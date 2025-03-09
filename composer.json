@@ -1,0 +1,25 @@
+{
+    "name": "pslits/oai-pmh",
+    "description": "The Open Archives Initiative Protocol for Metadata Harvesting",
+    "type": "project",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Pslits\\OaiPmh\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Paul Slits",
+            "email": "paul.slits@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "vlucas/phpdotenv": "^5.5",
+        "phpoffice/phpspreadsheet": "^1.25"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.6"
+    }
+}
