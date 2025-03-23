@@ -1,6 +1,6 @@
 <?php
 /* +--------------------------------------------------------------------------+
- * | Filename: oai.php
+ * | Filename: OAIRequestHandler.php
  * | Author:   Paul Slits
  * | Project:  OAI-PMH
  * +--------------------------------------------------------------------------+
@@ -26,32 +26,51 @@
  * +--------------------------------------------------------------------------+
  */
 
-require_once 'vendor/autoload.php';
+namespace Pslits\OaiPmh;
 
-use Pslits\OaiPmh\OAIException;
-use Pslits\OaiPmh\OAIRequestDTO;
-use Pslits\OaiPmh\OAIRequestHandler;
-use Pslits\OaiPmh\OAIView;
+use DOMElement;
 
-// Load environment variables
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
-$dotenv->load();
+/**
+ * Class OAIRequestHandler
+ *
+ * This class is responsible for handling OAI-PMH requests.
+ */
+class OAIRequestHandler
+{
+    /**
+     * @var array An array of OAI-PMH commands.
+     */
+    private array $commands;
 
-$oaiView = new OAIView();
+    /**
+     * OAIRequestHandler constructor.
+     *
+     * Initializes a new instance of the OAIRequestHandler class.
+     */
+    public function __construct()
+    {
+        $this->commands = [
+            "ListRecords" => new OAIListRecords()
+        ];
+    }
 
-try {
-    // create DTO from request parameters
-    $requestDTO = new OAIRequestDTO($_GET);
+    /**
+     * Handle the OAI-PMH request.
+     *
+     * @param OAIRequestDTO $requestDTO The request data transfer object.
+     * @return DOMElement The response to the request.
+     */
+    public function handleRequest(OAIRequestDTO $requestDTO): DOMElement
+    {
+        $verb = $requestDTO->getVerb();
+        $responseXML = null;
 
-    // create request handler and execute the request
-    $requestHandler = new OAIRequestHandler();
-    $responseXml = $requestHandler->handleRequest($requestDTO);
+        if (isset($this->commands[$verb])) {
+            $responseXML = $this->commands[$verb]->execute($requestDTO);
+        } else {
+            throw new OAIException("badVerb", "Unknown verb");
+        }
 
-    // output the response
-    $oaiView->renderResponse($requestDTO, $responseXml);
-} catch (OAIException $e) {
-    $oaiView->renderError($e->getErrorCode(), $e->getMessage());
-    exit;
-    // } catch (Exception $e) {
-    //     $oaiView->renderError('internalServerError', $e->getMessage());
+        return $responseXML;
+    }
 }

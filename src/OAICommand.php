@@ -1,6 +1,6 @@
 <?php
 /* +--------------------------------------------------------------------------+
- * | Filename: oai.php
+ * | Filename: OAICommand.php
  * | Author:   Paul Slits
  * | Project:  OAI-PMH
  * +--------------------------------------------------------------------------+
@@ -26,32 +26,17 @@
  * +--------------------------------------------------------------------------+
  */
 
-require_once 'vendor/autoload.php';
+namespace Pslits\OaiPmh;
 
-use Pslits\OaiPmh\OAIException;
-use Pslits\OaiPmh\OAIRequestDTO;
-use Pslits\OaiPmh\OAIRequestHandler;
-use Pslits\OaiPmh\OAIView;
-
-// Load environment variables
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
-$dotenv->load();
-
-$oaiView = new OAIView();
-
-try {
-    // create DTO from request parameters
-    $requestDTO = new OAIRequestDTO($_GET);
-
-    // create request handler and execute the request
-    $requestHandler = new OAIRequestHandler();
-    $responseXml = $requestHandler->handleRequest($requestDTO);
-
-    // output the response
-    $oaiView->renderResponse($requestDTO, $responseXml);
-} catch (OAIException $e) {
-    $oaiView->renderError($e->getErrorCode(), $e->getMessage());
-    exit;
-    // } catch (Exception $e) {
-    //     $oaiView->renderError('internalServerError', $e->getMessage());
+/**
+ * Class OAICommand
+ *
+ * This class is an abstract class that defines the interface for OAI-PMH commands.
+ */
+abstract class OAICommand
+{
+    /**
+     * @var OAIController An instance of the OAIController class.
+     */
+    abstract public function execute(OAIRequestDTO $requestDTO);
 }

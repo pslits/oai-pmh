@@ -62,11 +62,11 @@ class OAIView
     }
 
     /**
-     * Creates the root XML element for the OAI-PMH response.
+     * Creates the root element for the OAI-PMH response.
      *
-     * @return DOMElement The root XML element.
+     * @return DOMElement The root element.
      */
-    private function createRoot($verb = null, $parameters = null): DOMElement
+    private function createRoot(): DOMElement
     {
         $root = $this->dom->createElement('OAI-PMH');
         $root->setAttribute('xmlns', 'http://www.openarchives.org/OAI/2.0/');
@@ -76,25 +76,24 @@ class OAIView
         $responseDate = $this->dom->createElement('responseDate', gmdate('Y-m-d\TH:i:s\Z'));
         $root->appendChild($responseDate);
 
-        $request = $this->dom->createElement('request', 'http://localhost/oai-mph');
-
-        if ($verb) {
-            $request->setAttribute('verb', $verb);
-
-            // If parameters are provided, set them as attributes on the request element
-            if ($parameters !== "") {
-                foreach ($parameters as $key => $value) {
-                    if (!empty($value)) {
-                        $request->setAttribute($key, $value);
-                    }
-                }
-            }
-        }
-
-        $root->appendChild($request);
-
         return $root;
     }
+
+    /**
+     * Creates the request element for the OAI-PMH response.
+     *
+     * @param OAIRequestDTO $requestDto The request data transfer object.
+     * @return DOMElement The request element.
+     */
+    public function createRequestElement(OAIRequestDTO $requestDto): DOMElement
+    {
+        $request = $this->dom->createElement('request', 'http://localhost/oai-mph');
+        $request->setAttribute('verb', $requestDto->getVerb());
+        $request->setAttribute('metadataPrefix', $requestDto->getMetadataPrefix());
+
+        return $request;
+    }
+
     /**
      * Renders an error response.
      *
@@ -114,36 +113,21 @@ class OAIView
     }
 
     /**
-     * Renders a ListRecords response.
+     * Renders a successful response.
      *
-     * @param array                 $records              An array of records data.
-     * @param MetadataFormatPlugin  $metadataFormatPlugin An instance of MetadataFormatPlugin to create metadata elements.
+     * @param OAIRequestDTO $requestDto The request data transfer object.
+     * @param DOMElement     $response   The response to the request.
      */
-    public function renderListRecords(array $records, array $parameters, MetadataFormatPlugin $metadataFormatPlugin): void
+    public function renderResponse(OAIRequestDTO $requestDto, DomElement $response): void
     {
-        $root = $this->createRoot('ListRecords', $parameters);
+        $root = $this->createRoot();
 
-        $listRecords = $this->dom->createElement('ListRecords');
-        foreach ($records as $record) {
-            $recordElement = $this->dom->createElement('record');
+        $request = $this->createRequestElement($requestDto);
+        $root->appendChild($request);
 
-            // Handle the header part
-            $header = $this->dom->createElement('header');
-            $identifier = $this->dom->createElement('identifier', $record['identifier']);
-            $datestamp = $this->dom->createElement('datestamp', $record['datestamp']);
-            $header->appendChild($identifier);
-            $header->appendChild($datestamp);
-            $recordElement->appendChild($header);
+        $importedNode = $this->dom->importNode($response, true);
+        $root->appendChild($importedNode);
 
-            // Create metadata element using MetadataFormatPlugin
-            $metadata = $this->dom->createElement('metadata');
-            $metadataElement = $metadataFormatPlugin->createMetadata($this->dom, $record);
-            $metadata->appendChild($metadataElement);
-            $recordElement->appendChild($metadata);
-
-            $listRecords->appendChild($recordElement);
-        }
-        $root->appendChild($listRecords);
         $this->dom->appendChild($root);
         $this->output();
     }

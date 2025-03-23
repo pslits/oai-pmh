@@ -1,6 +1,6 @@
 <?php
 /* +--------------------------------------------------------------------------+
- * | Filename: oai.php
+ * | Filename: OAIException.php
  * | Author:   Paul Slits
  * | Project:  OAI-PMH
  * +--------------------------------------------------------------------------+
@@ -26,32 +26,43 @@
  * +--------------------------------------------------------------------------+
  */
 
-require_once 'vendor/autoload.php';
+namespace Pslits\OaiPmh;
 
-use Pslits\OaiPmh\OAIException;
-use Pslits\OaiPmh\OAIRequestDTO;
-use Pslits\OaiPmh\OAIRequestHandler;
-use Pslits\OaiPmh\OAIView;
+use Exception;
 
-// Load environment variables
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
-$dotenv->load();
+/**
+ * Class OAIException
+ *
+ * This class is responsible for handling OAI-PMH exceptions.
+ */
+class OAIException extends Exception
+{
+    /**
+     * @var string The OAI-PMH error code.
+     */
+    private $errorCode;
 
-$oaiView = new OAIView();
+    /**
+     * OAIException constructor.
+     *
+     * Initializes a new instance of the OAIException class.
+     *
+     * @param string $errorCode The OAI-PMH error code.
+     * @param string $message The error message.
+     */
+    public function __construct(string $errorCode, string $message)
+    {
+        parent::__construct($message);
+        $this->errorCode = $errorCode;
+    }
 
-try {
-    // create DTO from request parameters
-    $requestDTO = new OAIRequestDTO($_GET);
-
-    // create request handler and execute the request
-    $requestHandler = new OAIRequestHandler();
-    $responseXml = $requestHandler->handleRequest($requestDTO);
-
-    // output the response
-    $oaiView->renderResponse($requestDTO, $responseXml);
-} catch (OAIException $e) {
-    $oaiView->renderError($e->getErrorCode(), $e->getMessage());
-    exit;
-    // } catch (Exception $e) {
-    //     $oaiView->renderError('internalServerError', $e->getMessage());
+    /**
+     * Get the OAI-PMH error code.
+     *
+     * @return string The OAI-PMH error code.
+     */
+    public function getErrorCode(): string
+    {
+        return $this->errorCode;
+    }
 }
