@@ -87,7 +87,8 @@ class OAIView
      */
     public function createRequestElement(OAIRequestDTO $requestDto): DOMElement
     {
-        $request = $this->dom->createElement('request', 'http://localhost/oai-mph');
+        $baseURL = $_ENV['BASE_URL'];
+        $request = $this->dom->createElement('request', $baseURL);
         $request->setAttribute('verb', $requestDto->getVerb());
         $request->setAttribute('metadataPrefix', $requestDto->getMetadataPrefix());
 
@@ -97,16 +98,32 @@ class OAIView
     /**
      * Renders an error response.
      *
-     * @param string $code    The error code.
-     * @param string $message The error message.
+     * @param array $exceptionList The list of exceptions to be rendered.
+     * @param OAIRequestDTO|null $requestDTO The request data transfer object, if available.
      */
-    public function renderError(string $code, string $message): void
+    public function renderError(array $exceptionList, ?OAIRequestDTO $requestDTO): void
     {
         $root = $this->createRoot();
 
-        $error = $this->dom->createElement('error', $message);
-        $error->setAttribute('code', $code);
-        $root->appendChild($error);
+        $baseURL = $_ENV['BASE_URL'];
+        $requestElement = $this->dom->createElement('request', $baseURL);
+
+        // If requestDTO is not null, set the attributes for the request element
+        if ($requestDTO) {
+            $requestElement->setAttribute('verb', $requestDTO->getVerb());
+            $requestElement->setAttribute('metadataPrefix', $requestDTO->getMetadataPrefix());
+        }
+
+        $root->appendChild($requestElement);
+
+        // Loop through the exception list and create error elements for each error
+        foreach ($exceptionList as $code => $messages) {
+            foreach ($messages as $message) {
+                $error = $this->dom->createElement('error', $message);
+                $error->setAttribute('code', $code);
+                $root->appendChild($error);
+            }
+        }
 
         $this->dom->appendChild($root);
         $this->output();

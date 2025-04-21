@@ -68,7 +68,7 @@ class OAIRequestHandler
         if (isset($this->commands[$verb])) {
             $responseXML = $this->commands[$verb]->execute($requestDTO);
         } else {
-            throw new OAIException("badVerb", "Unknown verb");
+            throw new OAIException("badVerb", "The verb " . $verb . " is not supported by this repository.");
         }
 
         return $responseXML;

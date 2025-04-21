@@ -1,6 +1,6 @@
 <?php
 /* +--------------------------------------------------------------------------+
- * | Filename: OAIException.php
+ * | Filename: OAIParsedQuery.php
  * | Author:   Paul Slits
  * | Project:  OAI-PMH
  * +--------------------------------------------------------------------------+
@@ -28,54 +28,57 @@
 
 namespace Pslits\OaiPmh;
 
-use Exception;
-
-/**
- * Class OAIException
- *
- * This class is responsible for handling OAI-PMH exceptions.
- */
-class OAIException extends Exception
+class OAIParsedQuery
 {
-    private array $exceptionList = [];
+    private array $pairs = [];
 
-    public function __construct(?string $errorCode = null, ?string $message = null)
+    public function __construct(string $queryString)
     {
-        parent::__construct("OAI validation error");
+        // protect against DoS attacks by limiting the size of the request
+        if (strlen($queryString) > 1000) {
+            throw new OAIException('badArgument', 'Request is too long');
+        }
 
-        if ($errorCode && $message) {
-            $this->add($errorCode, $message);
+        foreach (explode('&', $queryString) as $pair) {
+            if (trim($pair) === '') continue;
+
+            [$key, $value] = explode('=', $pair, 2) + [null, null];
+            $key = urldecode(trim($key));
+            $value = urldecode(trim($value ?? ''));
+            $this->pairs[] = ['key' => $key, 'value' => $value];
         }
     }
 
-    /**
-     * Adds an error message to the exception list. The messages are grouped by error code.
-     *
-     * @param string $errorCode The OAI-PMH error code.
-     * @param string $message The error message.
-     */
-    public function add(string $errorCode, string $message): void
+    public function getValuesByKey(string $key): array
     {
-        $this->exceptionList[$errorCode][] = $message;
+        return array_map(
+            fn($item) => $item['value'],
+            array_filter($this->pairs, fn($item) => $item['key'] === $key)
+        );
     }
 
-    /**
-     * Checks if there are any exceptions in the exception list.
-     *
-     * @return bool True if there are exceptions, false otherwise.
-     */
-    public function hasExceptions(): bool
+    public function getFirstValue(string $key): ?string
     {
-        return !empty($this->exceptionList);
+        foreach ($this->pairs as $item) {
+            if ($item['key'] === $key) {
+                return $item['value'];
+            }
+        }
+        return null;
     }
 
-    /**
-     * Returns the exception list.
-     * 
-     * @return array The exception list, grouped by error code.
-     */
-    public function getExceptionList(): array
+    public function getKeys(): array
     {
-        return $this->exceptionList;
+        return array_column($this->pairs, 'key');
+    }
+
+    public function countKeyOccurrences(string $key): int
+    {
+        return count(array_filter($this->pairs, fn($item) => $item['key'] === $key));
+    }
+
+    public function toArray(): array
+    {
+        return $this->pairs;
     }
 }

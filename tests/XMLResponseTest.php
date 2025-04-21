@@ -65,6 +65,7 @@ use PHPUnit\Framework\TestCase;
 class XMLResponseTest extends TestCase
 {
     private $xml;
+    private $expectedBaseURL = 'http://localhost/oai-pmh/oai.php';
 
     /**
      * Load XML from a provided URL before executing each test.
@@ -73,10 +74,24 @@ class XMLResponseTest extends TestCase
      */
     protected function setUpWithUrl($url): void
     {
-        $xmlResponse = file_get_contents($url);
-        print($url);
-        $this->xml = new DOMDocument;
-        $this->xml->loadXML($xmlResponse, LIBXML_NOBLANKS);
+        $xmlResponse = null;
+
+        try {
+            $xmlResponse = file_get_contents($url);
+            if ($xmlResponse === false) {
+                $this->fail("Failed to fetch XML from URL: $url");
+            }
+        } catch (Exception $e) {
+            $this->fail("Failed to fetch XML from URL: " . $e->getMessage());
+        }
+
+        try {
+            $this->xml = new DOMDocument;
+            $this->xml->loadXML($xmlResponse, LIBXML_NOBLANKS);
+        } catch (Exception $e) {
+            print_r($xmlResponse);
+            $this->fail("Failed to load XML: " . $e->getMessage());
+        }
     }
 
     /**
@@ -178,10 +193,8 @@ class XMLResponseTest extends TestCase
 
         // Validate request
         $request = $root->getElementsByTagName('request')->item(0);
-        $this->assertNotNull($request, "Missing 'request' element.");
-
-        $expectedBaseURL = 'http://localhost/oai-mph';
-        $this->assertEquals($expectedBaseURL, $request->nodeValue, "The 'request' element value does not match the expected baseURL.");
+        $this->assertNotNull($request, '<request> element not found');
+        $this->assertEquals($this->expectedBaseURL, $request->nodeValue, "The 'request' element value does not match the expected baseURL.");
     }
 
     /**
@@ -193,12 +206,15 @@ class XMLResponseTest extends TestCase
     public function testRequestChildAttributesForInvalidRequest(string $url): void
     {
         $this->setUpWithUrl($url);
+        print_r($this->xml->saveXML());
 
         $root = $this->xml->documentElement;
 
-        // Validate request
+        // Validate that request doesn't have attributes
         $request = $root->getElementsByTagName('request')->item(0);
-        $this->assertFalse($request->hasAttribute('verb'), "The 'request' element should not have a 'verb' attribute for invalid requests.");
+        $this->assertNotNull($request, '<request> element not found');
+        $this->assertEquals(0, $request->attributes->length, '<request> element should not have any attributes');
+        $this->assertEquals($this->expectedBaseURL, $request->nodeValue, "<request> element value does not match the expected baseURL.");
     }
 
     /**

@@ -1,6 +1,6 @@
 <?php
 /* +--------------------------------------------------------------------------+
- * | Filename: OAIException.php
+ * | Filename: OAIRepositoryDAO.php
  * | Author:   Paul Slits
  * | Project:  OAI-PMH
  * +--------------------------------------------------------------------------+
@@ -28,54 +28,40 @@
 
 namespace Pslits\OaiPmh;
 
-use Exception;
+use DateTime;
 
-/**
- * Class OAIException
- *
- * This class is responsible for handling OAI-PMH exceptions.
- */
-class OAIException extends Exception
+class OAIRepositoryDAO
 {
-    private array $exceptionList = [];
+    public function __construct() {}
 
-    public function __construct(?string $errorCode = null, ?string $message = null)
+    // return a list of OAIRecordDTO objects
+    public function getRecords(OAIRequestDTO $requestDTO): array
     {
-        parent::__construct("OAI validation error");
+        $records = array();
 
-        if ($errorCode && $message) {
-            $this->add($errorCode, $message);
-        }
-    }
+        $record = new OAIRecordDTO(
+            'oai:example.org:1',
+            new DateTime("2025-01-01T00:00:00Z"),
+            'set1',
+            '<metadata><title>Record 1</title></metadata>'
+        );
+        $records[] = $record;
 
-    /**
-     * Adds an error message to the exception list. The messages are grouped by error code.
-     *
-     * @param string $errorCode The OAI-PMH error code.
-     * @param string $message The error message.
-     */
-    public function add(string $errorCode, string $message): void
-    {
-        $this->exceptionList[$errorCode][] = $message;
-    }
+        $record = new OAIRecordDTO(
+            'oai:example.org:2',
+            new DateTime("2025-01-02T00:00:00Z"),
+            'set1',
+            '<metadata><title>Record 2</title></metadata>'
+        );
+        $records[] = $record;
 
-    /**
-     * Checks if there are any exceptions in the exception list.
-     *
-     * @return bool True if there are exceptions, false otherwise.
-     */
-    public function hasExceptions(): bool
-    {
-        return !empty($this->exceptionList);
-    }
+        $record = new OAIRecordDTO(
+            'oai:example.org:3',
+            new DateTime("2025-01-03T00:00:00Z"),
+            'set1',
+            '<metadata><title>Record 3</title></metadata>'
+        );
 
-    /**
-     * Returns the exception list.
-     * 
-     * @return array The exception list, grouped by error code.
-     */
-    public function getExceptionList(): array
-    {
-        return $this->exceptionList;
+        return $records;
     }
 }

@@ -36,6 +36,38 @@ namespace Pslits\OaiPmh;
 class OAIRequestDTO
 {
     /**
+     * @const array Allowed OAI-PMH verbs.
+     * These verbs are supported by the OAI-PMH protocol and can be used in requests.
+     */
+    private const ALLOWED_VERBS = [
+        'Identify',
+        'GetRecord',
+        'ListIdentifiers',
+        'ListMetadataFormats',
+        'ListRecords',
+        'ListSets'
+    ];
+
+    /**
+     * @const array Allowed arguments in the OAI-PMH request.
+     * These arguments are valid parameters that can be included in the request.
+     */
+    private const ALLOWED_ARGUMENTS = [
+        'verb',
+        'identifier',
+        'metadataPrefix',
+        'from',
+        'until',
+        'set',
+        'resumptionToken'
+    ];
+
+    /**
+     * @var OAIParsedQuery An instance of the OAIParsedQuery class that holds the parsed query parameters.
+     */
+    private OAIParsedQuery $parsedQuery;
+
+    /**
      * @var string The OAI-PMH verb.
      */
     private $verb;
@@ -46,34 +78,37 @@ class OAIRequestDTO
     private $metadataPrefix;
 
     /**
-     * OAIRequestDTO constructor.
-     *
-     * Initializes a new instance of the OAIRequestDTO class.
-     *
-     * @param string $metadataPrefix The metadata prefix.
+     * @var OAIException An instance of the OAIException class for handling exceptions.
      */
-    public function __construct(array $request)
-    {
-        $this->verb = $request['verb'] ?? null;
-        $this->metadataPrefix = $request['metadataPrefix'] ?? null;
-
-        $this->validateStructure();
-    }
+    private OAIException $exception;
 
     /**
-     * Validates the structure of the request parameters.
+     * OAIRequestDTO constructor.
      *
-     * @throws \InvalidArgumentException If the request parameters are invalid.
+     * Initializes a new instance of the OAIRequestDTO class and validates the request parameters.
+     *
+     * @param OAIParsedQuery $parsedQuery The parsed query parameters from the request.
+     * @param OAIException|null $exception An optional OAIException instance for handling exceptions.
+     * 
+     * @throws OAIException If the request is invalid or contains errors.
      */
-    private function validateStructure(): void
+    public function __construct(OAIParsedQuery $parsedQuery, ?OAIException $exception = null)
     {
-        if (!$this->verb) {
-            throw new OAIException('badVerb', 'Verb is required');
+        if ($exception === null) {
+            $this->exception = new OAIException();
+        } else {
+            $this->exception = $exception;
         }
 
-        if (!$this->metadataPrefix) {
-            throw new OAIException('badArgument', 'metadataPrefix is required');
+        $this->parsedQuery = $parsedQuery;
+        $this->validateQuery();
+
+        if ($this->exception->hasExceptions()) {
+            throw $this->exception;
         }
+
+        $this->verb = $this->parsedQuery->getFirstValue('verb');
+        $this->metadataPrefix = $this->parsedQuery->getFirstValue('metadataPrefix');
     }
 
     /**
@@ -94,5 +129,115 @@ class OAIRequestDTO
     public function getMetadataPrefix(): string
     {
         return $this->metadataPrefix;
+    }
+
+    /**
+     * Gets the request URI.
+     *
+     * @return string The request URI.
+     */
+    public function getRequestURL(): string
+    {
+        $baseURL = $_ENV['BASE_URL'];
+        // TODO: Validate the base URL
+        $requestURL =  $baseURL . '?verb=' . $this->verb . '&metadataPrefix=' . $this->metadataPrefix;
+        return $requestURL;
+    }
+
+    /**
+     * Checks if the request contains the verb argument.
+     * 
+     * @return bool True if the verb argument is present, false otherwise.
+     */
+    private function isVerbInRequestArguments(): bool
+    {
+        return in_array('verb', $this->parsedQuery->getKeys());
+    }
+
+    /**
+     * Validates if the verb argument is present in the request.
+     * 
+     * @throws OAIException If the verb argument is missing.
+     */
+    private function validateVerbIsPresent(): void
+    {
+        if (!$this->isVerbInRequestArguments()) {
+            $this->exception->add('badVerb', 'The verb argument is missing in the request');
+        }
+    }
+
+    /**
+     * Validates if the verb argument is not repeated in the request.
+     * 
+     * @throws OAIException If the verb argument is repeated.
+     */
+    private function validateVerbIsNotRepeated(): void
+    {
+        if ($this->isVerbInRequestArguments()) {
+            if ($this->parsedQuery->countKeyOccurrences('verb') > 1) {
+                $this->exception->add('badVerb', 'The verb argument is repeated in the request');
+            }
+        }
+    }
+
+    /**
+     * Validates if the verb argument is supported by the OAI-PMH protocol.
+     * 
+     * @throws OAIException If the verb argument is not supported.
+     */
+    private function validateVerbIsSupported(): void
+    {
+        if ($this->isVerbInRequestArguments()) {
+            $verb = $this->parsedQuery->getFirstValue('verb');
+            $isVerbAllowed = ($verb && in_array($verb, self::ALLOWED_VERBS));
+            if (!$isVerbAllowed) {
+                $this->exception->add('badVerb', 'The value "' . $verb . '" of the verb argument is not supported by the OAI-PMH protocol');
+            }
+        }
+    }
+
+    /**
+     * Validates if the arguments in the request are legal.
+     * 
+     * @throws OAIException If any illegal arguments are found.
+     */
+    private function validateArgumentsAreLegal(): void
+    {
+        foreach ($this->parsedQuery->getKeys() as $key) {
+            if (!in_array($key, self::ALLOWED_ARGUMENTS)) {
+                $this->exception->add('badArgument', 'Illegal argument "' . $key . '" in the request');
+            }
+        }
+    }
+
+    /**
+     * Validates if the arguments in the request are not repeated.
+     * 
+     * @throws OAIException If any arguments are repeated.
+     */
+    private function validateArgumentsAreNotRepeated(): void
+    {
+        foreach (self::ALLOWED_ARGUMENTS as $argument) {
+            // exclude 'verb' from this check, as it is already validated separately
+            if ($argument === 'verb') continue;
+            if ($this->parsedQuery->countKeyOccurrences($argument) > 1) {
+                $this->exception->add('badArgument', 'Argument "' . $argument . '" is repeated in the request');
+            }
+        }
+    }
+
+    /**
+     * Validates the entire request query.
+     * 
+     * @throws OAIException If any validation errors are found.
+     */
+    private function validateQuery(): void
+    {
+        $this->validateVerbIsPresent();
+        $this->validateVerbIsNotRepeated();
+        $this->validateVerbIsSupported();
+
+        $this->validateArgumentsAreLegal();
+        $this->validateArgumentsAreNotRepeated();
     }
 }

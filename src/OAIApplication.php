@@ -1,6 +1,6 @@
 <?php
 /* +--------------------------------------------------------------------------+
- * | Filename: OAIException.php
+ * | Filename: OAIApplication.php
  * | Author:   Paul Slits
  * | Project:  OAI-PMH
  * +--------------------------------------------------------------------------+
@@ -28,54 +28,46 @@
 
 namespace Pslits\OaiPmh;
 
-use Exception;
-
 /**
- * Class OAIException
+ * Class OAIApplication
  *
- * This class is responsible for handling OAI-PMH exceptions.
+ * This class is responsible for handling the OAI-PMH application logic.
  */
-class OAIException extends Exception
+class OAIApplication
 {
-    private array $exceptionList = [];
+    protected OAIView $view;
 
-    public function __construct(?string $errorCode = null, ?string $message = null)
+    /**
+     * OAIApplication constructor.
+     *
+     * Initializes a new instance of the OAIApplication class.
+     */
+    public function __construct()
     {
-        parent::__construct("OAI validation error");
+        $this->view = new OAIView();
+    }
 
-        if ($errorCode && $message) {
-            $this->add($errorCode, $message);
+    /**
+     * Run the OAI-PMH application.
+     *
+     * @param string $request The input parameters for the OAI-PMH request.
+     */
+    public function run(string $requestQuery): void
+    {
+        $requestDTO = null;
+
+        try {
+            $parsedQuery = new OAIParsedQuery($requestQuery);
+            $requestDTO = new OAIRequestDTO($parsedQuery);
+
+            $handler = new OAIRequestHandler();
+            $response = $handler->handleRequest($requestDTO);
+
+            $this->view->renderResponse($requestDTO, $response);
+        } catch (OAIException $e) {
+            $this->view->renderError($e->getExceptionList(), $requestDTO);
         }
-    }
-
-    /**
-     * Adds an error message to the exception list. The messages are grouped by error code.
-     *
-     * @param string $errorCode The OAI-PMH error code.
-     * @param string $message The error message.
-     */
-    public function add(string $errorCode, string $message): void
-    {
-        $this->exceptionList[$errorCode][] = $message;
-    }
-
-    /**
-     * Checks if there are any exceptions in the exception list.
-     *
-     * @return bool True if there are exceptions, false otherwise.
-     */
-    public function hasExceptions(): bool
-    {
-        return !empty($this->exceptionList);
-    }
-
-    /**
-     * Returns the exception list.
-     * 
-     * @return array The exception list, grouped by error code.
-     */
-    public function getExceptionList(): array
-    {
-        return $this->exceptionList;
+        // } catch (Exception $e) {
+        //     $oaiView->renderError('internalServerError', $e->getMessage());
     }
 }
