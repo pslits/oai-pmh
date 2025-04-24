@@ -1,5 +1,7 @@
 <?php
 
+namespace Pslits\OaiPmh\Tests\Unit;
+
 use PHPUnit\Framework\TestCase;
 use Pslits\OaiPmh\OAIParsedQuery;
 use Pslits\OaiPmh\OAIException;

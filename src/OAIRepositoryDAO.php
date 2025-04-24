@@ -1,4 +1,5 @@
 <?php
+
 /* +--------------------------------------------------------------------------+
  * | Filename: OAIRepositoryDAO.php
  * | Author:   Paul Slits
@@ -32,7 +33,9 @@ use DateTime;
 
 class OAIRepositoryDAO
 {
-    public function __construct() {}
+    public function __construct()
+    {
+    }
 
     // return a list of OAIRecordDTO objects
     public function getRecords(OAIRequestDTO $requestDTO): array

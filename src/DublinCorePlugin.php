@@ -1,4 +1,5 @@
 <?php
+
 /* +--------------------------------------------------------------------------+
  * | Filename: DublinCorePlugin.php
  * | Author:   Paul Slits
@@ -33,7 +34,6 @@ use DOMElement;
 
 class DublinCorePlugin implements MetadataFormatPlugin
 {
-
     // Define Dublin Core elements
     private $elements = [
         'title',

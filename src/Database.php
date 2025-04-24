@@ -1,4 +1,5 @@
 <?php
+
 /* +--------------------------------------------------------------------------+
  * | Filename: Database.php
  * | Author:   Paul Slits
@@ -32,7 +33,6 @@ use PDO;
 
 class Database
 {
-
     private $pdo;
 
     public function __construct($config)

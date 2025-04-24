@@ -1,4 +1,5 @@
 <?php
+
 /* +--------------------------------------------------------------------------+
  * | Filename: OAIRequestDTO.php
  * | Author:   Paul Slits
@@ -89,7 +90,7 @@ class OAIRequestDTO
      *
      * @param OAIParsedQuery $parsedQuery The parsed query parameters from the request.
      * @param OAIException|null $exception An optional OAIException instance for handling exceptions.
-     * 
+     *
      * @throws OAIException If the request is invalid or contains errors.
      */
     public function __construct(OAIParsedQuery $parsedQuery, ?OAIException $exception = null)
@@ -146,7 +147,7 @@ class OAIRequestDTO
 
     /**
      * Checks if the request contains the verb argument.
-     * 
+     *
      * @return bool True if the verb argument is present, false otherwise.
      */
     private function isVerbInRequestArguments(): bool
@@ -156,7 +157,7 @@ class OAIRequestDTO
 
     /**
      * Validates if the verb argument is present in the request.
-     * 
+     *
      * @throws OAIException If the verb argument is missing.
      */
     private function validateVerbIsPresent(): void
@@ -168,7 +169,7 @@ class OAIRequestDTO
 
     /**
      * Validates if the verb argument is not repeated in the request.
-     * 
+     *
      * @throws OAIException If the verb argument is repeated.
      */
     private function validateVerbIsNotRepeated(): void
@@ -182,7 +183,7 @@ class OAIRequestDTO
 
     /**
      * Validates if the verb argument is supported by the OAI-PMH protocol.
-     * 
+     *
      * @throws OAIException If the verb argument is not supported.
      */
     private function validateVerbIsSupported(): void
@@ -198,7 +199,7 @@ class OAIRequestDTO
 
     /**
      * Validates if the arguments in the request are legal.
-     * 
+     *
      * @throws OAIException If any illegal arguments are found.
      */
     private function validateArgumentsAreLegal(): void
@@ -212,14 +213,16 @@ class OAIRequestDTO
 
     /**
      * Validates if the arguments in the request are not repeated.
-     * 
+     *
      * @throws OAIException If any arguments are repeated.
      */
     private function validateArgumentsAreNotRepeated(): void
     {
         foreach (self::ALLOWED_ARGUMENTS as $argument) {
             // exclude 'verb' from this check, as it is already validated separately
-            if ($argument === 'verb') continue;
+            if ($argument === 'verb') {
+                continue;
+            }
             if ($this->parsedQuery->countKeyOccurrences($argument) > 1) {
                 $this->exception->add('badArgument', 'Argument "' . $argument . '" is repeated in the request');
             }
@@ -228,7 +231,7 @@ class OAIRequestDTO
 
     /**
      * Validates the entire request query.
-     * 
+     *
      * @throws OAIException If any validation errors are found.
      */
     private function validateQuery(): void

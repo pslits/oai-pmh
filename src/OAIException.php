@@ -1,4 +1,5 @@
 <?php
+
 /* +--------------------------------------------------------------------------+
  * | Filename: OAIException.php
  * | Author:   Paul Slits
@@ -71,7 +72,7 @@ class OAIException extends Exception
 
     /**
      * Returns the exception list.
-     * 
+     *
      * @return array The exception list, grouped by error code.
      */
     public function getExceptionList(): array

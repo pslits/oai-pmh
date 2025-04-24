@@ -1,4 +1,5 @@
 <?php
+
 /* +--------------------------------------------------------------------------+
  * | Filename: OAIParsedQuery.php
  * | Author:   Paul Slits
@@ -40,7 +41,9 @@ class OAIParsedQuery
         }
 
         foreach (explode('&', $queryString) as $pair) {
-            if (trim($pair) === '') continue;
+            if (trim($pair) === '') {
+                continue;
+            }
 
             [$key, $value] = explode('=', $pair, 2) + [null, null];
             $key = urldecode(trim($key));

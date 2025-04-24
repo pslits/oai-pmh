@@ -1,4 +1,5 @@
 <?php
+
 /* +--------------------------------------------------------------------------+
  * | Filename: OAIRequestHandler.php
  * | Author:   Paul Slits

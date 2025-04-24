@@ -1,4 +1,5 @@
 <?php
+
 /* +--------------------------------------------------------------------------+
  * | Filename: MetadataFormatPlugin.php
  * | Author:   Paul Slits
@@ -33,7 +34,6 @@ use DOMElement;
 
 interface MetadataFormatPlugin
 {
-
     /**
      * Get the metadata prefix used by OAI-PMH for this metadata format.
      *
