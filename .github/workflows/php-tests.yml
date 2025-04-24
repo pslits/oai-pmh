@@ -38,10 +38,10 @@ jobs:
         run: composer install --no-progress --prefer-dist
 
       - name: Run linter
-        run: ./vendor/bin/phpcs --standard=PSR12 app/
+        run: ./vendor/bin/phpcs --standard=PSR12 src/
 
       - name: Run static analysis
-        run: ./vendor/bin/phpstan analyse app/ --level=max
+        run: ./vendor/bin/phpstan analyse src/ --level=max
 
       - name: Run tests
         run: |
