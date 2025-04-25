@@ -29,6 +29,8 @@
 
 namespace Pslits\OaiPmh;
 
+use DOMElement;
+
 /**
  * Class OAICommand
  *
@@ -37,7 +39,9 @@ namespace Pslits\OaiPmh;
 abstract class OAICommand
 {
     /**
-     * @var OAIController An instance of the OAIController class.
+     * @param OAIRequestDTO $requestDTO The request data transfer object.
+     *
+     * @return DOMElement The XML response element.
      */
-    abstract public function execute(OAIRequestDTO $requestDTO);
+    abstract public function execute(OAIRequestDTO $requestDTO): DOMElement;
 }

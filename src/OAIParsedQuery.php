@@ -31,8 +31,19 @@ namespace Pslits\OaiPmh;
 
 class OAIParsedQuery
 {
+    /**
+     *
+     * @var array<array{key: string, value: string}> An array of key-value pairs parsed from the query string.
+     */
     private array $pairs = [];
 
+    /**
+     * OAIParsedQuery constructor.
+     *
+     * @param string $queryString The query string to be parsed.
+     *
+     * @throws OAIException If the query string is too long.
+     */
     public function __construct(string $queryString)
     {
         // protect against DoS attacks by limiting the size of the request
@@ -46,20 +57,34 @@ class OAIParsedQuery
             }
 
             [$key, $value] = explode('=', $pair, 2) + [null, null];
-            $key = urldecode(trim($key));
+            $key = urldecode(trim($key ?? ''));
             $value = urldecode(trim($value ?? ''));
             $this->pairs[] = ['key' => $key, 'value' => $value];
         }
     }
 
+    /**
+     * Get the value of a specific key from the parsed query.
+     *
+     * @param string $key The key to search for.
+     *
+     * @return array<string> An array of values associated with the specified key.
+     */
     public function getValuesByKey(string $key): array
     {
         return array_map(
-            fn($item) => $item['value'],
-            array_filter($this->pairs, fn($item) => $item['key'] === $key)
+            fn ($item) => $item['value'],
+            array_filter($this->pairs, fn ($item) => $item['key'] === $key)
         );
     }
 
+    /**
+     * Get the first value associated with a specific key from the parsed query.
+     *
+     * @param string $key The key to search for.
+     *
+     * @return string|null The first value associated with the specified key, or null if not found.
+     */
     public function getFirstValue(string $key): ?string
     {
         foreach ($this->pairs as $item) {
@@ -70,16 +95,33 @@ class OAIParsedQuery
         return null;
     }
 
+    /**
+     * Get all keys from the parsed query.
+     *
+     * @return array<string> An array of keys from the parsed query.
+     */
     public function getKeys(): array
     {
         return array_column($this->pairs, 'key');
     }
 
+    /**
+     * Count the occurrences of a specific key in the parsed query.
+     *
+     * @param string $key The key to count.
+     *
+     * @return int The number of occurrences of the specified key.
+     */
     public function countKeyOccurrences(string $key): int
     {
-        return count(array_filter($this->pairs, fn($item) => $item['key'] === $key));
+        return count(array_filter($this->pairs, fn ($item) => $item['key'] === $key));
     }
 
+    /**
+     * Convert the parsed query to an array of key-value pairs.
+     *
+     * @return array<array{key: string, value: string}> An array of key-value pairs.
+     */
     public function toArray(): array
     {
         return $this->pairs;

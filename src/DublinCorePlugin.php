@@ -35,7 +35,8 @@ use DOMElement;
 class DublinCorePlugin implements MetadataFormatPlugin
 {
     // Define Dublin Core elements
-    private $elements = [
+    /** @var array<string> $elements */
+    private array $elements = [
         'title',
         'creator',
         'subject',
@@ -71,7 +72,8 @@ class DublinCorePlugin implements MetadataFormatPlugin
     /**
      * Create metadata for the given record in Dublin Core format.
      *
-     * @param array $record
+     * @param DOMDocument $doc
+     * @param array<string, string> $record
      * @return DomElement XML representation of the metadata.
      */
     public function createMetadata(DOMDocument $doc, array $record): DOMElement

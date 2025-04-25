@@ -93,17 +93,22 @@ class OAIView
     public function createRequestElement(OAIRequestDTO $requestDto): DOMElement
     {
         $baseURL = $_ENV['BASE_URL'];
-        $request = $this->dom->createElement('request', $baseURL);
-        $request->setAttribute('verb', $requestDto->getVerb());
-        $request->setAttribute('metadataPrefix', $requestDto->getMetadataPrefix());
 
+        // Ensure that $baseURL is a string
+        if (!is_string($baseURL)) {
+            throw new \RuntimeException('Base URL is not set or is not a string in the environment variables.');
+        }
+
+        $request = $this->dom->createElement('request', $baseURL);
+        $request->setAttribute('verb', $requestDto->getVerb() ?? '');
+        $request->setAttribute('metadataPrefix', $requestDto->getMetadataPrefix() ?? '');
         return $request;
     }
 
     /**
      * Renders an error response.
      *
-     * @param array $exceptionList The list of exceptions to be rendered.
+     * @param array<string, array<string>> $exceptionList An associative array of error codes and messages.
      * @param OAIRequestDTO|null $requestDTO The request data transfer object, if available.
      */
     public function renderError(array $exceptionList, ?OAIRequestDTO $requestDTO): void
@@ -111,12 +116,18 @@ class OAIView
         $root = $this->createRoot();
 
         $baseURL = $_ENV['BASE_URL'];
+
+        // Ensure that $baseURL is a string
+        if (!is_string($baseURL)) {
+            throw new \RuntimeException('Base URL is not set or is not a string in the environment variables.');
+        }
+
         $requestElement = $this->dom->createElement('request', $baseURL);
 
         // If requestDTO is not null, set the attributes for the request element
         if ($requestDTO) {
-            $requestElement->setAttribute('verb', $requestDTO->getVerb());
-            $requestElement->setAttribute('metadataPrefix', $requestDTO->getMetadataPrefix());
+            $requestElement->setAttribute('verb', $requestDTO->getVerb() ?? '');
+            $requestElement->setAttribute('metadataPrefix', $requestDTO->getMetadataPrefix() ?? '');
         }
 
         $root->appendChild($requestElement);

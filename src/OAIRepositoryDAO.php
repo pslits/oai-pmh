@@ -37,7 +37,11 @@ class OAIRepositoryDAO
     {
     }
 
-    // return a list of OAIRecordDTO objects
+    /**
+     * return a list of OAIRecordDTO objects
+     * @param OAIRequestDTO $requestDTO
+     * @return OAIRecordDTO[]
+     */
     public function getRecords(OAIRequestDTO $requestDTO): array
     {
         $records = array();

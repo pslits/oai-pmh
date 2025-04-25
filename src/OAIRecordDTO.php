@@ -84,7 +84,7 @@ class OAIRecordDTO
     /**
      * Get the datestamp of the record.
      *
-     * @return string
+     * @return DateTime
      */
     public function getDatestamp(): DateTime
     {

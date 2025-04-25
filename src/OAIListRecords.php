@@ -54,8 +54,6 @@ class OAIListRecords extends OAICommand
      * OAIListRecords constructor.
      *
      * Initializes a new instance of the OAIListRecords class.
-     *
-     * @param OAIController $oaiController An instance of the OAIController class.
      */
     public function __construct()
     {
@@ -66,7 +64,7 @@ class OAIListRecords extends OAICommand
      * List the records in the repository.
      *
      * @param OAIRequestDTO $requestDTO The request parameters.
-     * @return string The OAI-PMH response.
+     * @return DOMElement The XML response element.
      */
     public function execute(OAIRequestDTO $requestDTO): DOMElement
     {
@@ -75,10 +73,10 @@ class OAIListRecords extends OAICommand
             case 'oai_dc':
                 $this->metadataFormatPlugin = new DublinCorePlugin();
                 break;
-            // case 'other_format':
-            //     $oaiController = new OtherOAIControllerPlugin($database);
-            //     $metadataFormatPlugin = new OtherMetadataFormatPlugin();
-            //     break;
+                // case 'other_format':
+                //     $oaiController = new OtherOAIControllerPlugin($database);
+                //     $metadataFormatPlugin = new OtherMetadataFormatPlugin();
+                //     break;
             default:
                 throw new OAIException('cannotDisseminateFormat', 'The metadata format provided is not supported');
         }
@@ -117,7 +115,14 @@ class OAIListRecords extends OAICommand
         return $listRecordsXml;
     }
 
-    private function retrieveRecords($offset, $limit)
+    /**
+     * Retrieve records from the database.
+     *
+     * @param int $offset The offset for pagination.
+     * @param int $limit The limit for pagination.
+     * @return array<array<string, string>> An array of records.
+     */
+    private function retrieveRecords($offset, $limit): array
     {
         // Simulating retrieving records where Dublin Core values are part of the same record.
         $mockRecords = [

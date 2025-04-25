@@ -38,6 +38,9 @@ use Exception;
  */
 class OAIException extends Exception
 {
+    /**
+     * @var array<string, array<string>> An associative array of error codes and their corresponding messages.
+     */
     private array $exceptionList = [];
 
     public function __construct(?string $errorCode = null, ?string $message = null)
@@ -73,7 +76,7 @@ class OAIException extends Exception
     /**
      * Returns the exception list.
      *
-     * @return array The exception list, grouped by error code.
+     * @return array<string, array<string>> The exception list.
      */
     public function getExceptionList(): array
     {

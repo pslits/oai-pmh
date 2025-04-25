@@ -58,7 +58,9 @@ interface MetadataFormatPlugin
     /**
      * Create metadata for the given record in this metadata format.
      *
-     * @param array $record
+     * @param DOMDocument $doc
+     * @param array<string, string> $record
+     *
      * @return DomElement XML representation of the metadata.
      */
     public function createMetadata(DOMDocument $doc, array $record): DOMElement;

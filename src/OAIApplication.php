@@ -51,7 +51,7 @@ class OAIApplication
     /**
      * Run the OAI-PMH application.
      *
-     * @param string $request The input parameters for the OAI-PMH request.
+     * @param string $requestQuery The input parameters for the OAI-PMH request.
      */
     public function run(string $requestQuery): void
     {

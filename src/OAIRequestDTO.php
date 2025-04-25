@@ -69,14 +69,14 @@ class OAIRequestDTO
     private OAIParsedQuery $parsedQuery;
 
     /**
-     * @var string The OAI-PMH verb.
+     * @var string|null The OAI-PMH verb.
      */
-    private $verb;
+    private ?string $verb;
 
     /**
-     * @var string The metadata prefix.
+     * @var string|null The metadata prefix.
      */
-    private $metadataPrefix;
+    private ?string $metadataPrefix;
 
     /**
      * @var OAIException An instance of the OAIException class for handling exceptions.
@@ -115,9 +115,9 @@ class OAIRequestDTO
     /**
      * Gets the OAI-PMH verb.
      *
-     * @return string The OAI-PMH verb.
+     * @return string|null The OAI-PMH verb.
      */
-    public function getVerb(): string
+    public function getVerb(): ?string
     {
         return $this->verb;
     }
@@ -125,24 +125,11 @@ class OAIRequestDTO
     /**
      * Gets the metadata prefix.
      *
-     * @return string The metadata prefix.
+     * @return string|null The metadata prefix.
      */
-    public function getMetadataPrefix(): string
+    public function getMetadataPrefix(): ?string
     {
         return $this->metadataPrefix;
-    }
-
-    /**
-     * Gets the request URI.
-     *
-     * @return string The request URI.
-     */
-    public function getRequestURL(): string
-    {
-        $baseURL = $_ENV['BASE_URL'];
-        // TODO: Validate the base URL
-        $requestURL =  $baseURL . '?verb=' . $this->verb . '&metadataPrefix=' . $this->metadataPrefix;
-        return $requestURL;
     }
 
     /**

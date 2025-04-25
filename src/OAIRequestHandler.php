@@ -39,7 +39,7 @@ use DOMElement;
 class OAIRequestHandler
 {
     /**
-     * @var array An array of OAI-PMH commands.
+     * @var array<string, OAICommand> An associative array of commands that can be executed.
      */
     private array $commands;
 
@@ -64,14 +64,11 @@ class OAIRequestHandler
     public function handleRequest(OAIRequestDTO $requestDTO): DOMElement
     {
         $verb = $requestDTO->getVerb();
-        $responseXML = null;
 
         if (isset($this->commands[$verb])) {
-            $responseXML = $this->commands[$verb]->execute($requestDTO);
+            return $this->commands[$verb]->execute($requestDTO);
         } else {
             throw new OAIException("badVerb", "The verb " . $verb . " is not supported by this repository.");
         }
-
-        return $responseXML;
     }
 }
