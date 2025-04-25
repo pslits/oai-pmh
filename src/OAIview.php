@@ -53,13 +53,8 @@ class OAIView
      */
     public function __construct()
     {
-        // Create a new instance of DOMDocument with version '1.0' and encoding 'UTF-8'
         $this->dom = new DOMDocument('1.0', 'UTF-8');
-
-        // Set the formatOutput property to true, which means the output XML will be nicely formatted with indentation and extra spacing
         $this->dom->formatOutput = true;
-
-        // Set the preserveWhiteSpace property to false, ensuring that unnecessary whitespace (e.g., indentation, new lines) won't affect the DOM's structure
     }
 
     /**
@@ -70,9 +65,18 @@ class OAIView
     private function createRoot(): DOMElement
     {
         $root = $this->dom->createElement('OAI-PMH');
-        $root->setAttribute('xmlns', 'http://www.openarchives.org/OAI/2.0/');
-        $root->setAttribute('xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance');
-        $root->setAttribute('xsi:schemaLocation', 'http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd');
+        $root->setAttribute(
+            'xmlns',
+            'http://www.openarchives.org/OAI/2.0/'
+        );
+        $root->setAttribute(
+            'xmlns:xsi',
+            'http://www.w3.org/2001/XMLSchema-instance'
+        );
+        $root->setAttribute(
+            'xsi:schemaLocation',
+            'http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd'
+        );
 
         $responseDate = $this->dom->createElement('responseDate', gmdate('Y-m-d\TH:i:s\Z'));
         $root->appendChild($responseDate);

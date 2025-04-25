@@ -192,7 +192,10 @@ class OAIRequestDTO
             $verb = $this->parsedQuery->getFirstValue('verb');
             $isVerbAllowed = ($verb && in_array($verb, self::ALLOWED_VERBS));
             if (!$isVerbAllowed) {
-                $this->exception->add('badVerb', 'The value "' . $verb . '" of the verb argument is not supported by the OAI-PMH protocol');
+                $this->exception->add(
+                    'badVerb',
+                    'The value "' . $verb . '" of the verb argument is not supported by the OAI-PMH protocol'
+                );
             }
         }
     }
@@ -224,7 +227,10 @@ class OAIRequestDTO
                 continue;
             }
             if ($this->parsedQuery->countKeyOccurrences($argument) > 1) {
-                $this->exception->add('badArgument', 'Argument "' . $argument . '" is repeated in the request');
+                $this->exception->add(
+                    'badArgument',
+                    'Argument "' . $argument . '" is repeated in the request'
+                );
             }
         }
     }

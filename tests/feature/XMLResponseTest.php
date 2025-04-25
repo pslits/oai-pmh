@@ -27,7 +27,6 @@
  * +--------------------------------------------------------------------------+
  */
 
-
 namespace Pslits\OaiPmh\Tests\Feature;
 
 use PHPUnit\Framework\TestCase;
@@ -137,7 +136,10 @@ class XMLResponseTest extends TestCase
         $xmlContent = $this->xml->saveXML();
         $expectedDeclaration = '<?xml version="1.0" encoding="UTF-8"?>';
 
-        $this->assertTrue(strpos($xmlContent, $expectedDeclaration) === 0, "The XML declaration is missing or incorrect.");
+        $this->assertTrue(
+            strpos($xmlContent, $expectedDeclaration) === 0,
+            "The XML declaration is missing or incorrect."
+        );
     }
 
     /**
@@ -156,13 +158,28 @@ class XMLResponseTest extends TestCase
 
         // Validate OAI-PMH attributes
         $this->assertTrue($root->hasAttribute('xmlns'), "Root element missing 'xmlns' attribute.");
-        $this->assertEquals('http://www.openarchives.org/OAI/2.0/', $root->getAttribute('xmlns'), "'xmlns' attribute value mismatch.");
+        $this->assertEquals(
+            'http://www.openarchives.org/OAI/2.0/',
+            $root->getAttribute('xmlns'),
+            "'xmlns' attribute value mismatch."
+        );
 
         $this->assertTrue($root->hasAttribute('xmlns:xsi'), "Root element missing 'xmlns:xsi' attribute.");
-        $this->assertEquals('http://www.w3.org/2001/XMLSchema-instance', $root->getAttribute('xmlns:xsi'), "'xmlns:xsi' attribute value mismatch.");
+        $this->assertEquals(
+            'http://www.w3.org/2001/XMLSchema-instance',
+            $root->getAttribute('xmlns:xsi'),
+            "'xmlns:xsi' attribute value mismatch."
+        );
 
-        $this->assertTrue($root->hasAttribute('xsi:schemaLocation'), "Root element missing 'xsi:schemaLocation' attribute.");
-        $this->assertEquals('http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd', $root->getAttribute('xsi:schemaLocation'), "'xsi:schemaLocation' attribute value mismatch.");
+        $this->assertTrue(
+            $root->hasAttribute('xsi:schemaLocation'),
+            "Root element missing 'xsi:schemaLocation' attribute."
+        );
+        $this->assertEquals(
+            'http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd',
+            $root->getAttribute('xsi:schemaLocation'),
+            "'xsi:schemaLocation' attribute value mismatch."
+        );
     }
 
     /**
@@ -200,7 +217,11 @@ class XMLResponseTest extends TestCase
         // Validate request
         $request = $root->getElementsByTagName('request')->item(0);
         $this->assertNotNull($request, '<request> element not found');
-        $this->assertEquals($this->expectedBaseURL, $request->nodeValue, "The 'request' element value does not match the expected baseURL.");
+        $this->assertEquals(
+            $this->expectedBaseURL,
+            $request->nodeValue,
+            "The 'request' element value does not match the expected baseURL."
+        );
     }
 
     /**
@@ -219,7 +240,11 @@ class XMLResponseTest extends TestCase
         $request = $root->getElementsByTagName('request')->item(0);
         $this->assertNotNull($request, '<request> element not found');
         $this->assertEquals(0, $request->attributes->length, '<request> element should not have any attributes');
-        $this->assertEquals($this->expectedBaseURL, $request->nodeValue, "<request> element value does not match the expected baseURL.");
+        $this->assertEquals(
+            $this->expectedBaseURL,
+            $request->nodeValue,
+            "<request> element value does not match the expected baseURL."
+        );
     }
 
     /**
