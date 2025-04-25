@@ -92,7 +92,7 @@ class OAIView
      */
     public function createRequestElement(OAIRequestDTO $requestDto): DOMElement
     {
-        $baseURL = $_ENV['BASE_URL'];
+        $baseURL = getenv('BASE_URL');
 
         // Ensure that $baseURL is a string
         if (!is_string($baseURL)) {
@@ -115,7 +115,7 @@ class OAIView
     {
         $root = $this->createRoot();
 
-        $baseURL = $_ENV['BASE_URL'];
+        $baseURL = getenv('BASE_URL');
 
         // Ensure that $baseURL is a string
         if (!is_string($baseURL)) {

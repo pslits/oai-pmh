@@ -35,6 +35,11 @@ use Pslits\OaiPmh\OAIApplication;
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 $dotenv->load();
 
+// Populate the environment variables into `getenv()`
+foreach ($_ENV as $key => $value) {
+    putenv("$key=$value"); // Pushes all into `getenv()`
+}
+
 // Initialize the OAI-PMH application
 $app = new OAIApplication();
 $app->run($_SERVER['QUERY_STRING'] ?? '');
