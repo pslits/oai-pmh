@@ -44,7 +44,7 @@ jobs:
         run: ./vendor/bin/phpstan analyse src/ --level=max
 
       - name: Start PHP server
-        run: php -S localhost:8000 -t . &
+        run: php -S localhost:8000 -t . > php_errors.log 2>&1 &
 
       - name: Wait for server
         run: sleep 2
