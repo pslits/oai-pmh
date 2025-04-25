@@ -71,7 +71,7 @@ use Exception;
 class XMLResponseTest extends TestCase
 {
     private $xml;
-    private $expectedBaseURL = 'http://localhost/oai-pmh/oai.php';
+    private $expectedBaseURL;
 
     /**
      * Load XML from a provided URL before executing each test.
@@ -81,6 +81,7 @@ class XMLResponseTest extends TestCase
     protected function setUpWithUrl($url): void
     {
         $xmlResponse = null;
+        $this->expectedBaseURL = $_ENV['BASE_URL'] ?? 'http://localhost/oai-pmh/oai.php';
 
         try {
             $xmlResponse = file_get_contents($url);
@@ -106,8 +107,9 @@ class XMLResponseTest extends TestCase
      */
     public function correctUrlProvider(): array
     {
+        $baseURL = $_ENV['BASE_URL'] ?? 'http://localhost/oai-pmh/oai.php';
         return [
-            'Correct URL' => ['http://localhost/oai-pmh/oai.php?verb=ListRecords&metadataPrefix=oai_dc']
+            'Correct URL' => [$baseURL . '?verb=ListRecords&metadataPrefix=oai_dc'],
         ];
     }
 
@@ -118,8 +120,9 @@ class XMLResponseTest extends TestCase
      */
     public function incorrectUrlProvider(): array
     {
+        $baseURL = $_ENV['BASE_URL'] ?? 'http://localhost/oai-pmh/oai.php';
         return [
-            'Incorrect URL' => ['http://localhost/oai-pmh/oai.php']
+            'Incorrect URL' => [$baseURL],
         ];
     }
 
