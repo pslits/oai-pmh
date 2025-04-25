@@ -43,7 +43,12 @@ jobs:
       - name: Run static analysis
         run: ./vendor/bin/phpstan analyse src/ --level=max
 
+      - name: Start PHP server
+        run: php -S localhost:8000 -t public/ &
+
       - name: Run tests
+        env:
+          BASE_URL: http://localhost:8000/oai.php
         run: |
           php -dxdebug.mode=coverage ./vendor/bin/phpunit --coverage-clover=coverage.xml
 
