@@ -43,11 +43,19 @@ jobs:
       - name: Run static analysis
         run: ./vendor/bin/phpstan analyse src/ --level=max
 
-      - name: Start PHP server
-        run: php -S localhost:8000 -t . > php_errors.log 2>&1 &
+      - name: Start PHP server with error logging
+        run: |
+          mkdir -p ./logs  # Create logs directory if it doesn't exist
+          php -S localhost:8000 -t . > ./logs/php_errors.log 2>&1 &  # Start the PHP server and log errors
 
-      - name: Wait for server
-        run: sleep 2
+      - name: Wait for server to start
+        run: sleep 2  # Give the server some time to start
+
+      - name: Check if server is running
+        run: curl -v http://localhost:8000/oai.php  # Check if the server is responding
+
+      - name: Display PHP errors
+        run: cat ./logs/php_errors.log  # Show PHP error log contents for debugging  
 
       - name: Run tests
         env:
