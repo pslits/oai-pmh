@@ -14,6 +14,9 @@
 
 namespace OaiPmh\Domain;
 
+use DOMDocument;
+use InvalidArgumentException;
+
 /**
  * Class MetadataFormat
  *
@@ -26,6 +29,9 @@ class MetadataFormat
     private string $namespace;
     private string $schemaUrl;
     private string $xmlRootElement;
+
+    private const ANYURI_XSD_PATH = __DIR__ . '/Schema/anyURI.xsd';
+    private const PREFIX_PATTERN = '/^[A-Za-z0-9\-_\.!~\*\'\(\)]+$/';
 
     /**
      * MetadataFormat constructor.
@@ -42,6 +48,11 @@ class MetadataFormat
         string $schemaUrl,
         string $xmlRootElement
     ) {
+        $this->validatePrefix($prefix);
+        $this->validateAnyUri($namespace);
+        $this->validateAnyUri($schemaUrl);
+
+
         $this->prefix = $prefix;
         $this->namespace = $namespace;
         $this->schemaUrl = $schemaUrl;
@@ -87,4 +98,47 @@ class MetadataFormat
     {
         return $this->xmlRootElement;
     } // End of getXmlRootElement
+
+    /**
+     * Validate the OAI-PMH metadata prefix.
+     *
+     * @param string $prefix The metadata prefix to validate.
+     * @throws \InvalidArgumentException If the prefix does not match the required pattern.
+     */
+    private function validatePrefix(string $prefix): void
+    {
+        if (!preg_match(self::PREFIX_PATTERN, $prefix)) {
+            throw new \InvalidArgumentException(
+                sprintf('Invalid OAI-PMH metadata prefix: "%s".', $prefix)
+            );
+        }
+    } // End of validatePrefix
+
+    /**
+     * Validate that a string is a valid anyURI per XML Schema (xs:anyURI)
+     *
+     * @param string $uri
+     * @throws InvalidArgumentException if not a valid anyURI
+     */
+    private function validateAnyUri(string $uri): void
+    {
+        $dom = new DOMDocument();
+        $root = $dom->createElement('root');
+        $dom->appendChild($root);
+
+        $uriElement = $dom->createElement('uri', $uri);
+        $root->appendChild($uriElement);
+
+        // Add schema location attribute on root
+        $root->setAttributeNS(
+            'http://www.w3.org/2001/XMLSchema-instance',
+            'xsi:noNamespaceSchemaLocation',
+            'anyURI.xsd'
+        );
+
+        if (!$dom->schemaValidate(self::ANYURI_XSD_PATH)) {
+            throw new InvalidArgumentException("Invalid URI: $uri");
+        }
+    }
+
 } // End of MetadataFormat class
