@@ -1,0 +1,23 @@
+{
+    "name": "pslits/oai-pmh",
+    "description": "OAI-PMH protocol implementation in PHP",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Paul Slits",
+            "email": "paul.slits@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "OaiPmh\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "OaiPmh\\Tests\\": "tests/"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.6"
+    }
+}

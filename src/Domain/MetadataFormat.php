@@ -12,7 +12,7 @@
  * +--------------------------------------------------------------------------+
  */
 
-namespace App\Domain\Model;
+namespace OaiPmh\Domain;
 
 /**
  * Class MetadataFormat
