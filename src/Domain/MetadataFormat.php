@@ -14,9 +14,6 @@
 
 namespace OaiPmh\Domain;
 
-use DOMDocument;
-use InvalidArgumentException;
-
 /**
  * Class MetadataFormat
  *
@@ -25,38 +22,30 @@ use InvalidArgumentException;
  */
 class MetadataFormat
 {
-    private string $prefix;
-    private string $namespace;
-    private string $schemaUrl;
-    private string $xmlRootElement;
-
-    private const ANYURI_XSD_PATH = __DIR__ . '/Schema/anyURI.xsd';
-    private const PREFIX_PATTERN = '/^[A-Za-z0-9\-_\.!~\*\'\(\)]+$/';
+    private MetadataPrefix $prefix;
+    /** @var MetadataNamespace[] An associative array of XML namespaces used in the format. */
+    private array $namespaces;
+    private AnyUri $schemaUrl;
+    private MetadataRootTag $rootTag;
 
     /**
      * MetadataFormat constructor.
      * Initializes a new instance of the MetadataFormat class.
-     *
-     * @param string $prefix OAI-PMH metadata prefix (e.g., oai_dc) used in protocol verbs.
-     * @param string $namespace XML namespace associated with this format.
-     * @param string $schemaUrl Fully qualified URI of the XSD schema defining the format structure.
-     * @param string $xmlRootElement The root element of the XML representation for this format.
+     * @param MetadataPrefix $prefix The OAI-PMH metadata prefix.
+     * @param MetadataNamespace[] $namespaces An associative array of XML namespaces used in the format.
+     * @param AnyUri $schemaUrl The fully qualified URI of the XSD schema defining the format structure.
+     * @param MetadataRootTag $rootTag The root element of the XML representation for this format.
      */
     public function __construct(
-        string $prefix,
-        string $namespace,
-        string $schemaUrl,
-        string $xmlRootElement
+        MetadataPrefix $prefix,
+        array $namespaces,
+        AnyUri $schemaUrl,
+        MetadataRootTag $rootTag
     ) {
-        $this->validatePrefix($prefix);
-        $this->validateAnyUri($namespace);
-        $this->validateAnyUri($schemaUrl);
-
-
         $this->prefix = $prefix;
-        $this->namespace = $namespace;
+        $this->namespaces = $namespaces;
         $this->schemaUrl = $schemaUrl;
-        $this->xmlRootElement = $xmlRootElement;
+        $this->rootTag = $rootTag;
     } // End of constructor
 
     /**
@@ -66,18 +55,22 @@ class MetadataFormat
      */
     public function getPrefix(): string
     {
-        return $this->prefix;
+        return $this->prefix->getPrefix();
     } // End of getPrefix
 
     /**
-     * Get the XML namespace associated with this format.
+     * Get the XML namespaces used in this format.
      *
-     * @return string The XML namespace.
+     * @return array<string, string> An associative array of XML namespaces.
      */
-    public function getNamespace(): string
+    public function getNamespaces(): array
     {
-        return $this->namespace;
-    } // End of getNamespace
+        $namespaces = [];
+        foreach ($this->namespaces as $namespace) {
+            $namespaces[$namespace->getPrefix()] = $namespace->getUri();
+        }
+        return $namespaces;
+    } // End of getNamespaces
 
     /**
      * Get the fully qualified URI of the XSD schema defining the format structure.
@@ -86,59 +79,16 @@ class MetadataFormat
      */
     public function getSchemaUrl(): string
     {
-        return $this->schemaUrl;
+        return $this->schemaUrl->getUri();
     } // End of getSchemaUrl
 
     /**
      * Get the root element of the XML representation for this format.
      *
-     * @return string The XML root element.
+     * @return string The root tag object.
      */
-    public function getXmlRootElement(): string
+    public function getRootTag(): string
     {
-        return $this->xmlRootElement;
-    } // End of getXmlRootElement
-
-    /**
-     * Validate the OAI-PMH metadata prefix.
-     *
-     * @param string $prefix The metadata prefix to validate.
-     * @throws \InvalidArgumentException If the prefix does not match the required pattern.
-     */
-    private function validatePrefix(string $prefix): void
-    {
-        if (!preg_match(self::PREFIX_PATTERN, $prefix)) {
-            throw new \InvalidArgumentException(
-                sprintf('Invalid OAI-PMH metadata prefix: "%s".', $prefix)
-            );
-        }
-    } // End of validatePrefix
-
-    /**
-     * Validate that a string is a valid anyURI per XML Schema (xs:anyURI)
-     *
-     * @param string $uri
-     * @throws InvalidArgumentException if not a valid anyURI
-     */
-    private function validateAnyUri(string $uri): void
-    {
-        $dom = new DOMDocument();
-        $root = $dom->createElement('root');
-        $dom->appendChild($root);
-
-        $uriElement = $dom->createElement('uri', $uri);
-        $root->appendChild($uriElement);
-
-        // Add schema location attribute on root
-        $root->setAttributeNS(
-            'http://www.w3.org/2001/XMLSchema-instance',
-            'xsi:noNamespaceSchemaLocation',
-            'anyURI.xsd'
-        );
-
-        if (!$dom->schemaValidate(self::ANYURI_XSD_PATH)) {
-            throw new InvalidArgumentException("Invalid URI: $uri");
-        }
-    }
-
+        return $this->rootTag->getRootTag();
+    } // End of getRootTag
 } // End of MetadataFormat class
