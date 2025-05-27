@@ -19,7 +19,7 @@ use OaiPmh\Domain\MetadataFormat;
 use OaiPmh\Domain\MetadataPrefix;
 use OaiPmh\Domain\MetadataRootTag;
 use OaiPmh\Domain\MetadataNamespace;
-use OaiPmh\Domain\MetadataRootTagInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class MetadataFormatTest extends \PHPUnit\Framework\TestCase
 {
@@ -161,12 +161,12 @@ class MetadataFormatTest extends \PHPUnit\Framework\TestCase
      * Creates a MetadataFormat instance with mocked dependencies.
      *
      * @return array{
-     *     format: MetadataFormat,
+     *     format: \OaiPmh\Domain\MetadataFormat,
      *     mocks: array{
-     *         prefixMock: MetadataPrefix&\PHPUnit\Framework\MockObject\MockObject,
-     *         namespaceMocks: array<int, MetadataNamespace&\PHPUnit\Framework\MockObject\MockObject>,
-     *         anyUriMock: AnyUri&\PHPUnit\Framework\MockObject\MockObject,
-     *         rootTagMock: MetadataRootTagInterface&\PHPUnit\Framework\MockObject\MockObject
+     *         prefixMock: \OaiPmh\Domain\MetadataPrefix&\PHPUnit\Framework\MockObject\MockObject,
+     *         metadataNamespaceMock: array<int, \OaiPmh\Domain\MetadataNamespace&\PHPUnit\Framework\MockObject\MockObject>,
+     *         anyUriMock: \OaiPmh\Domain\AnyUri&\PHPUnit\Framework\MockObject\MockObject,
+     *         rootTagMock: \OaiPmh\Domain\MetadataRootTag&\PHPUnit\Framework\MockObject\MockObject
      *     }
      * }
      */

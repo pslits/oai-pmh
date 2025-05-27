@@ -1,15 +1,16 @@
 <?php
 
 /**
- * +--------------------------------------------------------------------------+
- * | This file is part of the OAI-PMH package.                                |
- * | @link https://github.com/pslits/oai-pmh                                  |
- * +--------------------------------------------------------------------------+
- * | (c) 2025 Paul Slits <paul.slits@gmail.com>                               |
- * | This source code is licensed under the MIT license found in the LICENSE  |
- * | file in the root directory of this source tree or at the following link: |
- * | @license MIT <https://opensource.org/licenses/MIT>                       |
- * +--------------------------------------------------------------------------+
+ * This file is part of the OAI-PMH package.
+ * PHP version 8.0
+ *
+ * @category  OAI-PMH
+ * @package   OaiPmh\Domain
+ * @author    Paul Slits <paul.slits@gmail.com>
+ * @copyright 2025 Paul Slits
+ * @license   MIT <https://opensource.org/licenses/MIT>
+ * @link      https://github.com/pslits/oai-pmh
+ * @since     0.1.0
  */
 
 namespace OaiPmh\Domain;
@@ -21,11 +22,21 @@ use InvalidArgumentException;
  * Class AnyUri
  *
  * Represents a URI that conforms to the anyURI type defined in XML Schema.
- * This class validates the URI against the anyURI schema and provides access to the validated URI.
+ *
+ * This class validates the URI against the anyURI schema and provides access
+ * to the validated URI.
+ *
+ * @category  OAI-PMH
+ * @package   OaiPmh\Domain
+ * @author    Paul Slits <paul.slits@gmail.com>
+ * @copyright 2025 Paul Slits
+ * @license   MIT <https://opensource.org/licenses/MIT>
+ * @link      https://github.com/pslits/oai-pmh
+ * @since     0.1.0
  */
 class AnyUri
 {
-    private string $uri;
+    private string $_uri;
 
     private const ANYURI_XSD_PATH = __DIR__ . '/Schema/anyURI.xsd';
 
@@ -37,8 +48,8 @@ class AnyUri
      */
     public function __construct(string $uri)
     {
-        $this->validateAnyUri($uri);
-        $this->uri = $uri;
+        $this->_validateAnyUri($uri);
+        $this->_uri = $uri;
     } // End of constructor
 
     /**
@@ -48,23 +59,26 @@ class AnyUri
      */
     public function getUri(): string
     {
-        return $this->uri;
+        return $this->_uri;
     } // End of getUri
 
     /**
      * Validates the URI against the anyURI XSD schema.
      *
-     * @param string $uri The URI to validate.
-     * @throws InvalidArgumentException If the URI is not valid according to the anyURI schema.
+     * @param string $_uri The URI to validate.
+     *
+     * @throws InvalidArgumentException If the URI is not valid according to
+     *                                  the anyURI schema.
+     * @return void
      */
-    private function validateAnyUri(string $uri): void
+    private function _validateAnyUri(string $_uri): void
     {
         $dom = new DOMDocument();
         $root = $dom->createElement('root');
         $dom->appendChild($root);
 
-        $uriElement = $dom->createElement('uri', $uri);
-        $root->appendChild($uriElement);
+        $_uriElement = $dom->createElement('uri', $_uri);
+        $root->appendChild($_uriElement);
 
         // Add schema location attribute on root
         $root->setAttributeNS(
@@ -74,7 +88,7 @@ class AnyUri
         );
 
         if (!$dom->schemaValidate(self::ANYURI_XSD_PATH)) {
-            throw new InvalidArgumentException("Invalid URI: $uri");
+            throw new InvalidArgumentException("Invalid URI: $_uri");
         }
     } // End of validateAnyUri
 } // End of class AnyUri

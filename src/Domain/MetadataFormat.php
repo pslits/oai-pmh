@@ -1,15 +1,16 @@
 <?php
 
 /**
- * +--------------------------------------------------------------------------+
- * | This file is part of the OAI-PMH package.                                |
- * | @link https://github.com/pslits/oai-pmh                                  |
- * +--------------------------------------------------------------------------+
- * | (c) 2025 Paul Slits <paul.slits@gmail.com>                               |
- * | This source code is licensed under the MIT license found in the LICENSE  |
- * | file in the root directory of this source tree or at the following link: |
- * | @license MIT <https://opensource.org/licenses/MIT>                       |
- * +--------------------------------------------------------------------------+
+ * This file is part of the OAI-PMH package.
+ * PHP version 8.0
+ *
+ * @category  OAI-PMH
+ * @package   OaiPmh\Domain
+ * @author    Paul Slits <paul.slits@gmail.com>
+ * @copyright 2025 Paul Slits
+ * @license   MIT <https://opensource.org/licenses/MIT>
+ * @link      https://github.com/pslits/oai-pmh
+ * @since     0.1.0
  */
 
 namespace OaiPmh\Domain;
@@ -17,8 +18,19 @@ namespace OaiPmh\Domain;
 /**
  * Class MetadataFormat
  *
- * Represents a metadata format used in OAI-PMH (Open Archives Initiative Protocol for Metadata Harvesting).
- * This class encapsulates the metadata prefix, XML namespace, schema URL, and XML root element for a specific format.
+ * Represents a metadata format used in OAI-PMH (Open Archives Initiative
+ * Protocol for Metadata Harvesting).
+ *
+ * This class encapsulates the metadata prefix, XML namespace, schema URL, and
+ * XML root element for a specific format.
+ *
+* @category  OAI-PMH
+ * @package   OaiPmh\Domain
+ * @author    Paul Slits <paul.slits@gmail.com>
+ * @copyright 2025 Paul Slits
+ * @license   MIT <https://opensource.org/licenses/MIT>
+ * @link      https://github.com/pslits/oai-pmh
+ * @since     0.1.0
  */
 class MetadataFormat
 {
