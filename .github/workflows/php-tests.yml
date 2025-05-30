@@ -12,16 +12,7 @@ jobs:
 
     strategy:
       matrix:
-        php-version: [
-          '7.0', '7.0.33',
-          '7.1', '7.1.33',
-          '7.2', '7.2.34',
-          '7.3', '7.3.33',
-          '7.4', '7.4.33',
-          '8.0', '8.0.30',
-          '8.1', '8.1.27',
-          '8.2', '8.2.18'
-        ]
+        php-version: ['8.0', '8.0.30']
 
     services:
       mysql:
@@ -43,7 +34,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.2'
+          php-version: ${{ matrix.php-version }}
           extensions: mbstring, pdo_mysql, xdebug
           coverage: xdebug
 
