@@ -1,15 +1,11 @@
 <?php
 
 /**
- * +--------------------------------------------------------------------------+
- * | This file is part of the OAI-PMH package.                                |
- * | @link https://github.com/pslits/oai-pmh                                  |
- * +--------------------------------------------------------------------------+
- * | (c) 2025 Paul Slits <paul.slits@gmail.com>                               |
- * | This source code is licensed under the MIT license found in the LICENSE  |
- * | file in the root directory of this source tree or at the following link: |
- * | @license MIT <https://opensource.org/licenses/MIT>                       |
- * +--------------------------------------------------------------------------+
+ * @author    Paul Slits <paul.slits@gmail.com>
+ * @copyright (c) 2025 Paul Slits
+ * @license   MIT License - https://opensource.org/licenses/MIT
+ * @link      https://github.com/pslits/oai-pmh
+ * @since     0.1.0
  */
 
 namespace OaiPmh\Domain;
@@ -33,20 +29,31 @@ class MetadataPrefix
     {
         $this->validatePrefix($prefix);
         $this->prefix = $prefix;
-    } // End of constructor
+    }
 
     /**
      * Returns the metadata prefix.
      *
      * @return string The metadata prefix.
      */
-    public function getPrefix(): string
+    public function getValue(): string
     {
         return $this->prefix;
-    } // End of getPrefix
+    }
 
     /**
-     * Validates the metadata prefix against the expected pattern.
+     * Validates the metadata prefix against the expected pattern: It must consist of:
+     * - alphanumeric characters: A-Z, a-z, 0-9
+     * - hyphens: -
+     * - underscores: _
+     * - dots: .
+     * - exclamation marks: !
+     * - tildes: ~
+     * - asterisks: *
+     * - single quotes: '
+     * - parentheses: ()
+     * * The prefix must not contain any other characters or whitespace.
+     * - The prefix can be any combination of these characters, but must not be empty.
      *
      * @param string $prefix The prefix to validate.
      * @throws \InvalidArgumentException If the prefix does not match the expected pattern.
@@ -56,5 +63,5 @@ class MetadataPrefix
         if (!preg_match(self::PREFIX_PATTERN, $prefix)) {
             throw new InvalidArgumentException("Invalid metadata prefix: '$prefix'.");
         }
-    } // End of validatePrefix
+    }
 }

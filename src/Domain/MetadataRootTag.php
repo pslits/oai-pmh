@@ -1,15 +1,11 @@
 <?php
 
 /**
- * +--------------------------------------------------------------------------+
- * | This file is part of the OAI-PMH package.                                |
- * | @link https://github.com/pslits/oai-pmh                                  |
- * +--------------------------------------------------------------------------+
- * | (c) 2025 Paul Slits <paul.slits@gmail.com>                               |
- * | This source code is licensed under the MIT license found in the LICENSE  |
- * | file in the root directory of this source tree or at the following link: |
- * | @license MIT <https://opensource.org/licenses/MIT>                       |
- * +--------------------------------------------------------------------------+
+ * @author    Paul Slits <paul.slits@gmail.com>
+ * @copyright (c) 2025 Paul Slits
+ * @license   MIT License - https://opensource.org/licenses/MIT
+ * @link      https://github.com/pslits/oai-pmh
+ * @since     0.1.0
  */
 
 namespace OaiPmh\Domain;
@@ -32,17 +28,17 @@ class MetadataRootTag
     {
         $this->validateRootTag($rootTag);
         $this->rootTag = $rootTag;
-    } // End of constructor
+    }
 
     /**
      * Returns the root tag used in XML elements.
      *
      * @return string The root tag.
      */
-    public function getRootTag(): string
+    public function getValue(): string
     {
         return $this->rootTag;
-    } // End of getRootTag
+    }
 
     /**
      * Validates the root tag format.
@@ -55,5 +51,5 @@ class MetadataRootTag
         if (!preg_match(self::ROOT_TAG_PATTERN, $rootTag)) {
             throw new InvalidArgumentException("Invalid metadata root tag: '$rootTag'.");
         }
-    } // End of validateRootTag
+    }
 }

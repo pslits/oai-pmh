@@ -1,14 +1,9 @@
 <?php
 
 /**
- * This file is part of the OAI-PMH package.
- * PHP version 8.0
- *
- * @category  OAI-PMH
- * @package   OaiPmh\Domain
  * @author    Paul Slits <paul.slits@gmail.com>
- * @copyright 2025 Paul Slits
- * @license   MIT <https://opensource.org/licenses/MIT>
+ * @copyright (c) 2025 Paul Slits
+ * @license   MIT License - https://opensource.org/licenses/MIT
  * @link      https://github.com/pslits/oai-pmh
  * @since     0.1.0
  */
@@ -16,26 +11,39 @@
 namespace OaiPmh\Domain;
 
 /**
- * Class MetadataFormat
+ * Represents a metadata format declaration as defined by the OAI-PMH protocol.
  *
- * Represents a metadata format used in OAI-PMH (Open Archives Initiative
- * Protocol for Metadata Harvesting).
+ * A MetadataFormat encapsulates the essential elements of a metadata format:
+ * - {@see MetadataPrefix} object,
+ * - Array of {@see MetadataNamespaceInterface} objects,
+ * - {@see AnyUri} object,
+ * - {@see MetadataRootTag} object.
  *
- * This class encapsulates the metadata prefix, XML namespace, schema URL, and
- * XML root element for a specific format.
+ * This class implements {@see MetadataFormatInterface} but also includes additional
+ * domain behavior not defined in the interface. It is the full domain representation
+ * of a metadata format and enforces immutability and value-based equality.
  *
-* @category  OAI-PMH
- * @package   OaiPmh\Domain
+ * As a Value Object in the domain layer, it has:
+ * - no identity,
+ * - immutable state,
+ * - equality based on value.
+ *
+ * This object is intended for internal domain use and supports consistent and
+ * predictable handling of metadata format declarations.
+ *
+ * NOTE: Concerns such as XML serialization, transport formatting, or protocol I/O
+ * are handled outside of the domain layer.
+ *
  * @author    Paul Slits <paul.slits@gmail.com>
- * @copyright 2025 Paul Slits
- * @license   MIT <https://opensource.org/licenses/MIT>
+ * @copyright (c) 2025 Paul Slits
+ * @license   MIT License - https://opensource.org/licenses/MIT
  * @link      https://github.com/pslits/oai-pmh
  * @since     0.1.0
  */
-class MetadataFormat
+final class MetadataFormat implements MetadataFormatInterface
 {
     private MetadataPrefix $prefix;
-    /** @var MetadataNamespace[] An associative array of XML namespaces used in the format. */
+    /** @var MetadataNamespaceInterface[] An associative array of XML namespaces used in the format. */
     private array $namespaces;
     private AnyUri $schemaUrl;
     private MetadataRootTag $rootTag;
@@ -44,7 +52,7 @@ class MetadataFormat
      * MetadataFormat constructor.
      * Initializes a new instance of the MetadataFormat class.
      * @param MetadataPrefix $prefix The OAI-PMH metadata prefix.
-     * @param MetadataNamespace[] $namespaces An associative array of XML namespaces used in the format.
+     * @param MetadataNamespaceInterface[] $namespaces An associative array of XML namespaces used in the format.
      * @param AnyUri $schemaUrl The fully qualified URI of the XSD schema defining the format structure.
      * @param MetadataRootTag $rootTag The root element of the XML representation for this format.
      */
@@ -58,49 +66,29 @@ class MetadataFormat
         $this->namespaces = $namespaces;
         $this->schemaUrl = $schemaUrl;
         $this->rootTag = $rootTag;
-    } // End of constructor
+    }
 
-    /**
-     * Get the OAI-PMH metadata prefix.
-     *
-     * @return string The metadata prefix.
-     */
-    public function getPrefix(): string
+    /** @inheritdoc */
+    public function getPrefix(): MetadataPrefix
     {
-        return $this->prefix->getPrefix();
-    } // End of getPrefix
+        return $this->prefix;
+    }
 
-    /**
-     * Get the XML namespaces used in this format.
-     *
-     * @return array<string, string> An associative array of XML namespaces.
-     */
+    /** @inheritdoc */
     public function getNamespaces(): array
     {
-        $namespaces = [];
-        foreach ($this->namespaces as $namespace) {
-            $namespaces[$namespace->getPrefix()] = $namespace->getUri();
-        }
-        return $namespaces;
-    } // End of getNamespaces
+        return $this->namespaces;
+    }
 
-    /**
-     * Get the fully qualified URI of the XSD schema defining the format structure.
-     *
-     * @return string The schema URL.
-     */
-    public function getSchemaUrl(): string
+    /** @inheritdoc */
+    public function getSchemaUrl(): AnyUri
     {
-        return $this->schemaUrl->getUri();
-    } // End of getSchemaUrl
+        return $this->schemaUrl;
+    }
 
-    /**
-     * Get the root element of the XML representation for this format.
-     *
-     * @return string The root tag object.
-     */
-    public function getRootTag(): string
+    /** @inheritdoc */
+    public function getRootTag(): MetadataRootTag
     {
-        return $this->rootTag->getRootTag();
-    } // End of getRootTag
-} // End of MetadataFormat class
+        return $this->rootTag;
+    }
+}

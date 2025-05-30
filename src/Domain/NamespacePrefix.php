@@ -1,15 +1,11 @@
 <?php
 
 /**
- * +--------------------------------------------------------------------------+
- * | This file is part of the OAI-PMH package.                                |
- * | @link https://github.com/pslits/oai-pmh                                  |
- * +--------------------------------------------------------------------------+
- * | (c) 2025 Paul Slits <paul.slits@gmail.com>                               |
- * | This source code is licensed under the MIT license found in the LICENSE  |
- * | file in the root directory of this source tree or at the following link: |
- * | @license MIT <https://opensource.org/licenses/MIT>                       |
- * +--------------------------------------------------------------------------+
+ * @author    Paul Slits <paul.slits@gmail.com>
+ * @copyright (c) 2025 Paul Slits
+ * @license   MIT License - https://opensource.org/licenses/MIT
+ * @link      https://github.com/pslits/oai-pmh
+ * @since     0.1.0
  */
 
 namespace OaiPmh\Domain;
@@ -38,17 +34,17 @@ class NamespacePrefix
     {
         $this->validatePrefix($prefix);
         $this->prefix = $prefix;
-    } // End of constructor
+    }
 
     /**
      * Returns the prefix used in XML elements.
      *
      * @return string The prefix.
      */
-    public function getPrefix(): string
+    public function getValue(): string
     {
         return $this->prefix;
-    } // End of getPrefix
+    }
 
     /**
      * Validates the prefix format.
@@ -62,5 +58,5 @@ class NamespacePrefix
         if (!preg_match(self::PREFIX_PATTERN, $prefix)) {
             throw new InvalidArgumentException('Invalid prefix format.');
         }
-    } // End of validatePrefix
-} // End of NamespacePrefix
+    }
+}
