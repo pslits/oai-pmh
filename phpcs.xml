@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<ruleset name="MyProject Coding Standards">
+    <description>Enforces PSR-12 with some customizations</description>
+
+    <!-- Base standard -->
+    <rule ref="PSR12" />
+
+    <!-- Include folders -->
+    <file>src</file>
+    <file>tests</file>
+
+    <!-- Exclude specific files/folders -->
+    <exclude-pattern>vendor/*</exclude-pattern>
+
+    <!-- Show warnings and errors -->
+    <arg name="colors"/>
+    <arg name="extensions" value="php"/>
+
+    <!-- Custom rule tweaks -->
+    <rule ref="Generic.WhiteSpace.DisallowTabIndent">
+        <severity>5</severity>
+    </rule>
+
+    <rule ref="Squiz.Functions.FunctionDeclarationArgumentSpacing">
+        <properties>
+            <property name="equalsSpacing" value="1"/>
+        </properties>
+    </rule>
+</ruleset>
