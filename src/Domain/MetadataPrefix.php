@@ -32,6 +32,17 @@ class MetadataPrefix
     }
 
     /**
+     * Returns a string representation of the metadata prefix.
+     *
+     * @return string The metadata prefix.
+     */
+    public function __toString(): string
+    {
+        return sprintf('MetadataPrefix(prefix: %s)', $this->prefix);
+    }
+
+
+    /**
      * Returns the metadata prefix.
      *
      * @return string The metadata prefix.
@@ -63,5 +74,16 @@ class MetadataPrefix
         if (!preg_match(self::PREFIX_PATTERN, $prefix)) {
             throw new InvalidArgumentException("Invalid metadata prefix: '$prefix'.");
         }
+    }
+
+    /**
+     * Checks if this prefix is equal to another MetadataPrefix instance.
+     *
+     * @param MetadataPrefix $other The other MetadataPrefix instance to compare with.
+     * @return bool True if the prefixes are equal, false otherwise.
+     */
+    public function equals(MetadataPrefix $other): bool
+    {
+        return $this->prefix === $other->getValue();
     }
 }

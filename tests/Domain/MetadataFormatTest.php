@@ -11,17 +11,18 @@
 namespace OaiPmh\Tests\Domain;
 
 use OaiPmh\Domain\AnyUri;
+use PHPUnit\Framework\TestCase;
 use OaiPmh\Domain\MetadataFormat;
 use OaiPmh\Domain\MetadataPrefix;
 use OaiPmh\Domain\MetadataRootTag;
 use OaiPmh\Domain\NamespacePrefix;
-use OaiPmh\Domain\MetadataNamespaceInterface;
+use OaiPmh\Domain\MetadataNamespace;
+use OaiPmh\Domain\MetadataNamespaceCollection;
 
 /**
- * Tests for the MetadataFormat class.
+ * Unit tests for the MetadataFormat value object in the OAI-PMH domain.
  *
- * This class tests the basic functionality of the MetadataFormat class,
- * including retrieving metadata prefix, namespaces, schema URL, and root tag.
+ * Ensures correct instantiation, immutability, value equality, and string representation.
  *
  * @author    Paul Slits <paul.slits@gmail.com>
  * @copyright (c) 2025 Paul Slits
@@ -29,231 +30,222 @@ use OaiPmh\Domain\MetadataNamespaceInterface;
  * @link      https://github.com/pslits/oai-pmh
  * @since     0.1.0
  */
-class MetadataFormatTest extends \PHPUnit\Framework\TestCase
+class MetadataFormatTest extends TestCase
 {
-    //+-----------------------------------------------------------------------+
-    //| Public methods
-    //+-----------------------------------------------------------------------+
-
     /**
-     * @test
-     * As a providor of metadata formats,
-     * I want to retrieve the metadata prefix, namespace and schema URL,
-     * So that I can provide the necessary information for harvesers to understand the format.
+     * User Story:
+     * As a developer,
+     * I want to instantiate a MetadataFormat with valid prefix, namespaces, schema URL, and root tag
+     * So that I can represent a qualified OAI-PMH metadata format.
      */
-    public function itExposesBasicFormatInformationForMetadataFormats(): void
+    public function testCanInstantiateWithValidArguments(): void
     {
-        $formatAndMocks = $this->createMetadataWithMockes();
+        // Given: Valid dependencies
+        $prefix = $this->givenMetadataPrefix('oai_dc');
 
-        // Mock the MetadataPrefix
-        $formatAndMocks['mocks']['prefixMock']
-            ->method('getValue')
-            ->willReturn('oai_dc');
-
-        // namespace 1
-        $formatAndMocks['mocks']['metadataNamespaceMock'][0]
-            ->method('getPrefix')
-            ->willReturn(new NamespacePrefix('oai_dc'));
-        $formatAndMocks['mocks']['metadataNamespaceMock'][0]
-            ->method('getUri')
-            ->willReturn(new AnyUri('http://www.openarchives.org/OAI/2.0/oai_dc/'));
-
-        // namespace 2
-        $formatAndMocks['mocks']['metadataNamespaceMock'][1]
-            ->method('getPrefix')
-            ->willReturn(new NamespacePrefix('dc'));
-        $formatAndMocks['mocks']['metadataNamespaceMock'][1]
-            ->method('getUri')
-            ->willReturn(new AnyUri('http://purl.org/dc/elements/1.1/'));
-
-        // namespace 3
-        $formatAndMocks['mocks']['metadataNamespaceMock'][2]
-            ->method('getPrefix')
-            ->willReturn(new NamespacePrefix('xsi'));
-        $formatAndMocks['mocks']['metadataNamespaceMock'][2]
-            ->method('getUri')
-            ->willReturn(new AnyUri('http://www.w3.org/2001/XMLSchema-instance'));
-
-        $formatAndMocks['mocks']['anyUriMock']
-            ->method('getValue')
-            ->willReturn('http://www.openarchives.org/OAI/2.0/oai_dc.xsd');
-
-
-        $this->assertSame('oai_dc', $formatAndMocks['format']->getPrefix()->getValue());
-
-        // asser namespace 1
-        $this->assertSame('oai_dc', $formatAndMocks['format']->getNamespaces()[0]->getPrefix()->getValue());
-        $this->assertSame(
-            'http://www.openarchives.org/OAI/2.0/oai_dc/',
-            $formatAndMocks['format']->getNamespaces()[0]->getUri()->getValue()
+        $namespaces = $this->givenMetadataNamespaceCollection(
+            new MetadataNamespace(
+                $this->givenNamespacePrefix('oai_dc'),
+                $this->givenAnyUri('http://www.openarchives.org/OAI/2.0/oai_dc/')
+            )
         );
-        // asser namespace 2
-        $this->assertSame('dc', $formatAndMocks['format']->getNamespaces()[1]->getPrefix()->getValue());
-        $this->assertSame(
-            'http://purl.org/dc/elements/1.1/',
-            $formatAndMocks['format']->getNamespaces()[1]->getUri()->getValue()
-        );
-        // asser namespace 3
-        $this->assertSame('xsi', $formatAndMocks['format']->getNamespaces()[2]->getPrefix()->getValue());
-        $this->assertSame(
-            'http://www.w3.org/2001/XMLSchema-instance',
-            $formatAndMocks['format']->getNamespaces()[2]->getUri()->getValue()
-        );
+        $schemaUrl = $this->givenAnyUri('http://www.openarchives.org/OAI/2.0/oai_dc.xsd');
+        $rootTag = $this->givenMetadataRootTag('oai_dc:dc');
 
-        $this->assertSame(
-            'http://www.openarchives.org/OAI/2.0/oai_dc.xsd',
-            $formatAndMocks['format']->getSchemaUrl()->getValue()
-        );
+        // When: I construct a MetadataFormat
+        $format = new MetadataFormat($prefix, $namespaces, $schemaUrl, $rootTag);
+
+        // Then: The object should be created without error
+        $this->assertInstanceOf(MetadataFormat::class, $format);
     }
 
     /**
-     * @test
-     * As a metadata serializer,
-     * I need to retrieve the correct XML root tag, namespaces, and schema URL
-     * So that I can serialize a record in the specified metadata format.
+     * User Story:
+     * As a developer,
+     * I want to retrieve all properties from a MetadataFormat instance
+     * So that I can use them in OAI-PMH responses or validation.
      */
-    public function itReturnsTheXmlRootElementForGetRecordSerialization(): void
+    public function testGettersReturnExpectedValues(): void
     {
-        $formatAndMocks = $this->createMetadataWithMockes();
+        $prefix = $this->givenMetadataPrefix('oai_dc');
 
-        // Mock the MetadataRootTag
-        $formatAndMocks['mocks']['rootTagMock']
-            ->method('getValue')
-            ->willReturn('oai_dc:dc');
-
-        // namespace 1
-        $formatAndMocks['mocks']['metadataNamespaceMock'][0]
-            ->method('getPrefix')
-            ->willReturn(new NamespacePrefix('oai_dc'));
-        $formatAndMocks['mocks']['metadataNamespaceMock'][0]
-            ->method('getUri')
-            ->willReturn(new AnyUri('http://www.openarchives.org/OAI/2.0/oai_dc/'));
-
-        // namespace 2
-        $formatAndMocks['mocks']['metadataNamespaceMock'][1]
-            ->method('getPrefix')
-            ->willReturn(new NamespacePrefix('dc'));
-        $formatAndMocks['mocks']['metadataNamespaceMock'][1]
-            ->method('getUri')
-            ->willReturn(new AnyUri('http://purl.org/dc/elements/1.1/'));
-
-        // namespace 3
-        $formatAndMocks['mocks']['metadataNamespaceMock'][2]
-            ->method('getPrefix')
-            ->willReturn(new NamespacePrefix('xsi'));
-        $formatAndMocks['mocks']['metadataNamespaceMock'][2]
-            ->method('getUri')
-            ->willReturn(new AnyUri('http://www.w3.org/2001/XMLSchema-instance'));
-
-        // Mock the AnyUri for schema URL
-        $formatAndMocks['mocks']['anyUriMock']
-            ->method('getValue')
-            ->willReturn('http://www.openarchives.org/OAI/2.0/oai_dc.xsd');
-
-        $this->assertSame('oai_dc:dc', $formatAndMocks['format']->getRootTag()->getValue());
-
-        // asser namespace 1
-        $this->assertSame('oai_dc', $formatAndMocks['format']->getNamespaces()[0]->getPrefix()->getValue());
-        $this->assertSame(
-            'http://www.openarchives.org/OAI/2.0/oai_dc/',
-            $formatAndMocks['format']->getNamespaces()[0]->getUri()->getValue()
+        $namespaces = $this->givenMetadataNamespaceCollection(
+            $this->givenMetadataNamespace('oai_dc', 'http://www.openarchives.org/OAI/2.0/oai_dc/')
         );
-        // asser namespace 2
-        $this->assertSame('dc', $formatAndMocks['format']->getNamespaces()[1]->getPrefix()->getValue());
-        $this->assertSame(
-            'http://purl.org/dc/elements/1.1/',
-            $formatAndMocks['format']->getNamespaces()[1]->getUri()->getValue()
-        );
-        // asser namespace 3
-        $this->assertSame('xsi', $formatAndMocks['format']->getNamespaces()[2]->getPrefix()->getValue());
-        $this->assertSame(
-            'http://www.w3.org/2001/XMLSchema-instance',
-            $formatAndMocks['format']->getNamespaces()[2]->getUri()->getValue()
-        );
+        $schemaUrl = $this->givenAnyUri('http://www.openarchives.org/OAI/2.0/oai_dc.xsd');
+        $rootTag = $this->givenMetadataRootTag('oai_dc:dc');
+        $format = new MetadataFormat($prefix, $namespaces, $schemaUrl, $rootTag);
 
-        $this->assertSame(
-            'http://www.openarchives.org/OAI/2.0/oai_dc.xsd',
-            $formatAndMocks['format']->getSchemaUrl()->getValue()
-        );
+        $this->assertSame($prefix, $format->getPrefix());
+        $this->assertSame($namespaces, $format->getNamespaces());
+        $this->assertSame($schemaUrl, $format->getSchemaUrl());
+        $this->assertSame($rootTag, $format->getRootTag());
     }
 
     /**
-     * @test
-     * As a system integrator,
-     * I want to retrieve the metadata prefix from the format object,
-     * So that I can use it as a key to register or fetch formats from a repository.
+     * User Story:
+     * As a developer,
+     * I want MetadataFormat to behave as an immutable value object
+     * So that its internal state cannot be changed after construction.
      */
-    public function itExosesItsMetadataPrefixForRepositoryRegistration(): void
+    public function testMetadataFormatIsImmutable(): void
     {
-        $formatAndMocks = $this->createMetadataWithMockes();
-
-        // Mock the MetadataPrefix
-        $formatAndMocks['mocks']['prefixMock']
-            ->method('getValue')
-            ->willReturn('oai_dc');
-
-        $this->assertSame('oai_dc', $formatAndMocks['format']->getPrefix()->getValue());
+        $format = $this->givenMetadataFormat();
+        $reflection = new \ReflectionClass($format);
+        foreach ($reflection->getProperties() as $property) {
+            $this->assertTrue($property->isPrivate(), "Property {$property->getName()} should be private.");
+        }
     }
 
-    //+-----------------------------------------------------------------------+
-    //| Protected methods
-    //+-----------------------------------------------------------------------+
-
-    //+-----------------------------------------------------------------------+
-    //| Private methods
-    //+-----------------------------------------------------------------------+
+    /**
+     * User Story:
+     * As a developer,
+     * I want two MetadataFormat instances with the same values to be considered equal
+     * So that value equality is supported.
+     */
+    public function testMetadataFormatEqualityByValue(): void
+    {
+        $format1 = $this->givenMetadataFormat();
+        $format2 = $this->givenMetadataFormat();
+        $this->assertTrue($format1->equals($format2));
+    }
 
     /**
-     * Creates a MetadataFormat instance with mocked dependencies.
+     * User Story:
+     * As a developer,
+     * I want two MetadataFormat instances with different values to not be equal
+     * So that I can distinguish between different formats.
+     */
+    public function testMetadataFormatNotEqualWhenDifferent(): void
+    {
+        $format1 = $this->givenMetadataFormat();
+        $format2 = $this->givenMetadataFormatWithDifferentPrefix();
+        $this->assertFalse($format1->equals($format2));
+    }
+
+    /**
+     * User Story:
+     * As a developer,
+     * I want to convert MetadataFormat to a string
+     * So that I can log or display it in a human-readable format.
+     */
+    public function testToStringReturnsExpectedFormat(): void
+    {
+        $format = $this->givenMetadataFormat();
+
+        $expected = 'MetadataFormat(prefix: MetadataPrefix(prefix: oai_dc), namespaces: ' .
+            'MetadataNamespaceCollection(namespaces: ' .
+            'MetadataNamespace(prefix: oai_dc, uri: http://www.openarchives.org/OAI/2.0/oai_dc/), ' .
+            'MetadataNamespace(prefix: oai_marc, uri: http://www.openarchives.org/OAI/2.0/oai_marc/)), ' .
+            'schemaUrl: AnyUri(uri: http://www.openarchives.org/OAI/2.0/oai_dc.xsd), rootTag: MetadataRootTag(rootTag: oai_dc:dc))';
+
+        $this->assertSame($expected, (string)$format);
+    }
+
+    // --- Helper methods ---
+
+    /**
+     * Creates a MetadataFormat with predefined values for testing purposes.
      *
-     * @return array{
-     *     format: \OaiPmh\Domain\MetadataFormat,
-     *     mocks: array{
-     *         prefixMock: \OaiPmh\Domain\MetadataPrefix&\PHPUnit\Framework\MockObject\MockObject,
-     *         metadataNamespaceMock: array<int,
-     *             \OaiPmh\Domain\MetadataNamespaceInterface&\PHPUnit\Framework\MockObject\MockObject>,
-     *         anyUriMock: \OaiPmh\Domain\AnyUri&\PHPUnit\Framework\MockObject\MockObject,
-     *         rootTagMock: \OaiPmh\Domain\MetadataRootTag&\PHPUnit\Framework\MockObject\MockObject
-     *     }
-     * }
+     * @return MetadataFormat
      */
-    private function createMetadataWithMockes(): array
+    private function givenMetadataFormat(): MetadataFormat
     {
-        /** @var MetadataPrefix&\PHPUnit\Framework\MockObject\MockObject $prefixMock */
-        $prefixMock = $this->createMock(MetadataPrefix::class);
-        /** @var MetadataNamespaceInterface&\PHPUnit\Framework\MockObject\MockObject $metadataNamespaceMock1 */
-        $metadataNamespaceMock1 = $this->createMock(MetadataNamespaceInterface::class);
-        /** @var MetadataNamespaceInterface&\PHPUnit\Framework\MockObject\MockObject $metadataNamespaceMock2 */
-        $metadataNamespaceMock2 = $this->createMock(MetadataNamespaceInterface::class);
-        /** @var MetadataNamespaceInterface&\PHPUnit\Framework\MockObject\MockObject $metadataNamespaceMock3 */
-        $metadataNamespaceMock3 = $this->createMock(MetadataNamespaceInterface::class);
-        /** @var AnyUri&\PHPUnit\Framework\MockObject\MockObject $anyUriMock */
-        $anyUriMock = $this->createMock(AnyUri::class);
-        /** @var MetadataRootTag&\PHPUnit\Framework\MockObject\MockObject $rootTagMock */
-        $rootTagMock = $this->createMock(MetadataRootTag::class);
-
-        // Create the MetadataFormat instance with mocks
-        $format = new MetadataFormat(
-            $prefixMock,
-            [$metadataNamespaceMock1, $metadataNamespaceMock2, $metadataNamespaceMock3],
-            $anyUriMock,
-            $rootTagMock
+        return new MetadataFormat(
+            $this->givenMetadataPrefix('oai_dc'),
+            $this->givenMetadataNamespaceCollection(
+                $this->givenMetadataNamespace('oai_dc', 'http://www.openarchives.org/OAI/2.0/oai_dc/'),
+                $this->givenMetadataNamespace('oai_marc', 'http://www.openarchives.org/OAI/2.0/oai_marc/')
+            ),
+            $this->givenAnyUri('http://www.openarchives.org/OAI/2.0/oai_dc.xsd'),
+            $this->givenMetadataRootTag('oai_dc:dc')
         );
+    }
 
-        $formatAndMocks = [
-            'format' => $format,
-            'mocks' => [
-                'prefixMock' => $prefixMock,
-                'metadataNamespaceMock' => [
-                    $metadataNamespaceMock1,
-                    $metadataNamespaceMock2,
-                    $metadataNamespaceMock3
-                ],
-                'anyUriMock' => $anyUriMock,
-                'rootTagMock' => $rootTagMock,
-            ]
-        ];
+    /**
+     * Creates a MetadataFormat with a different prefix for testing purposes.
+     *
+     * @return MetadataFormat
+     */
+    private function givenMetadataFormatWithDifferentPrefix(): MetadataFormat
+    {
+        return new MetadataFormat(
+            $this->givenMetadataPrefix('oai_marc'),
+            $this->givenMetadataNamespaceCollection(
+                $this->givenMetadataNamespace('oai_marc', 'http://www.openarchives.org/OAI/2.0/oai_marc/')
+            ),
+            $this->givenAnyUri('http://www.openarchives.org/OAI/2.0/oai_marc.xsd'),
+            $this->givenMetadataRootTag('oai_marc:marc')
+        );
+    }
 
-        return $formatAndMocks;
+    /**
+     * Creates a MetadataPrefix instance for testing purposes.
+     *
+     * @param string $prefix The prefix to use in the MetadataPrefix.
+     * @return MetadataPrefix
+     */
+    private function givenMetadataPrefix(string $prefix): MetadataPrefix
+    {
+        return new MetadataPrefix($prefix);
+    }
+
+    /**
+     * Creates a NamespacePrefix instance for testing purposes.
+     *
+     * @param string $prefix The prefix to use in the NamespacePrefix.
+     * @return NamespacePrefix
+     */
+    private function givenNamespacePrefix(string $prefix): NamespacePrefix
+    {
+        return new NamespacePrefix($prefix);
+    }
+
+    /**
+     * Creates a MetadataNamespace instance with the given prefix and URI for testing purposes.
+     *
+     * @param string $prefix The namespace prefix.
+     * @param string $uri The namespace URI.
+     * @return MetadataNamespace
+     */
+    private function givenMetadataNamespace(string $prefix, string $uri): MetadataNamespace
+    {
+        return new MetadataNamespace(
+            $this->givenNamespacePrefix($prefix),
+            $this->givenAnyUri($uri)
+        );
+    }
+
+    /**
+     * Creates a MetadataNamespaceCollection with the given MetadataNamespace instances.
+     *
+     * @param MetadataNamespace ...$namespaces The namespaces to include in the collection.
+     * @return MetadataNamespaceCollection
+     */
+    private function givenMetadataNamespaceCollection(MetadataNamespace ...$namespaces): MetadataNamespaceCollection
+    {
+        return new MetadataNamespaceCollection(...$namespaces);
+    }
+
+    /**
+     * Creates a AnyUri instance for testing purposes.
+     *
+     * @param string $uri The URI to use in the AnyUri.
+     * @return AnyUri
+     */
+    private function givenAnyUri(string $uri): AnyUri
+    {
+        return new AnyUri($uri);
+    }
+
+    /**
+     * Creates a MetadataRootTag instance for testing purposes.
+     *
+     * @param string $tag The root tag to use in the MetadataRootTag.
+     * @return MetadataRootTag
+     */
+    private function givenMetadataRootTag(string $tag): MetadataRootTag
+    {
+        return new MetadataRootTag($tag);
     }
 }

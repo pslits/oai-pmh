@@ -31,6 +31,16 @@ class MetadataRootTag
     }
 
     /**
+     * Returns a string representation of the metadata root tag.
+     *
+     * @return string The metadata root tag.
+     */
+    public function __toString(): string
+    {
+        return sprintf('MetadataRootTag(rootTag: %s)', $this->rootTag);
+    }
+
+    /**
      * Returns the root tag used in XML elements.
      *
      * @return string The root tag.
@@ -51,5 +61,16 @@ class MetadataRootTag
         if (!preg_match(self::ROOT_TAG_PATTERN, $rootTag)) {
             throw new InvalidArgumentException("Invalid metadata root tag: '$rootTag'.");
         }
+    }
+
+    /**
+     * Checks if this root tag is equal to another.
+     *
+     * @param MetadataRootTag $other The other root tag to compare against.
+     * @return bool True if the two root tags are equal, false otherwise.
+     */
+    public function equals(MetadataRootTag $other): bool
+    {
+        return $this->rootTag === $other->getValue();
     }
 }

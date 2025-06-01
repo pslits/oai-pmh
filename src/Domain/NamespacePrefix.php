@@ -59,4 +59,25 @@ class NamespacePrefix
             throw new InvalidArgumentException('Invalid prefix format.');
         }
     }
+
+    /**
+     * Serializes the NamespacePrefix to a JSON-compatible array.
+     *
+     * @return array<string, string> An associative array with the prefix.
+     */
+    public function jsonSerialize(): array
+    {
+        return ['prefix' => $this->prefix];
+    }
+
+    /**
+     * Checks if this NamespacePrefix is equal to another.
+     *
+     * @param NamespacePrefix $other The other NamespacePrefix to compare against.
+     * @return bool True if both prefixes are equal, false otherwise.
+     */
+    public function equals(NamespacePrefix $other): bool
+    {
+        return $this->prefix === $other->getValue();
+    }
 }

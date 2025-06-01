@@ -47,6 +47,18 @@ class AnyUri
     }
 
     /**
+     * Returns a string representation of the AnyUri object.
+     * The string format is presented as:
+     * `AnyUri(uri: <uri>)`
+     *
+     * @return string A string representation of the AnyUri.
+     */
+    public function __toString(): string
+    {
+        return sprintf('AnyUri(uri: %s)', $this->uri);
+    }
+
+    /**
      * Returns the stored URI.
      *
      * @return string The validated URI.
@@ -83,5 +95,26 @@ class AnyUri
         if (!$dom->schemaValidate(self::ANYURI_XSD_PATH)) {
             throw new InvalidArgumentException("Invalid URI: $_uri");
         }
+    }
+
+    /**
+     * Serializes the AnyUri to a JSON-compatible array.
+     *
+     * @return array<string, string> An associative array with the URI.
+     */
+    public function jsonSerialize(): array
+    {
+        return ['uri' => $this->getValue()];
+    }
+
+    /**
+     * Checks if this AnyUri is equal to another.
+     *
+     * @param AnyUri $other The other AnyUri to compare against.
+     * @return bool True if both URIs are equal, false otherwise.
+     */
+    public function equals(AnyUri $other): bool
+    {
+        return $this->getValue() === $other->getValue();
     }
 }

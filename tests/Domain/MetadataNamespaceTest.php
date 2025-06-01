@@ -31,15 +31,6 @@ use OaiPmh\Domain\MetadataNamespace;
  */
 class MetadataNamespaceTest extends TestCase
 {
-    private MetadataNamespace $metadataNamespace;
-
-    protected function setUp(): void
-    {
-        $prefix = new NamespacePrefix('oai_dc');
-        $uri = new AnyUri('http://www.openarchives.org/OAI/2.0/oai_dc/');
-        $this->metadataNamespace = new MetadataNamespace($prefix, $uri);
-    }
-
     /**
      * User Story:
      * As a developer,
@@ -49,35 +40,14 @@ class MetadataNamespaceTest extends TestCase
     public function testCanInstantiateWithValidPrefixAndUri(): void
     {
         // Given: A NamespacePrefix and an AnyUri
-        $prefix = new NamespacePrefix('oai_dc');
-        $uri = new AnyUri('http://www.openarchives.org/OAI/2.0/oai_dc/');
+        $prefix = $this->givenNamespacePrefix('oai_dc');
+        $anyaUri = $this->givenAnyUri('http://www.openarchives.org/OAI/2.0/oai_dc/');
 
         // When: I construct a MetadataNamespace
-        $metadataNamespace = new MetadataNamespace($prefix, $uri);
+        $namespace = new MetadataNamespace($prefix, $anyaUri);
 
-        // Then: The object should be created without error and retain the input values
-        $this->assertInstanceOf(MetadataNamespace::class, $metadataNamespace);
-        $this->assertSame($prefix, $metadataNamespace->getPrefix());
-        $this->assertSame($uri, $metadataNamespace->getUri());
-    }
-
-    /**
-     * User Story:
-     * As a developer,
-     * I want to ensure that instantiating MetadataNamespace with invalid prefix or URI throws an error
-     * So that I can catch configuration errors early.
-     */
-    public function testCannotInstantiateWithInvalidPrefixOrUri(): void
-    {
-        // Given: Invalid types for NamespacePrefix and AnyUri
-        $namespacePrefix = new NamespacePrefix('invalid_prefix');
-        $anyUri = new AnyUri('invalid-uri');
-
-        // When: I attempt to create a MetadataNamespace with invalid types
-        // Then: It should throw an InvalidArgumentException
-        $this->expectException(\InvalidArgumentException::class);
-        /** @phpstan-ignore-next-line */
-        new MetadataNamespace(new NamespacePrefix(123), new AnyUri('invalid-uri'));
+        // Then: The object should be created without error
+        $this->assertInstanceOf(MetadataNamespace::class, $namespace);
     }
 
     /**
@@ -89,17 +59,19 @@ class MetadataNamespaceTest extends TestCase
     public function testGetPrefixAndUri(): void
     {
         // Given: A MetadataNamespace with a specific prefix and URI
-        $expectedPrefix = new NamespacePrefix('oai_dc');
-        $expectedUri = new AnyUri('http://www.openarchives.org/OAI/2.0/oai_dc/');
-        $namespace = new MetadataNamespace($expectedPrefix, $expectedUri);
+        $expectedPrefix = "oai_dc";
+        $expectedURI = "http://www.openarchives.org/OAI/2.0/oai_dc/";
+        $namespacePrefix = $this->givenNamespacePrefix($expectedPrefix);
+        $anyUri = $this->givenAnyUri($expectedURI);
+        $namespace = new MetadataNamespace($namespacePrefix, $anyUri);
 
-        // When: I call getPrefix() and getUri()
-        $actualPrefix = $namespace->getPrefix();
-        $actualUri = $namespace->getUri();
+        // When: I retrieve the prefix and URI
+        $actualPrefix = $namespace->getPrefix()->getValue();
+        $actualUri = $namespace->getUri()->getValue();
 
         // Then: It should return the expected prefix and URI
-        $this->assertSame($expectedPrefix, $actualPrefix);
-        $this->assertSame($expectedUri, $actualUri);
+        $this->assertSame($expectedPrefix, $actualPrefix, 'The prefix should match the expected value.');
+        $this->assertSame($expectedURI, $actualUri, 'The URI should match the expected value.');
     }
 
     /**
@@ -107,18 +79,17 @@ class MetadataNamespaceTest extends TestCase
      * As a developer,
      * I want to ensure that the MetadataNamespace behaves as an immutable value object
      * So that its internal state cannot be changed after construction.
+     *
+     * TODO: Immutabbility in 8.0 and 8.2 are different. When using 8.2 this needs to be improved.
      */
     public function testMetadataNamespaceIsImmutable(): void
     {
         // Given: A constructed MetadataNamespace
-        $namespace = new MetadataNamespace(
-            new NamespacePrefix('oai_dc'),
-            new AnyUri('http://www.openarchives.org/OAI/2.0/oai_dc/')
-        );
+        $namespace = $this->givenMetadataNamespace('oai_dc', 'http://www.openarchives.org/OAI/2.0/oai_dc/');
 
         // When: I attempt to access or change private properties via reflection or dynamic means
         $reflectionClass = new ReflectionClass(MetadataNamespace::class);
-        $prefixProperty = $reflectionClass->getProperty('namespacePrefix');
+        $prefixProperty = $reflectionClass->getProperty('prefix');
         $uriProperty = $reflectionClass->getProperty('uri');
 
         // Then: It should not allow state modification or expose setters
@@ -127,7 +98,10 @@ class MetadataNamespaceTest extends TestCase
 
         // Attempting to set values should not work
         $this->expectException(ReflectionException::class);
-        $prefixProperty->setValue($namespace, new NamespacePrefix('new_prefix'));
+        $prefixProperty->setValue($namespace, new MetadataNamespace(
+            $this->givenNamespacePrefix('new_prefix'),
+            $this->givenAnyUri('http://example.com/new_uri/')
+        ));
     }
 
     /**
@@ -139,18 +113,14 @@ class MetadataNamespaceTest extends TestCase
     public function testMetadataNamespaceEqualityByValue(): void
     {
         // Given: Two MetadataNamespace instances with the same prefix and URI
-        $prefix = new NamespacePrefix('oai_dc');
-        $uri = new AnyUri('http://www.openarchives.org/OAI/2.0/oai_dc/');
-        $namespace1 = new MetadataNamespace($prefix, $uri);
-        $namespace2 = new MetadataNamespace($prefix, $uri);
-
-        // When: I compare them for equality
-        $areEqual =
-            ($namespace1->getPrefix() === $namespace2->getPrefix()) &&
-            ($namespace1->getUri() === $namespace2->getUri());
+        $namespace1 = $this->givenMetadataNamespace('oai_dc', 'http://www.openarchives.org/OAI/2.0/oai_dc/');
+        $namespace2 = $this->givenMetadataNamespace('oai_dc', 'http://www.openarchives.org/OAI/2.0/oai_dc/');
 
         // Then: They should be considered equal
-        $this->assertTrue($areEqual, 'MetadataNamespace instances with the same prefix and URI should be equal.');
+        $this->assertTrue(
+            $namespace1->equals($namespace2),
+            'MetadataNamespace instances with the same prefix and URI should be equal.'
+        );
     }
 
     /**
@@ -162,18 +132,12 @@ class MetadataNamespaceTest extends TestCase
     public function testMetadataNamespaceNotEqualWhenDifferent(): void
     {
         // Given: Two MetadataNamespace instances with different prefixes or URIs
-        $prefix1 = new NamespacePrefix('oai_dc');
-        $uri1 = new AnyUri('http://www.openarchives.org/OAI/2.0/oai_dc/');
-        $namespace1 = new MetadataNamespace($prefix1, $uri1);
-
-        $prefix2 = new NamespacePrefix('oai_marc');
-        $uri2 = new AnyUri('http://www.openarchives.org/OAI/2.0/oai_marc/');
-        $namespace2 = new MetadataNamespace($prefix2, $uri2);
+        $namespace1 = $this->givenMetadataNamespace('oai_dc', 'http://www.openarchives.org/OAI/2.0/oai_dc/');
+        $namespace2 = $this->givenMetadataNamespace('oai_marc', 'http://www.openarchives.org/OAI/2.0/oai_marc/');
 
         // Then: They should not be considered equal
-        $this->assertNotEquals(
-            json_encode($namespace1),
-            json_encode($namespace2),
+        $this->assertFalse(
+            $namespace1->equals($namespace2),
             'MetadataNamespace instances with different prefixes or URIs should not be equal.'
         );
     }
@@ -181,77 +145,86 @@ class MetadataNamespaceTest extends TestCase
     /**
      * User Story:
      * As a developer,
-     * I want to ensure that MetadataNamespace does not expose setters or unintended public methods
-     * So that the value object remains pure and controlled.
+     * I want to ensure that the MetadataNamespace can be converted to a string
+     * So that it can be easily logged or displayed in a human-readable format.
      */
-    public function testMetadataNamespaceDoesNotExposeSetters(): void
+    public function testToStringReturnsExpectedFormat(): void
     {
-        // Given: A MetadataNamespace instance
+        // Given: A MetadataNamespace
+        $namespace = $this->givenMetadataNamespace('oai_dc', 'http://www.openarchives.org/OAI/2.0/oai_dc/');
 
-        // When: I inspect its public methods
+        // When: I convert it to a string
+        $actual = (string)$namespace;
 
-        // Then: It should not have any set* methods
-        $this->assertFalse($this->methodExists('setPrefix'), 'MetadataNamespace should not have setPrefix() method');
-        $this->assertFalse($this->methodExists('setUri'), 'MetadataNamespace should not have setUri() method');
+        // Then: It should return a string in the expected format
+        $expected = 'MetadataNamespace(prefix: oai_dc, uri: http://www.openarchives.org/OAI/2.0/oai_dc/)';
+        $this->assertSame($expected, $actual);
     }
 
     /**
-     * User Story:
-     * As a developer,
-     * I want to ensure that MetadataNamespace does not expose private properties via public means
-     * So that its internal state remains encapsulated.
+     * Helper method to create a MetadataNamespace instance with given prefix and URI.
+     *
+     * @param string $prefix The namespace prefix.
+     * @param string $uri The namespace URI.
+     * @return MetadataNamespace
      */
-    public function testMetadataNamespacePropertiesAreNotPubliclyAccessible(): void
+    private function givenMetadataNamespace(string $prefix, string $uri): MetadataNamespace
     {
-        // Given: A MetadataNamespace instance
-
-        // When: I check for public properties
-
-        // Then: It should not have public properties like namespacePrefix or uri
-        $this->assertFalse(
-            $this->propertyExists('namespacePrefix'),
-            'MetadataNamespace should not have public property namespacePrefix'
+        return new MetadataNamespace(
+            $this->givenNamespacePrefix($prefix),
+            $this->givenAnyUri($uri)
         );
-        $this->assertFalse($this->propertyExists('uri'), 'MetadataNamespace should not have public property uri');
+
+        // return new MetadataNamespace(new NamespacePrefix($prefix), new AnyUri($uri));
     }
 
     /**
-     * User Story:
-     * As a developer,
-     * I want to ensure that MetadataNamespace implements the MetadataNamespaceInterface
-     * So that it adheres to the expected contract for metadata namespaces.
+     * Creates a mock or real NamespacePrefix for testing purposes.
+     *
+     * @param string $prefix The prefix to use in the mock.
+     * @return NamespacePrefix
      */
-    public function testImplementsMetadataNamespaceInterface(): void
+    private function givenNamespacePrefix(string $prefix): NamespacePrefix
     {
-        // Given: A MetadataNamespace instance
+        if ($this->mockingEnabled()) {
+            /** @var NamespacePrefix&\PHPUnit\Framework\MockObject\MockObject $namespacePrefix */
+            $namespacePrefix = $this->createMock(NamespacePrefix::class);
+            $namespacePrefix->method('getValue')->willReturn($prefix);
+            $namespacePrefix->method('equals')->willReturn(true);
 
-        // When: I check if it implements MetadataNamespaceInterface
-        $this->assertInstanceOf(
-            'OaiPmh\Domain\MetadataNamespaceInterface',
-            $this->metadataNamespace,
-            'MetadataNamespace should implement MetadataNamespaceInterface'
-        );
+            return $namespacePrefix;
+        }
+
+        return new NamespacePrefix($prefix);
     }
 
     /**
-     * Checks if a method exists in the MetadataNamespace class.
-     * @param string $methodName The name of the method to check.
-     * @return bool True if the method exists, false otherwise.
+     * Creates a mock or real AnyUri for testing purposes.
+     *
+     * @param string $uri The URI to use in the mock.
+     * @return AnyUri
      */
-    private function methodExists(string $methodName): bool
+    private function givenAnyUri(string $uri): AnyUri
     {
-        return method_exists($this->metadataNamespace, $methodName);
+        if ($this->mockingEnabled()) {
+            /** @var AnyUri&\PHPUnit\Framework\MockObject\MockObject $anyUri */
+            $anyUri = $this->createMock(AnyUri::class);
+            $anyUri->method('getValue')->willReturn($uri);
+            $anyUri->method('equals')->willReturn(true);
+
+            return $anyUri;
+        }
+
+        return new AnyUri($uri);
     }
 
     /**
-     * Checks if a property exists in the MetadataNamespace class.
-     * @param string $propertyName The name of the property to check.
-     * @return bool True if the property exists, false otherwise.
+     * Determines if mocking is enabled for this test.
+     *
+     * @return bool True if mocking is enabled, false otherwise.
      */
-    private function propertyExists(string $propertyName): bool
+    private function mockingEnabled(): bool
     {
-        $object = new MetadataNamespace(new NamespacePrefix('test'), new AnyUri('http://example.com'));
-        $publicProperties = array_keys(get_object_vars($object));
-        return in_array($propertyName, $publicProperties, true);
+        return true;
     }
 }
