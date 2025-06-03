@@ -80,7 +80,7 @@ class MetadataNamespaceTest extends TestCase
      * I want to ensure that the MetadataNamespace behaves as an immutable value object
      * So that its internal state cannot be changed after construction.
      *
-     * TODO: Immutabbility in 8.0 and 8.2 are different. When using 8.2 this needs to be improved.
+     * TODO: Immutabbility in 8.0 and 8.2 are different. When using 8.2 this needs to be improved (issue #8).
      */
     public function testMetadataNamespaceIsImmutable(): void
     {

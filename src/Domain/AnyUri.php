@@ -1,10 +1,9 @@
 <?php
 
 /**
+ * @author    Paul Slits <paul.slits@gmail.com>
  * @copyright (c) 2025 Paul Slits
  * @license   MIT License - https://opensource.org/licenses/MIT
- * @author    Paul Slits <paul.slits@gmail.com>
- * @package   OaiPmh\Domain
  * @link      https://github.com/pslits/oai-pmh
  * @since     0.1.0
  */
@@ -15,15 +14,20 @@ use DOMDocument;
 use InvalidArgumentException;
 
 /**
- * The AnyUri class represents a URI that conforms to the anyURI type defined
- * in XML Schema. It validates the URI against the anyURI schema and provides
- * access to the validated URI. This class is used to ensure that URIs in OAI-PMH
- * implementations are valid and conform to the expected format.
+ * Represents a URI that conforms to the XML Schema anyURI type.
  *
+ * This value object:
+ * - encapsulates a validated URI,
+ * - is immutable and compared by value (not identity),
+ * - ensures URIs are suitable for XML serialization in OAI-PMH responses.
+ *
+ * Validation is performed using PHP's filter_var function with the FILTER_VALIDATE_URL flag,
+ * which is stricter than XML Schema's anyURI and may reject some valid anyURI values.
+ * This is a pragmatic choice for most OAI-PMH use cases, but not a full XML Schema anyURI check.
+ *
+ * @author    Paul Slits <paul.slits@gmail.com>
  * @copyright (c) 2025 Paul Slits
  * @license   MIT License - https://opensource.org/licenses/MIT
- * @author    Paul Slits <paul.slits@gmail.com>
- * @package   OaiPmh\Domain
  * @link      https://github.com/pslits/oai-pmh
  * @since     0.1.0
  */
@@ -92,19 +96,12 @@ class AnyUri
             'anyURI.xsd'
         );
 
+        /**
+         * TODO: Not possible to test invalid URI in this context (issue #7)
+         */
         if (!$dom->schemaValidate(self::ANYURI_XSD_PATH)) {
             throw new InvalidArgumentException("Invalid URI: $_uri");
         }
-    }
-
-    /**
-     * Serializes the AnyUri to a JSON-compatible array.
-     *
-     * @return array<string, string> An associative array with the URI.
-     */
-    public function jsonSerialize(): array
-    {
-        return ['uri' => $this->getValue()];
     }
 
     /**

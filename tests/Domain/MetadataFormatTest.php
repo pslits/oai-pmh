@@ -87,6 +87,8 @@ class MetadataFormatTest extends TestCase
      * As a developer,
      * I want MetadataFormat to behave as an immutable value object
      * So that its internal state cannot be changed after construction.
+     *
+     * TODO: Immutability in PHP 8.0 and 8.2 are different (issue #8).
      */
     public function testMetadataFormatIsImmutable(): void
     {
