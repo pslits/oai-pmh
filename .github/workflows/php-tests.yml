@@ -71,7 +71,8 @@ jobs:
         run: |
           php -dxdebug.mode=coverage ./vendor/bin/phpunit --coverage-clover=coverage.xml
 
-      - name: Upload coverage report
-        uses: codecov/codecov-action@v3
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
         with:
-          files: ./coverage.xml
+          files: coverage.xml
+          token: ${{ secrets.CODECOV_TOKEN }}
