@@ -54,20 +54,9 @@ class NamespacePrefix
      */
     private function validatePrefix(string $prefix): void
     {
-
         if (!preg_match(self::PREFIX_PATTERN, $prefix)) {
             throw new InvalidArgumentException('Invalid prefix format.');
         }
-    }
-
-    /**
-     * Serializes the NamespacePrefix to a JSON-compatible array.
-     *
-     * @return array<string, string> An associative array with the prefix.
-     */
-    public function jsonSerialize(): array
-    {
-        return ['prefix' => $this->prefix];
     }
 
     /**

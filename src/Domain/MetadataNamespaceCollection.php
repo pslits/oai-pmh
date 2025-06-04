@@ -89,10 +89,28 @@ final class MetadataNamespaceCollection implements IteratorAggregate, Countable
     }
 
     /**
+     * Converts the collection of MetadataNamespace objects to an associative array.
+     *
+     * The keys are the namespace prefixes, and the values are the corresponding URIs.
+     *
+     * @param MetadataNamespace[] $namespaces The namespaces to convert.
+     * @return array<string, string> An associative array mapping prefixes to URIs.
+     */
+    private function toAssoc(array $namespaces): array
+    {
+        $assoc = [];
+        foreach ($namespaces as $namespace) {
+            $assoc[$namespace->getPrefix()->getValue()] = $namespace->getUri()->getValue();
+        }
+        return $assoc;
+    }
+
+    /**
      * Checks if this collection is equal to another MetadataNamespaceCollection.
      *
-     * Two collections are considered equal if they contain the same namespaces
-     * in the same order.
+     * Two collections are considered equal if they:
+     * - contain the same number of namespaces
+     * - contain the same namespaces, regardless of their order
      *
      * @param self $other The other MetadataNamespaceCollection to compare with.
      * @return bool True if both collections are equal, false otherwise.
@@ -102,12 +120,11 @@ final class MetadataNamespaceCollection implements IteratorAggregate, Countable
         if (count($this->namespaces) !== count($other->namespaces)) {
             return false;
         }
-        foreach ($this->namespaces as $i => $ns) {
-            if (!$ns->equals($other->namespaces[$i])) {
-                return false;
-            }
-        }
-        return true;
+
+        $array1 = $this->toAssoc($this->namespaces);
+        $array2 = $other->toAssoc($other->namespaces);
+
+        return $array1 === $array2;
     }
 
     /**
@@ -123,11 +140,24 @@ final class MetadataNamespaceCollection implements IteratorAggregate, Countable
             throw new \InvalidArgumentException('At least one MetadataNamespace must be provided.');
         }
 
+        // no duplicate prefixes allowed
+        $prefixes = [];
         foreach ($namespaces as $namespace) {
-            /** @phpstan-ignore-next-line: Even this is checked by PHPDOC it's explicitly checked */
-            if (!$namespace instanceof MetadataNamespace) {
-                throw new \InvalidArgumentException('All items must be instances of MetadataNamespace.');
+            $prefix = $namespace->getPrefix()->getValue();
+            if (in_array($prefix, $prefixes, true)) {
+                throw new \InvalidArgumentException("Duplicate namespace prefix found: $prefix");
             }
+            $prefixes[] = $prefix;
+        }
+
+        // no duplicate URIs allowed
+        $uris = [];
+        foreach ($namespaces as $namespace) {
+            $uri = $namespace->getUri()->getValue();
+            if (in_array($uri, $uris, true)) {
+                throw new \InvalidArgumentException("Duplicate namespace URI found: $uri");
+            }
+            $uris[] = $uri;
         }
     }
 }

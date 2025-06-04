@@ -139,7 +139,8 @@ class MetadataFormatTest extends TestCase
             'MetadataNamespaceCollection(namespaces: ' .
             'MetadataNamespace(prefix: oai_dc, uri: http://www.openarchives.org/OAI/2.0/oai_dc/), ' .
             'MetadataNamespace(prefix: oai_marc, uri: http://www.openarchives.org/OAI/2.0/oai_marc/)), ' .
-            'schemaUrl: AnyUri(uri: http://www.openarchives.org/OAI/2.0/oai_dc.xsd), rootTag: MetadataRootTag(rootTag: oai_dc:dc))';
+            'schemaUrl: AnyUri(uri: http://www.openarchives.org/OAI/2.0/oai_dc.xsd), ' .
+            'rootTag: MetadataRootTag(rootTag: oai_dc:dc))';
 
         $this->assertSame($expected, (string)$format);
     }

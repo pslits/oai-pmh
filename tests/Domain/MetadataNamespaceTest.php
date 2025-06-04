@@ -186,15 +186,6 @@ class MetadataNamespaceTest extends TestCase
      */
     private function givenNamespacePrefix(string $prefix): NamespacePrefix
     {
-        if ($this->mockingEnabled()) {
-            /** @var NamespacePrefix&\PHPUnit\Framework\MockObject\MockObject $namespacePrefix */
-            $namespacePrefix = $this->createMock(NamespacePrefix::class);
-            $namespacePrefix->method('getValue')->willReturn($prefix);
-            $namespacePrefix->method('equals')->willReturn(true);
-
-            return $namespacePrefix;
-        }
-
         return new NamespacePrefix($prefix);
     }
 
@@ -206,25 +197,6 @@ class MetadataNamespaceTest extends TestCase
      */
     private function givenAnyUri(string $uri): AnyUri
     {
-        if ($this->mockingEnabled()) {
-            /** @var AnyUri&\PHPUnit\Framework\MockObject\MockObject $anyUri */
-            $anyUri = $this->createMock(AnyUri::class);
-            $anyUri->method('getValue')->willReturn($uri);
-            $anyUri->method('equals')->willReturn(true);
-
-            return $anyUri;
-        }
-
         return new AnyUri($uri);
-    }
-
-    /**
-     * Determines if mocking is enabled for this test.
-     *
-     * @return bool True if mocking is enabled, false otherwise.
-     */
-    private function mockingEnabled(): bool
-    {
-        return true;
     }
 }

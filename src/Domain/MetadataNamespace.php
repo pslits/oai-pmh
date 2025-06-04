@@ -85,7 +85,7 @@ final class MetadataNamespace
      */
     public function equals(MetadataNamespace $other): bool
     {
-        return $this->prefix->getValue() === $other->getPrefix()->getValue()
-            && $this->uri->getValue() === $other->getUri()->getValue();
+        return $this->prefix->equals($other->getPrefix()) &&
+               $this->uri->equals($other->getUri());
     }
 }
