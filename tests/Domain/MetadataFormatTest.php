@@ -162,8 +162,8 @@ class MetadataFormatTest extends TestCase
         // Then: The string representation should match the expected format
         $expected = 'MetadataFormat(prefix: MetadataPrefix(prefix: oai_dc), namespaces: ' .
             'MetadataNamespaceCollection(namespaces: ' .
-            'MetadataNamespace(prefix: oai_dc, uri: http://www.openarchives.org/OAI/2.0/oai_dc/), ' .
-            'MetadataNamespace(prefix: oai_marc, uri: http://www.openarchives.org/OAI/2.0/oai_marc/)), ' .
+            'MetadataNamespace(prefix: NamespacePrefix(prefix: oai_dc), uri: AnyUri(uri: http://www.openarchives.org/OAI/2.0/oai_dc/)), ' .
+            'MetadataNamespace(prefix: NamespacePrefix(prefix: oai_marc), uri: AnyUri(uri: http://www.openarchives.org/OAI/2.0/oai_marc/))), ' .
             'schemaUrl: AnyUri(uri: http://www.openarchives.org/OAI/2.0/oai_dc.xsd), ' .
             'rootTag: MetadataRootTag(rootTag: oai_dc:dc))';
         $this->assertSame($expected, $stringRepresentation);

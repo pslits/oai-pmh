@@ -157,7 +157,7 @@ class MetadataNamespaceTest extends TestCase
         $actual = (string)$namespace;
 
         // Then: It should return a string in the expected format
-        $expected = 'MetadataNamespace(prefix: oai_dc, uri: http://www.openarchives.org/OAI/2.0/oai_dc/)';
+        $expected = 'MetadataNamespace(prefix: NamespacePrefix(prefix: oai_dc), uri: AnyUri(uri: http://www.openarchives.org/OAI/2.0/oai_dc/))';
         $this->assertSame($expected, $actual);
     }
 

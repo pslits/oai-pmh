@@ -52,8 +52,8 @@ final class MetadataNamespace
     {
         return sprintf(
             'MetadataNamespace(prefix: %s, uri: %s)',
-            $this->prefix->getValue(),
-            $this->uri->getValue()
+            (string)$this->prefix,
+            (string)$this->uri
         );
     }
 

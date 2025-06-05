@@ -37,6 +37,16 @@ class NamespacePrefix
     }
 
     /**
+     * Returns a string representation of the NamespacePrefix.
+     *
+     * @return string A string representation of the NamespacePrefix.
+     */
+    public function __toString(): string
+    {
+        return sprintf('NamespacePrefix(prefix: %s)', $this->prefix);
+    }
+
+    /**
      * Returns the prefix used in XML elements.
      *
      * @return string The prefix.
