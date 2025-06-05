@@ -8,7 +8,7 @@
  * @since     0.1.0
  */
 
-namespace OaiPmh\Domain;
+namespace OaiPmh\Domain\ValueObject;
 
 /**
  * Represents a qualified XML namespace for use in OAI-PMH metadata.

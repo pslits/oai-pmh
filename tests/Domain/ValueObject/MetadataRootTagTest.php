@@ -11,7 +11,7 @@
 namespace OaiPmh\Tests\Domain;
 
 use InvalidArgumentException;
-use OaiPmh\Domain\MetadataRootTag;
+use OaiPmh\Domain\ValueObject\MetadataRootTag;
 use PHPUnit\Framework\TestCase;
 
 /**

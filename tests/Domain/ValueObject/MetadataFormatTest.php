@@ -10,13 +10,13 @@
 
 namespace OaiPmh\Tests\Domain;
 
-use OaiPmh\Domain\AnyUri;
-use OaiPmh\Domain\MetadataFormat;
-use OaiPmh\Domain\MetadataNamespace;
-use OaiPmh\Domain\MetadataNamespaceCollection;
-use OaiPmh\Domain\MetadataPrefix;
-use OaiPmh\Domain\MetadataRootTag;
-use OaiPmh\Domain\NamespacePrefix;
+use OaiPmh\Domain\ValueObject\AnyUri;
+use OaiPmh\Domain\ValueObject\MetadataFormat;
+use OaiPmh\Domain\ValueObject\MetadataNamespace;
+use OaiPmh\Domain\ValueObject\MetadataNamespaceCollection;
+use OaiPmh\Domain\ValueObject\MetadataPrefix;
+use OaiPmh\Domain\ValueObject\MetadataRootTag;
+use OaiPmh\Domain\ValueObject\NamespacePrefix;
 use PHPUnit\Framework\TestCase;
 
 /**

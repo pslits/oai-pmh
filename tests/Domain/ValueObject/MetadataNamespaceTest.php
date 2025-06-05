@@ -10,9 +10,9 @@
 
 namespace OaiPmh\Tests\Domain;
 
-use OaiPmh\Domain\AnyUri;
-use OaiPmh\Domain\MetadataNamespace;
-use OaiPmh\Domain\NamespacePrefix;
+use OaiPmh\Domain\ValueObject\AnyUri;
+use OaiPmh\Domain\ValueObject\MetadataNamespace;
+use OaiPmh\Domain\ValueObject\NamespacePrefix;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use ReflectionException;
