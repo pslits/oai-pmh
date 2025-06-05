@@ -10,24 +10,18 @@
 
 namespace OaiPmh\Tests\Domain;
 
-use OaiPmh\Domain\AnyUri;
 use InvalidArgumentException;
-use PHPUnit\Framework\TestCase;
-use OaiPmh\Domain\NamespacePrefix;
+use OaiPmh\Domain\AnyUri;
 use OaiPmh\Domain\MetadataNamespace;
 use OaiPmh\Domain\MetadataNamespaceCollection;
+use OaiPmh\Domain\NamespacePrefix;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Tests for the MetadataNamespaceCollection class.
  *
  * This class contains unit tests for the MetadataNamespaceCollection value object,
  * ensuring it behaves correctly as a collection of MetadataNamespace objects in the OAI-PMH domain.
- *
- * @author    Paul Slits <paul.slits@gmail.com>
- * @copyright (c) 2025 Paul Slits
- * @license   MIT License - https://opensource.org/licenses/MIT
- * @link      https://github.com/pslits/oai-pmh
- * @since     0.1.0
  */
 class MetadataNamespaceCollectionTest extends TestCase
 {
@@ -64,10 +58,9 @@ class MetadataNamespaceCollectionTest extends TestCase
         // Given: No namespaces provided
 
         // When: I try to create a MetadataNamespaceCollection without any namespaces
+        // Then: An exception should be thrown
         $this->expectException(InvalidArgumentException::class);
         new MetadataNamespaceCollection();
-
-        // Then: An exception should be thrown
     }
 
     /**
@@ -83,10 +76,9 @@ class MetadataNamespaceCollectionTest extends TestCase
         $namespace2 = $this->givenNamespace('dc', 'http://www.openarchives.org/OAI/2.0/');
 
         // When: I try to create a MetadataNamespaceCollection with duplicate prefixes
+        // Then: An exception should be thrown
         $this->expectException(InvalidArgumentException::class);
         new MetadataNamespaceCollection($namespace1, $namespace2);
-
-        // Then: An exception should be thrown
     }
 
     /**
@@ -102,10 +94,9 @@ class MetadataNamespaceCollectionTest extends TestCase
         $namespace2 = $this->givenNamespace('oai', 'http://purl.org/dc/elements/1.1/');
 
         // When: I try to create a MetadataNamespaceCollection with duplicate URIs
+        // Then: An exception should be thrown
         $this->expectException(InvalidArgumentException::class);
         new MetadataNamespaceCollection($namespace1, $namespace2);
-
-        // Then: An exception should be thrown
     }
 
     /**
@@ -129,6 +120,12 @@ class MetadataNamespaceCollectionTest extends TestCase
         $this->assertTrue($isEqual);
     }
 
+    /**
+     * User Story:
+     * As a developer,
+     * I want to compare two collections for value equality
+     * So that collections with the same namespaces in different order are still equal.
+     */
     public function testEqualsReturnsFalseForDifferentOrder(): void
     {
         // Given: Two MetadataNamespaceCollection objects with the same namespaces but in different order
@@ -140,18 +137,24 @@ class MetadataNamespaceCollectionTest extends TestCase
         // When: I compare the two collections for equality
         $isEqual = $col1->equals($col2);
 
-        // Then: They should not be considered equal
-        $this->assertFalse($isEqual);
+        // Then: They should be considered equal
+        $this->assertTrue($isEqual);
     }
 
+    /**
+     * User Story:
+     * As a developer,
+     * I want to compare two collections for value equality
+     * So that collections with different namespaces are not equal.
+     */
     public function testEqualsReturnsFalseForDifferentNamespaces(): void
     {
         // Given: Two MetadataNamespaceCollection objects with the same namespaces but in different order
         $namespace1 = $this->givenNamespace('dc', 'http://purl.org/dc/elements/1.1/');
         $namespace2 = $this->givenNamespace('oai', 'http://www.openarchives.org/OAI/2.0/');
-        $ns3 = $this->givenNamespace('xsi', 'http://www.w3.org/2001/XMLSchema-instance');
+        $namespace3 = $this->givenNamespace('xsi', 'http://www.w3.org/2001/XMLSchema-instance');
         $col1 = new MetadataNamespaceCollection($namespace1, $namespace2);
-        $col2 = new MetadataNamespaceCollection($namespace1, $ns3);
+        $col2 = new MetadataNamespaceCollection($namespace1, $namespace3);
 
         // When: I compare the two collections for equality
         $isEqual = $col1->equals($col2);
@@ -160,6 +163,12 @@ class MetadataNamespaceCollectionTest extends TestCase
         $this->assertFalse($isEqual);
     }
 
+    /**
+     * User Story:
+     * As a developer,
+     * I want to compare two collections for value equality
+     * So that collections with different number of namespaces are not equal.
+     */
     public function testEqualsReturnsFalseForDifferentCount(): void
     {
         // Given: Two MetadataNamespaceCollection objects with different number of namespaces
@@ -226,6 +235,12 @@ class MetadataNamespaceCollectionTest extends TestCase
 
     // --- Helpers ---
 
+    /**
+     * Creates a MetadataNamespace instance with the given prefix and URI.
+     *
+     * @param string $prefix The namespace prefix.
+     * @return MetadataNamespace
+     */
     private function givenNamespace(string $prefix, string $uri): MetadataNamespace
     {
         return new MetadataNamespace(

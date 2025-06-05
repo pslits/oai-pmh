@@ -10,21 +10,15 @@
 
 namespace OaiPmh\Tests\Domain;
 
+use InvalidArgumentException;
 use OaiPmh\Domain\NamespacePrefix;
 use PHPUnit\Framework\TestCase;
-use InvalidArgumentException;
 
 /**
  * Tests for the NamespacePrefix class.
  *
  * This class contains unit tests for the NamespacePrefix value object,
  * ensuring it behaves correctly as a value object in the OAI-PMH domain.
- *
- * @author    Paul Slits <paul.slits@gmail.com>
- * @copyright (c) 2025 Paul Slits
- * @license   MIT License - https://opensource.org/licenses/MIT
- * @link      https://github.com/pslits/oai-pmh
- * @since     0.1.0
  */
 class NamespacePrefixTest extends TestCase
 {
@@ -114,7 +108,11 @@ class NamespacePrefixTest extends TestCase
 
         // Then: The string representation should match the expected format
         $expected = "NamespacePrefix(prefix: $prefix)";
-        $this->assertSame($expected, $stringRepresentation, 'String representation of NamespacePrefix should match expected format.');
+        $this->assertSame(
+            $expected,
+            $stringRepresentation,
+            'String representation of NamespacePrefix should match expected format.'
+        );
     }
 
     /**

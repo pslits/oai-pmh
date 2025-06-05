@@ -10,11 +10,10 @@
 
 namespace OaiPmh\Domain;
 
-use OaiPmh\Domain\MetadataNamespace;
-use IteratorAggregate;
-use Countable;
-use Traversable;
 use ArrayIterator;
+use Countable;
+use IteratorAggregate;
+use Traversable;
 
 /**
  * Represents an immutable collection of MetadataNamespace value objects in the OAI-PMH domain.
@@ -29,12 +28,6 @@ use ArrayIterator;
  * the domain layer.
  *
  * @implements IteratorAggregate<int, MetadataNamespace>
- *
- * @author    Paul Slits <paul.slits@gmail.com>
- * @copyright (c) 2025 Paul Slits
- * @license   MIT License - https://opensource.org/licenses/MIT
- * @link      https://github.com/pslits/oai-pmh
- * @since     0.1.0
  */
 final class MetadataNamespaceCollection implements IteratorAggregate, Countable
 {
@@ -123,6 +116,9 @@ final class MetadataNamespaceCollection implements IteratorAggregate, Countable
 
         $array1 = $this->toAssoc($this->namespaces);
         $array2 = $other->toAssoc($other->namespaces);
+
+        ksort($array1);
+        ksort($array2);
 
         return $array1 === $array2;
     }

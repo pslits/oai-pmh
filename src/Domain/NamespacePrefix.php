@@ -16,7 +16,13 @@ use InvalidArgumentException;
  * Class NamespacePrefix
  *
  * Represents a namespace prefix used in XML elements.
- * This class encapsulates the prefix and provides validation to ensure it adheres to the expected format.
+ *
+ * This value object:
+ * - encapsulates a namespace prefix,
+ * - provides validation to ensure it adheres to the expected format,
+ * - is immutable and compared by value (not identity).
+ *
+ * Domain concerns such as XML serialization or protocol transport are handled outside this class.
  */
 class NamespacePrefix
 {

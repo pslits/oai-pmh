@@ -11,20 +11,14 @@
 namespace OaiPmh\Tests\Domain;
 
 use InvalidArgumentException;
-use PHPUnit\Framework\TestCase;
 use OaiPmh\Domain\MetadataPrefix;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Tests for the MetadataPrefix class.
  *
  * This class contains unit tests for the MetadataPrefix value object,
  * ensuring it behaves correctly as a value object in the OAI-PMH domain.
- *
- * @author    Paul Slits <paul.slits@gmail.com>
- * @copyright (c) 2025 Paul Slits
- * @license   MIT License - https://opensource.org/licenses/MIT
- * @link      https://github.com/pslits/oai-pmh
- * @since     0.1.0
  */
 class MetadataPrefixTest extends TestCase
 {

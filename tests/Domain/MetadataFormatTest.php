@@ -11,24 +11,18 @@
 namespace OaiPmh\Tests\Domain;
 
 use OaiPmh\Domain\AnyUri;
-use PHPUnit\Framework\TestCase;
 use OaiPmh\Domain\MetadataFormat;
+use OaiPmh\Domain\MetadataNamespace;
+use OaiPmh\Domain\MetadataNamespaceCollection;
 use OaiPmh\Domain\MetadataPrefix;
 use OaiPmh\Domain\MetadataRootTag;
 use OaiPmh\Domain\NamespacePrefix;
-use OaiPmh\Domain\MetadataNamespace;
-use OaiPmh\Domain\MetadataNamespaceCollection;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Unit tests for the MetadataFormat value object in the OAI-PMH domain.
  *
  * Ensures correct instantiation, immutability, value equality, and string representation.
- *
- * @author    Paul Slits <paul.slits@gmail.com>
- * @copyright (c) 2025 Paul Slits
- * @license   MIT License - https://opensource.org/licenses/MIT
- * @link      https://github.com/pslits/oai-pmh
- * @since     0.1.0
  */
 class MetadataFormatTest extends TestCase
 {
@@ -42,7 +36,6 @@ class MetadataFormatTest extends TestCase
     {
         // Given: Valid dependencies
         $prefix = $this->givenMetadataPrefix('oai_dc');
-
         $namespaces = $this->givenMetadataNamespaceCollection(
             new MetadataNamespace(
                 $this->givenNamespacePrefix('oai_dc'),
@@ -162,8 +155,10 @@ class MetadataFormatTest extends TestCase
         // Then: The string representation should match the expected format
         $expected = 'MetadataFormat(prefix: MetadataPrefix(prefix: oai_dc), namespaces: ' .
             'MetadataNamespaceCollection(namespaces: ' .
-            'MetadataNamespace(prefix: NamespacePrefix(prefix: oai_dc), uri: AnyUri(uri: http://www.openarchives.org/OAI/2.0/oai_dc/)), ' .
-            'MetadataNamespace(prefix: NamespacePrefix(prefix: oai_marc), uri: AnyUri(uri: http://www.openarchives.org/OAI/2.0/oai_marc/))), ' .
+            'MetadataNamespace(prefix: NamespacePrefix(prefix: oai_dc), ' .
+            'uri: AnyUri(uri: http://www.openarchives.org/OAI/2.0/oai_dc/)), ' .
+            'MetadataNamespace(prefix: NamespacePrefix(prefix: oai_marc), ' .
+            'uri: AnyUri(uri: http://www.openarchives.org/OAI/2.0/oai_marc/))), ' .
             'schemaUrl: AnyUri(uri: http://www.openarchives.org/OAI/2.0/oai_dc.xsd), ' .
             'rootTag: MetadataRootTag(rootTag: oai_dc:dc))';
         $this->assertSame($expected, $stringRepresentation);

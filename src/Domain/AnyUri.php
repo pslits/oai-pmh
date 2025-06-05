@@ -24,12 +24,6 @@ use InvalidArgumentException;
  * Validation is performed using PHP's filter_var function with the FILTER_VALIDATE_URL flag,
  * which is stricter than XML Schema's anyURI and may reject some valid anyURI values.
  * This is a pragmatic choice for most OAI-PMH use cases, but not a full XML Schema anyURI check.
- *
- * @author    Paul Slits <paul.slits@gmail.com>
- * @copyright (c) 2025 Paul Slits
- * @license   MIT License - https://opensource.org/licenses/MIT
- * @link      https://github.com/pslits/oai-pmh
- * @since     0.1.0
  */
 class AnyUri
 {

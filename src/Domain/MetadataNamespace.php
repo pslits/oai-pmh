@@ -19,12 +19,6 @@ namespace OaiPmh\Domain;
  * - is used to qualify XML elements in OAI-PMH responses.
  *
  * Domain concerns such as XML serialization or protocol transport are handled outside this class.
- *
- * @author    Paul Slits <paul.slits@gmail.com>
- * @copyright (c) 2025 Paul Slits
- * @license   MIT License - https://opensource.org/licenses/MIT
- * @link      https://github.com/pslits/oai-pmh
- * @since     0.1.0
  */
 final class MetadataNamespace
 {

@@ -10,24 +10,18 @@
 
 namespace OaiPmh\Tests\Domain;
 
+use OaiPmh\Domain\AnyUri;
+use OaiPmh\Domain\MetadataNamespace;
+use OaiPmh\Domain\NamespacePrefix;
+use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use ReflectionException;
-use OaiPmh\Domain\AnyUri;
-use PHPUnit\Framework\TestCase;
-use OaiPmh\Domain\NamespacePrefix;
-use OaiPmh\Domain\MetadataNamespace;
 
 /**
  * Tests for the MetadataNamespace class.
  *
  * This class contains unit tests for the MetadataNamespace value object,
  * ensuring it behaves correctly as a value object in the OAI-PMH domain.
- *
- * @author    Paul Slits <paul.slits@gmail.com>
- * @copyright (c) 2025 Paul Slits
- * @license   MIT License - https://opensource.org/licenses/MIT
- * @link      https://github.com/pslits/oai-pmh
- * @since     0.1.0
  */
 class MetadataNamespaceTest extends TestCase
 {
@@ -157,7 +151,9 @@ class MetadataNamespaceTest extends TestCase
         $actual = (string)$namespace;
 
         // Then: It should return a string in the expected format
-        $expected = 'MetadataNamespace(prefix: NamespacePrefix(prefix: oai_dc), uri: AnyUri(uri: http://www.openarchives.org/OAI/2.0/oai_dc/))';
+        $expected = 'MetadataNamespace(' .
+        'prefix: NamespacePrefix(prefix: oai_dc), ' .
+        'uri: AnyUri(uri: http://www.openarchives.org/OAI/2.0/oai_dc/))';
         $this->assertSame($expected, $actual);
     }
 

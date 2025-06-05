@@ -10,8 +10,8 @@
 
 namespace OaiPmh\Tests\Domain;
 
-use OaiPmh\Domain\AnyUri;
 use InvalidArgumentException;
+use OaiPmh\Domain\AnyUri;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -19,12 +19,6 @@ use PHPUnit\Framework\TestCase;
  *
  * This class contains unit tests for the AnyUri value object,
  * ensuring it behaves correctly as a value object in the OAI-PMH domain.
- *
- * @author    Paul Slits <paul.slits@gmail.com>
- * @copyright (c) 2025 Paul Slits
- * @license   MIT License - https://opensource.org/licenses/MIT
- * @link      https://github.com/pslits/oai-pmh
- * @since     0.1.0
  */
 class AnyUriTest extends TestCase
 {
@@ -38,15 +32,13 @@ class AnyUriTest extends TestCase
     {
         // Given: A valid URI
         $uri = 'http://www.openarchives.org/OAI/2.0/oai_dc.xsd';
-        $anyUri = new AnyUri($uri);
 
         // When: I create an AnyUri instance
+        $anyUri = new AnyUri($uri);
+
         // Then: It should be created successfully
-        $this->assertInstanceOf(AnyUri::class, $anyUri);
         $this->assertSame($uri, $anyUri->getValue());
     }
-
-    // Test for Unicode/Internationalized URIs (Optional):
 
     /**
      * User Story:
@@ -58,11 +50,11 @@ class AnyUriTest extends TestCase
     {
         // Given: A valid Unicode URI
         $uri = 'http://example.com/路径/文件.xml';
-        $anyUri = new AnyUri($uri);
 
         // When: I create an AnyUri instance
+        $anyUri = new AnyUri($uri);
+
         // Then: It should be created successfully
-        $this->assertInstanceOf(AnyUri::class, $anyUri);
         $this->assertSame($uri, $anyUri->getValue());
     }
 
@@ -112,6 +104,7 @@ class AnyUriTest extends TestCase
 
         // When: I check if they are equal
         $isEqual = $anyUri1->equals($anyUri2);
+
         // Then: They should not be considered equal
         $this->assertFalse($isEqual);
     }
