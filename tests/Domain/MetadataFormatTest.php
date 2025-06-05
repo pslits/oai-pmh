@@ -67,8 +67,10 @@ class MetadataFormatTest extends TestCase
      */
     public function testGettersReturnExpectedValues(): void
     {
+        // Given: A MetadataFormat instance with predefined values
         $prefix = $this->givenMetadataPrefix('oai_dc');
 
+        // When: I create a MetadataFormat instance
         $namespaces = $this->givenMetadataNamespaceCollection(
             $this->givenMetadataNamespace('oai_dc', 'http://www.openarchives.org/OAI/2.0/oai_dc/')
         );
@@ -76,6 +78,7 @@ class MetadataFormatTest extends TestCase
         $rootTag = $this->givenMetadataRootTag('oai_dc:dc');
         $format = new MetadataFormat($prefix, $namespaces, $schemaUrl, $rootTag);
 
+        // Then: The getters should return the expected values
         $this->assertSame($prefix, $format->getPrefix());
         $this->assertSame($namespaces, $format->getNamespaces());
         $this->assertSame($schemaUrl, $format->getSchemaUrl());
@@ -92,8 +95,13 @@ class MetadataFormatTest extends TestCase
      */
     public function testMetadataFormatIsImmutable(): void
     {
+        // Given: A MetadataFormat instance
         $format = $this->givenMetadataFormat();
+
+        // When: I use reflection to inspect its properties
         $reflection = new \ReflectionClass($format);
+
+        // Then: All properties should be private
         foreach ($reflection->getProperties() as $property) {
             $this->assertTrue($property->isPrivate(), "Property {$property->getName()} should be private.");
         }
@@ -107,9 +115,15 @@ class MetadataFormatTest extends TestCase
      */
     public function testMetadataFormatEqualityByValue(): void
     {
+        // Given: Two MetadataFormat instances with the same values
         $format1 = $this->givenMetadataFormat();
         $format2 = $this->givenMetadataFormat();
-        $this->assertTrue($format1->equals($format2));
+
+        // When: I check if they are equal
+        $isEqual = $format1->equals($format2);
+
+        // Then: They should be considered equal
+        $this->assertTrue($isEqual);
     }
 
     /**
@@ -120,9 +134,15 @@ class MetadataFormatTest extends TestCase
      */
     public function testMetadataFormatNotEqualWhenDifferent(): void
     {
+        // Given: Two MetadataFormat instances with different values
         $format1 = $this->givenMetadataFormat();
         $format2 = $this->givenMetadataFormatWithDifferentPrefix();
-        $this->assertFalse($format1->equals($format2));
+
+        // When: I check if they are equal
+        $isEqual = $format1->equals($format2);
+
+        // Then: They should not be considered equal
+        $this->assertFalse($isEqual);
     }
 
     /**
@@ -133,16 +153,20 @@ class MetadataFormatTest extends TestCase
      */
     public function testToStringReturnsExpectedFormat(): void
     {
+        // Given: A MetadataFormat instance with predefined values
         $format = $this->givenMetadataFormat();
 
+        // When: I convert it to a string
+        $stringRepresentation = (string)$format;
+
+        // Then: The string representation should match the expected format
         $expected = 'MetadataFormat(prefix: MetadataPrefix(prefix: oai_dc), namespaces: ' .
             'MetadataNamespaceCollection(namespaces: ' .
             'MetadataNamespace(prefix: oai_dc, uri: http://www.openarchives.org/OAI/2.0/oai_dc/), ' .
             'MetadataNamespace(prefix: oai_marc, uri: http://www.openarchives.org/OAI/2.0/oai_marc/)), ' .
             'schemaUrl: AnyUri(uri: http://www.openarchives.org/OAI/2.0/oai_dc.xsd), ' .
             'rootTag: MetadataRootTag(rootTag: oai_dc:dc))';
-
-        $this->assertSame($expected, (string)$format);
+        $this->assertSame($expected, $stringRepresentation);
     }
 
     // --- Helper methods ---

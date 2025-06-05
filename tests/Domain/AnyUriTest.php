@@ -14,6 +14,18 @@ use OaiPmh\Domain\AnyUri;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * Tests for the AnyUri class.
+ *
+ * This class contains unit tests for the AnyUri value object,
+ * ensuring it behaves correctly as a value object in the OAI-PMH domain.
+ *
+ * @author    Paul Slits <paul.slits@gmail.com>
+ * @copyright (c) 2025 Paul Slits
+ * @license   MIT License - https://opensource.org/licenses/MIT
+ * @link      https://github.com/pslits/oai-pmh
+ * @since     0.1.0
+ */
 class AnyUriTest extends TestCase
 {
     /**
@@ -24,8 +36,12 @@ class AnyUriTest extends TestCase
      */
     public function testCanInstantiateWithValidUri(): void
     {
+        // Given: A valid URI
         $uri = 'http://www.openarchives.org/OAI/2.0/oai_dc.xsd';
         $anyUri = new AnyUri($uri);
+
+        // When: I create an AnyUri instance
+        // Then: It should be created successfully
         $this->assertInstanceOf(AnyUri::class, $anyUri);
         $this->assertSame($uri, $anyUri->getValue());
     }
@@ -40,8 +56,12 @@ class AnyUriTest extends TestCase
      */
     public function testCanInstantiateWithUnicodeUri(): void
     {
+        // Given: A valid Unicode URI
         $uri = 'http://example.com/路径/文件.xml';
         $anyUri = new AnyUri($uri);
+
+        // When: I create an AnyUri instance
+        // Then: It should be created successfully
         $this->assertInstanceOf(AnyUri::class, $anyUri);
         $this->assertSame($uri, $anyUri->getValue());
     }
@@ -72,17 +92,28 @@ class AnyUriTest extends TestCase
      */
     public function testEqualsReturnsTrueForSameValue(): void
     {
+        // Given: Two AnyUri instances with the same URI
         $uri = 'http://www.openarchives.org/OAI/2.0/oai_dc.xsd';
         $anyUri1 = new AnyUri($uri);
         $anyUri2 = new AnyUri($uri);
-        $this->assertTrue($anyUri1->equals($anyUri2));
+
+        // When: I check if they are equal
+        $isEqual = $anyUri1->equals($anyUri2);
+
+        // Then: They should be considered equal
+        $this->assertTrue($isEqual);
     }
 
     public function testEqualsReturnsFalseForDifferentValue(): void
     {
+        // Given: Two AnyUri instances with different URIs
         $anyUri1 = new AnyUri('http://www.openarchives.org/OAI/2.0/oai_dc.xsd');
         $anyUri2 = new AnyUri('http://www.openarchives.org/OAI/2.0/oai_marc.xsd');
-        $this->assertFalse($anyUri1->equals($anyUri2));
+
+        // When: I check if they are equal
+        $isEqual = $anyUri1->equals($anyUri2);
+        // Then: They should not be considered equal
+        $this->assertFalse($isEqual);
     }
 
     /**
@@ -93,10 +124,16 @@ class AnyUriTest extends TestCase
      */
     public function testToStringReturnsExpectedFormat(): void
     {
+        // Given: A valid URI
         $uri = 'http://www.openarchives.org/OAI/2.0/oai_dc.xsd';
         $anyUri = new AnyUri($uri);
+
+        // When: I convert it to a string
+        $stringRepresentation = (string)$anyUri;
+
+        // Then: The string representation should match the expected format
         $expected = "AnyUri(uri: $uri)";
-        $this->assertSame($expected, (string)$anyUri);
+        $this->assertSame($expected, $stringRepresentation);
     }
 
     /**

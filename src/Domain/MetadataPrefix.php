@@ -12,7 +12,25 @@ namespace OaiPmh\Domain;
 
 use InvalidArgumentException;
 
-class MetadataPrefix
+/**
+ * Class MetadataPrefix
+ *
+ * Represents a metadata prefix used in OAI-PMH requests and responses.
+ *
+ * This value object:
+ * - encapsulates a metadata prefix,
+ * - provides validation to ensure it adheres to the expected format,
+ * - is immutable and compared by value (not identity).
+ *
+ * Domain concerns such as XML serialization or protocol transport are handled outside this class.
+ *
+ * @author    Paul Slits <paul.slits@gmail.com>
+ * @copyright (c) 2025 Paul Slits
+ * @license   MIT License - https://opensource.org/licenses/MIT
+ * @link      https://github.com/pslits/oai-pmh
+ * @since     0.1.0
+ */
+final class MetadataPrefix
 {
     private string $prefix;
 
@@ -53,18 +71,7 @@ class MetadataPrefix
     }
 
     /**
-     * Validates the metadata prefix against the expected pattern: It must consist of:
-     * - alphanumeric characters: A-Z, a-z, 0-9
-     * - hyphens: -
-     * - underscores: _
-     * - dots: .
-     * - exclamation marks: !
-     * - tildes: ~
-     * - asterisks: *
-     * - single quotes: '
-     * - parentheses: ()
-     * * The prefix must not contain any other characters or whitespace.
-     * - The prefix can be any combination of these characters, but must not be empty.
+     * Validates the metadata prefix against the expected pattern.
      *
      * @param string $prefix The prefix to validate.
      * @throws \InvalidArgumentException If the prefix does not match the expected pattern.

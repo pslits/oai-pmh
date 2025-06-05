@@ -36,8 +36,13 @@ class MetadataPrefixTest extends TestCase
      */
     public function testCanInstantiateWithValidPrefix(): void
     {
+        // Given: A valid prefix
         $prefix = 'oai_dc';
+
+        // When: I create a MetadataPrefix instance
         $metadataPrefix = new MetadataPrefix($prefix);
+
+        // Then: The instance should be created successfully
         $this->assertInstanceOf(MetadataPrefix::class, $metadataPrefix);
         $this->assertSame($prefix, $metadataPrefix->getValue());
     }
@@ -50,8 +55,13 @@ class MetadataPrefixTest extends TestCase
      */
     public function testThrowsExceptionForEmptyPrefix(): void
     {
+        // Given: An empty prefix
+        $metadataPrefix = '';
+
+        // When: I try to create a MetadataPrefix instance with the empty prefix
+        // Then: It should throw an InvalidArgumentException
         $this->expectException(InvalidArgumentException::class);
-        new MetadataPrefix('');
+        new MetadataPrefix($metadataPrefix);
     }
 
     /**
@@ -62,17 +72,32 @@ class MetadataPrefixTest extends TestCase
      */
     public function testEqualsReturnsTrueForSameValue(): void
     {
+        // Given: Two MetadataPrefix instances with the same value
         $prefix = 'oai_dc';
-        $a = new MetadataPrefix($prefix);
-        $b = new MetadataPrefix($prefix);
-        $this->assertTrue($a->equals($b));
+        $array1 = new MetadataPrefix($prefix);
+        $array2 = new MetadataPrefix($prefix);
+
+        // When: I check if they are equal
+        $isEqual = $array1->equals($array2);
+
+        // Then: They should be considered equal
+        $this->assertTrue($isEqual, 'MetadataPrefix instances with the same value should be equal.');
     }
 
     public function testEqualsReturnsFalseForDifferentValue(): void
     {
-        $a = new MetadataPrefix('oai_dc');
-        $b = new MetadataPrefix('marc21');
-        $this->assertFalse($a->equals($b));
+        // Given: Two MetadataPrefix instances with different values
+        $array1 = new MetadataPrefix('oai_dc');
+        $array2 = new MetadataPrefix('marc21');
+
+        // When: I check if they are equal
+        $isEqual = $array1->equals($array2);
+
+        // Then: They should not be considered equal
+        $this->assertFalse(
+            $isEqual,
+            'MetadataPrefix instances with different values should not be equal.'
+        );
     }
 
     /**
@@ -83,10 +108,20 @@ class MetadataPrefixTest extends TestCase
      */
     public function testToStringReturnsExpectedFormat(): void
     {
+        // Given: A MetadataPrefix instance
         $prefix = 'oai_dc';
         $metadataPrefix = new MetadataPrefix($prefix);
+
+        // When: I convert it to a string
+        $stringRepresentation = (string)$metadataPrefix;
+
+        // Then: The string representation should match the expected format
         $expected = "MetadataPrefix(prefix: $prefix)";
-        $this->assertSame($expected, (string)$metadataPrefix);
+        $this->assertSame(
+            $expected,
+            $stringRepresentation,
+            'String representation of MetadataPrefix should match expected format.'
+        );
     }
 
     /**
@@ -99,8 +134,13 @@ class MetadataPrefixTest extends TestCase
      */
     public function testIsImmutable(): void
     {
+        // Given: A MetadataPrefix instance
         $metadataPrefix = new MetadataPrefix('oai_dc');
+
+        // When: I create a ReflectionClass instance
         $reflection = new \ReflectionClass($metadataPrefix);
+
+        // Then: All properties should be private
         foreach ($reflection->getProperties() as $property) {
             $this->assertTrue($property->isPrivate(), "Property {$property->getName()} should be private.");
         }
