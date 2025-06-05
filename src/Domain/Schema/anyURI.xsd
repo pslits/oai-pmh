@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    XML Schema Definition for validating elements of type xs:anyURI.
+
+    This file is part of the OAI-PMH project.
+    Purpose:
+      Defines a simple XML schema with a root element containing a single "uri" element of type xs:anyURI.
+      This schema is used to validate that a given XML document contains a valid URI according to the XML Schema anyURI type.
+
+    @author    Paul Slits <paul.slits@gmail.com>
+    @copyright (c) 2025 Paul Slits
+    @license   MIT License - https://opensource.org/licenses/MIT
+    @link      https://github.com/pslits/oai-pmh
+    @since     0.1.0
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="root">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="uri" type="xs:anyURI"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
