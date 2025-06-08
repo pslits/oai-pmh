@@ -10,8 +10,7 @@
 
 namespace OaiPmh\Tests\Domain;
 
-use InvalidArgumentException;
-use OaiPmh\Domain\AnyUri;
+use OaiPmh\Domain\ValueObject\AnyUri;
 use PHPUnit\Framework\TestCase;
 
 /**

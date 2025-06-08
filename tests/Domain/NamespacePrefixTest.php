@@ -11,7 +11,7 @@
 namespace OaiPmh\Tests\Domain;
 
 use InvalidArgumentException;
-use OaiPmh\Domain\NamespacePrefix;
+use OaiPmh\Domain\ValueObject\NamespacePrefix;
 use PHPUnit\Framework\TestCase;
 
 /**

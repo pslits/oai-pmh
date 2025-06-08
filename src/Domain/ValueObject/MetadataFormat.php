@@ -8,7 +8,7 @@
  * @since     0.1.0
  */
 
-namespace OaiPmh\Domain;
+namespace OaiPmh\Domain\ValueObject;
 
 /**
  * Represents a metadata format declaration as defined by the OAI-PMH protocol.

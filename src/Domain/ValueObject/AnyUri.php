@@ -8,7 +8,7 @@
  * @since     0.1.0
  */
 
-namespace OaiPmh\Domain;
+namespace OaiPmh\Domain\ValueObject;
 
 use DOMDocument;
 use InvalidArgumentException;
@@ -29,7 +29,7 @@ class AnyUri
 {
     private string $uri;
 
-    private const ANYURI_XSD_PATH = __DIR__ . '/Schema/anyURI.xsd';
+    private const ANYURI_XSD_PATH = __DIR__ . '/../Schema/anyURI.xsd';
 
     /**
      * Constructs a new AnyUri instance.
