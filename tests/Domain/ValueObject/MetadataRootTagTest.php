@@ -8,7 +8,7 @@
  * @since     0.1.0
  */
 
-namespace OaiPmh\Tests\Domain;
+namespace OaiPmh\Tests\Domain\ValueObject;
 
 use InvalidArgumentException;
 use OaiPmh\Domain\ValueObject\MetadataRootTag;
