@@ -8,7 +8,7 @@
  * @since     0.1.0
  */
 
-namespace OaiPmh\Tests\Domain;
+namespace OaiPmh\Tests\Domain\ValueObject;
 
 use OaiPmh\Domain\ValueObject\AnyUri;
 use OaiPmh\Domain\ValueObject\MetadataNamespace;
