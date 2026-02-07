@@ -94,9 +94,9 @@ class MetadataFormatTest extends TestCase
         // When: I use reflection to inspect its properties
         $reflection = new \ReflectionClass($format);
 
-        // Then: All properties should be private
+        // Then: All properties should be protected
         foreach ($reflection->getProperties() as $property) {
-            $this->assertTrue($property->isPrivate(), "Property {$property->getName()} should be private.");
+            $this->assertTrue($property->isProtected(), "Property {$property->getName()} should be private.");
         }
     }
 

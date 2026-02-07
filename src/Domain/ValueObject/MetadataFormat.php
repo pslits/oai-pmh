@@ -21,16 +21,11 @@ namespace OaiPmh\Domain\ValueObject;
  * Typically used to represent a single metadata format supported by an OAI-PMH repository.
  * Concerns such as XML serialization, protocol transport, or I/O are handled outside the domain layer.
  */
-final class MetadataFormat
+final class MetadataFormat extends ContainerFormat
 {
-    private MetadataPrefix $prefix;
-    private MetadataNamespaceCollection $namespaces;
-    private AnyUri $schemaUrl;
-    private MetadataRootTag $rootTag;
-
     /**
      * MetadataFormat constructor.
-     * Initializes a new instance of the MetadataFormat class.
+     * This constructor initializes the metadata format with a prefix, namespaces, schema URL, and root tag.
      * @param MetadataPrefix $prefix The OAI-PMH metadata prefix.
      * @param MetadataNamespaceCollection $namespaces A collection of MetadataNamespace objects
      * @param AnyUri $schemaUrl The fully qualified URI of the XSD schema defining the format structure.
@@ -42,87 +37,18 @@ final class MetadataFormat
         AnyUri $schemaUrl,
         MetadataRootTag $rootTag
     ) {
-        $this->prefix = $prefix;
-        $this->namespaces = $namespaces;
-        $this->schemaUrl = $schemaUrl;
-        $this->rootTag = $rootTag;
-    }
-
-    /**
-     * Returns a string representation of the MetadataFormat object.
-     * The string format is presented as:
-     * `MetadataFormat(prefix: <prefix>, namespaces: <namespaces>, schemaUrl: <schemaUrl>, rootTag: <rootTag>)`
-     *
-     * @return string A string representation of the MetadataFormat object.
-     */
-    public function __toString(): string
-    {
-        return sprintf(
-            'MetadataFormat(prefix: %s, namespaces: %s, schemaUrl: %s, rootTag: %s)',
-            (string)$this->prefix,
-            (string)$this->namespaces,
-            (string)$this->schemaUrl,
-            (string)$this->rootTag
-        );
+        parent::__construct($prefix, $namespaces, $schemaUrl, $rootTag);
     }
 
     /**
      * Get the OAI-PMH metadata prefix.
-     *
+     * This prefix is used to identify the metadata format in OAI-PMH requests and responses.
      * @return MetadataPrefix The metadata prefix used in the OAI-PMH protocol.
      */
     public function getPrefix(): MetadataPrefix
     {
-        return $this->prefix;
-    }
-
-    /**
-     * Get the XML namespaces used in the metadata format.
-     *
-     * @return MetadataNamespaceCollection The collection of namespaces
-     */
-    public function getNamespaces(): MetadataNamespaceCollection
-    {
-        return $this->namespaces;
-    }
-
-    /**
-     * Get the schema URL for the metadata format.
-     *
-     * @return AnyUri The URI of the XSD schema defining the format structure.
-     */
-    public function getSchemaUrl(): AnyUri
-    {
-        return $this->schemaUrl;
-    }
-
-    /**
-     * Get the root tag for the metadata format.
-     *
-     * @return MetadataRootTag The name of the root element in the XML representation for this format.
-     */
-    public function getRootTag(): MetadataRootTag
-    {
-        return $this->rootTag;
-    }
-
-    /**
-     * Checks if this MetadataFormat is equal to another.
-     *
-     * @param MetadataFormat $other The other metadata format to compare against.
-     * @return bool True if the two metadata formats are equal, false otherwise.
-     */
-    public function equals(MetadataFormat $other): bool
-    {
-        if (
-            !$this->prefix->equals($other->getPrefix()) ||
-            !$this->namespaces->equals($other->getNamespaces()) ||
-            !$this->schemaUrl->equals($other->getSchemaUrl()) ||
-            !$this->rootTag->equals($other->getRootTag())
-        ) {
-            return false;
-        }
-
-        return true;
+        // Always returns non-null for MetadataFormat
+        /** @var MetadataPrefix */
+        return parent::getPrefix();
     }
 }
