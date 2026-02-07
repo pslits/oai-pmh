@@ -99,9 +99,11 @@ final class BaseURL
         $scheme = parse_url($url, PHP_URL_SCHEME);
         if ($scheme === false || $scheme === null) {
             // This should not happen since filter_var already checks for valid URLs, but we check it just in case.
+            // @codeCoverageIgnoreStart
             throw new InvalidArgumentException(
                 sprintf('Unable to parse URL scheme: %s', $url)
             );
+            // @codeCoverageIgnoreEnd
         }
         if (!in_array(strtolower($scheme), ['http', 'https'], true)) {
             throw new InvalidArgumentException(

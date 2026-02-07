@@ -46,7 +46,9 @@ final class UTCdatetime
 
         // Although this statement can never be reached, it is kept for clarity.
         if ($dt === false) {
+            // @codeCoverageIgnoreStart
             throw new InvalidArgumentException('Invalid date/time format or value.');
+            // @codeCoverageIgnoreEnd
         }
 
         $this->dateTime = $dt;
@@ -140,9 +142,11 @@ final class UTCdatetime
         } else {
             // Although this case should never be reached due to the constructor's type hinting,
             // it is included for completeness.
+            // @codeCoverageIgnoreStart
             throw new InvalidArgumentException(
                 sprintf('Unknown granularity: %s', $granularity->getValue())
             );
+            // @codeCoverageIgnoreEnd
         }
     }
 }
