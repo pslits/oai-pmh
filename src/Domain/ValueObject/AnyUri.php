@@ -94,7 +94,9 @@ class AnyUri
          * TODO: Not possible to test invalid URI in this context (issue #7)
          */
         if (!$dom->schemaValidate(self::ANYURI_XSD_PATH)) {
+            // @codeCoverageIgnoreStart
             throw new InvalidArgumentException("Invalid URI: $_uri");
+            // @codeCoverageIgnoreEnd
         }
     }
 
