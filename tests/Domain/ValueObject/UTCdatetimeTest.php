@@ -20,7 +20,7 @@ class UTCdatetimeTest extends TestCase
         $granularity = new Granularity(Granularity::DATE);
         $utc = new UTCdatetime('2024-06-10', $granularity);
         $this->assertInstanceOf(UTCdatetime::class, $utc);
-        $this->assertSame('2024-06-10', $utc->getValue());
+        $this->assertSame('2024-06-10', $utc->getDateTime());
     }
 
     public function testCanInstantiateWithValidDateTime(): void
@@ -28,7 +28,7 @@ class UTCdatetimeTest extends TestCase
         $granularity = new Granularity(Granularity::DATE_TIME_SECOND);
         $utc = new UTCdatetime('2024-06-10T12:34:56Z', $granularity);
         $this->assertInstanceOf(UTCdatetime::class, $utc);
-        $this->assertSame('2024-06-10T12:34:56Z', $utc->getValue());
+        $this->assertSame('2024-06-10T12:34:56Z', $utc->getDateTime());
     }
 
     /**
@@ -61,7 +61,7 @@ class UTCdatetimeTest extends TestCase
     {
         $granularity = new Granularity(Granularity::DATE_TIME_SECOND);
         $utc = new UTCdatetime('2024-06-10T12:34:56Z', $granularity);
-        $dateTime = $utc->getDateTime();
+        $dateTime = $utc->getDateTimeImmutable();
         $this->assertInstanceOf(\DateTimeImmutable::class, $dateTime);
         $this->assertSame('2024-06-10T12:34:56+00:00', $dateTime->format('c'));
     }
