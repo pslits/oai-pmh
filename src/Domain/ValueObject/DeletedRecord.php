@@ -13,12 +13,19 @@ namespace OaiPmh\Domain\ValueObject;
 use InvalidArgumentException;
 
 /**
- * Represents the OAI-PMH deletedRecord support as a value object.
+ * Represents the OAI-PMH deletedRecord support policy as a value object.
+ *
+ * According to OAI-PMH 2.0 specification section 3.5 (Deleted Records), repositories
+ * must declare how they handle deleted records using one of three values:
+ * - 'no': repository does not maintain information about deletions
+ * - 'transient': repository maintains deletion info but not persistently/completely
+ * - 'persistent': repository maintains complete deletion info with no time limit
  *
  * This value object:
  * - encapsulates a validated deletedRecord value,
  * - is immutable and compared by value (not identity),
- * - ensures only allowed deletedRecord values are accepted.
+ * - ensures only allowed deletedRecord values are accepted,
+ * - is required in the OAI-PMH Identify response.
  */
 final class DeletedRecord
 {
@@ -37,21 +44,24 @@ final class DeletedRecord
     /**
      * Constructs a new DeletedRecord instance.
      *
-     * @param string $value The deletedRecord value to validate and store.
-     * @throws InvalidArgumentException If the value is not allowed.
+     * Validates that the value is one of the three allowed values defined
+     * by the OAI-PMH specification.
+     *
+     * @param string $deletedRecord The deletedRecord policy value ('no', 'transient', or 'persistent').
+     * @throws InvalidArgumentException If the value is not one of the allowed values.
      */
-    public function __construct(string $value)
+    public function __construct(string $deletedRecord)
     {
-        $this->validateDeletedRecord($value);
-        $this->value = $value;
+        $this->validateDeletedRecord($deletedRecord);
+        $this->value = $deletedRecord;
     }
 
     /**
      * Returns the deletedRecord value.
      *
-     * @return string The deletedRecord value.
+     * @return string The deletedRecord policy value ('no', 'transient', or 'persistent').
      */
-    public function getValue(): string
+    public function getDeletedRecord(): string
     {
         return $this->value;
     }
@@ -59,16 +69,20 @@ final class DeletedRecord
     /**
      * Checks if this DeletedRecord is equal to another.
      *
-     * @param DeletedRecord $other The other DeletedRecord to compare with.
+     * Two DeletedRecord instances are equal if they represent the same policy.
+     *
+     * @param DeletedRecord $otherDeletedRecord The other DeletedRecord to compare with.
      * @return bool True if both DeletedRecord objects have the same value, false otherwise.
      */
-    public function equals(self $other): bool
+    public function equals(self $otherDeletedRecord): bool
     {
-        return $this->value === $other->value;
+        return $this->value === $otherDeletedRecord->value;
     }
 
     /**
      * Returns a string representation of the DeletedRecord object.
+     *
+     * Provides a human-readable representation useful for debugging and logging.
      *
      * @return string A string representation of the DeletedRecord.
      */
@@ -80,16 +94,19 @@ final class DeletedRecord
     /**
      * Validates the deletedRecord value.
      *
-     * @param string $value The deletedRecord value to validate.
-     * @throws InvalidArgumentException If the value is not allowed.
+     * Ensures the value is one of the three allowed values defined in the
+     * OAI-PMH 2.0 specification.
+     *
+     * @param string $deletedRecord The deletedRecord value to validate.
+     * @throws InvalidArgumentException If the value is not one of: 'no', 'transient', 'persistent'.
      */
-    private function validateDeletedRecord(string $value): void
+    private function validateDeletedRecord(string $deletedRecord): void
     {
-        if (!in_array($value, self::ALLOWED, true)) {
+        if (!in_array($deletedRecord, self::ALLOWED, true)) {
             throw new InvalidArgumentException(
                 sprintf(
                     'Invalid deletedRecord value: %s. Allowed values are: %s',
-                    $value,
+                    $deletedRecord,
                     implode(', ', self::ALLOWED)
                 )
             );

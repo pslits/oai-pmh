@@ -38,7 +38,7 @@ class BaseURLTest extends TestCase
 
         // Then: The object should be created without error
         $this->assertInstanceOf(BaseURL::class, $baseUrl);
-        $this->assertSame($url, $baseUrl->getValue());
+        $this->assertSame($url, $baseUrl->getBaseUrl());
     }
 
     /**
@@ -57,7 +57,7 @@ class BaseURLTest extends TestCase
 
         // Then: The object should be created without error
         $this->assertInstanceOf(BaseURL::class, $baseUrl);
-        $this->assertSame($url, $baseUrl->getValue());
+        $this->assertSame($url, $baseUrl->getBaseUrl());
     }
 
     /**
@@ -152,7 +152,7 @@ class BaseURLTest extends TestCase
 
         // Then: The object should be created without error
         $this->assertInstanceOf(BaseURL::class, $baseUrl);
-        $this->assertSame($url, $baseUrl->getValue());
+        $this->assertSame($url, $baseUrl->getBaseUrl());
     }
 
     /**
@@ -171,7 +171,7 @@ class BaseURLTest extends TestCase
 
         // Then: The object should be created without error
         $this->assertInstanceOf(BaseURL::class, $baseUrl);
-        $this->assertSame($url, $baseUrl->getValue());
+        $this->assertSame($url, $baseUrl->getBaseUrl());
     }
 
     /**
@@ -275,7 +275,7 @@ class BaseURLTest extends TestCase
 
         // Then: The object should be created without error
         $this->assertInstanceOf(BaseURL::class, $baseUrl);
-        $this->assertSame($url, $baseUrl->getValue());
+        $this->assertSame($url, $baseUrl->getBaseUrl());
     }
 
     /**
@@ -294,6 +294,6 @@ class BaseURLTest extends TestCase
 
         // Then: The object should be created without error
         $this->assertInstanceOf(BaseURL::class, $baseUrl);
-        $this->assertSame($url, $baseUrl->getValue());
+        $this->assertSame($url, $baseUrl->getBaseUrl());
     }
 }

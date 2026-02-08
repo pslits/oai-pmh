@@ -38,7 +38,7 @@ class DeletedRecordTest extends TestCase
 
             // Then: The instance should be created successfully
             $this->assertInstanceOf(DeletedRecord::class, $deletedRecord);
-            $this->assertSame($value, $deletedRecord->getValue());
+            $this->assertSame($value, $deletedRecord->getDeletedRecord());
         }
     }
 

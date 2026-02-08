@@ -15,10 +15,16 @@ use InvalidArgumentException;
 /**
  * Represents an OAI-PMH <description> container as a value object.
  *
+ * According to OAI-PMH 2.0 specification section 4.2 (Identify), the description
+ * element is an optional and repeatable container that holds data about the repository.
+ * Each description must reference an XML schema via schemaLocation and can contain
+ * community-defined metadata (e.g., oai-identifier, branding, rights).
+ *
  * This value object:
- * - encapsulates a description format, which includes a metadata prefix, namespaces, schema URL, and root tag,
+ * - encapsulates a description format (structure) and associated data (content),
  * - is immutable and compared by value (not identity),
- * - can serialize its data to XML for OAI-PMH responses.
+ * - supports flexible repository metadata using standard schemas,
+ * - can be serialized to XML for OAI-PMH Identify responses.
  */
 final class Description
 {
@@ -28,8 +34,11 @@ final class Description
 
     /**
      * Constructs a new Description instance.
-     * This represents a repository-level description in OAI-PMH.
-     * @param DescriptionFormat $descriptionFormat The description format defining how the description is structured.
+     *
+     * Combines a description format (defining the XML structure) with the actual
+     * data content for that format.
+     *
+     * @param DescriptionFormat $descriptionFormat The format defining this description's structure.
      * @param array<string, mixed> $data The data associated with this description.
      */
     public function __construct(DescriptionFormat $descriptionFormat, array $data)
@@ -40,7 +49,9 @@ final class Description
 
     /**
      * Returns the description format.
-     * This format defines how the description is structured and serialized.
+     *
+     * The format defines the XML schema, namespaces, and root tag for this description.
+     *
      * @return DescriptionFormat The description format used for this description.
      */
     public function getDescriptionFormat(): DescriptionFormat
@@ -50,7 +61,10 @@ final class Description
 
     /**
      * Returns the data array.
-     * This array contains the actual data for the description,
+     *
+     * Contains the actual content for this description, structured according to
+     * the associated format's schema.
+     *
      * @return array<string, mixed> The data associated with this description.
      */
     public function getData(): array
@@ -60,20 +74,24 @@ final class Description
 
     /**
      * Checks if this Description is equal to another.
-     * This method compares the description format and data.
-     * @param Description $other The other Description to compare with.
+     *
+     * Two descriptions are equal if they have the same format and the same data.
+     *
+     * @param Description $otherDescription The other Description to compare with.
      * @return bool True if both Description objects have the same format and data, false otherwise.
      */
-    public function equals(self $other): bool
+    public function equals(self $otherDescription): bool
     {
-        return $this->descriptionFormat->equals($other->descriptionFormat)
-            && $this->data === $other->data;
+        return $this->descriptionFormat->equals($otherDescription->descriptionFormat)
+            && $this->data === $otherDescription->data;
     }
 
     /**
      * Returns a string representation of the Description object.
-     * This is useful for debugging and logging.
-     * @return string A string representation of the Description.
+     *
+     * Provides a human-readable representation useful for debugging and logging.
+     *
+     * @return string A string representation of the Description including format and data.
      */
     public function __toString(): string
     {

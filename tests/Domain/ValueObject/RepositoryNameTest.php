@@ -38,7 +38,7 @@ class RepositoryNameTest extends TestCase
 
         // Then: The object should be created without error
         $this->assertInstanceOf(RepositoryName::class, $repositoryName);
-        $this->assertSame($name, $repositoryName->getValue());
+        $this->assertSame($name, $repositoryName->getRepositoryName());
     }
 
     /**
@@ -57,7 +57,7 @@ class RepositoryNameTest extends TestCase
 
         // Then: The object should be created without error
         $this->assertInstanceOf(RepositoryName::class, $repositoryName);
-        $this->assertSame($name, $repositoryName->getValue());
+        $this->assertSame($name, $repositoryName->getRepositoryName());
     }
 
     /**
@@ -76,7 +76,7 @@ class RepositoryNameTest extends TestCase
 
         // Then: The object should be created without error
         $this->assertInstanceOf(RepositoryName::class, $repositoryName);
-        $this->assertSame($name, $repositoryName->getValue());
+        $this->assertSame($name, $repositoryName->getRepositoryName());
     }
 
     /**
@@ -95,7 +95,7 @@ class RepositoryNameTest extends TestCase
 
         // Then: The object should be created without error
         $this->assertInstanceOf(RepositoryName::class, $repositoryName);
-        $this->assertSame($name, $repositoryName->getValue());
+        $this->assertSame($name, $repositoryName->getRepositoryName());
     }
 
     /**
@@ -172,7 +172,7 @@ class RepositoryNameTest extends TestCase
         // Then: The object should be created without error
         // Note: The original value is preserved, only validation uses trim()
         $this->assertInstanceOf(RepositoryName::class, $repositoryName);
-        $this->assertSame($name, $repositoryName->getValue());
+        $this->assertSame($name, $repositoryName->getRepositoryName());
     }
 
     /**
@@ -277,7 +277,7 @@ class RepositoryNameTest extends TestCase
 
         // Then: The object should be created without error
         $this->assertInstanceOf(RepositoryName::class, $repositoryName);
-        $this->assertSame($name, $repositoryName->getValue());
+        $this->assertSame($name, $repositoryName->getRepositoryName());
     }
 
     /**
@@ -296,6 +296,6 @@ class RepositoryNameTest extends TestCase
 
         // Then: The object should be created without error
         $this->assertInstanceOf(RepositoryName::class, $repositoryName);
-        $this->assertSame($name, $repositoryName->getValue());
+        $this->assertSame($name, $repositoryName->getRepositoryName());
     }
 }

@@ -38,7 +38,7 @@ class ProtocolVersionTest extends TestCase
 
         // Then: The instance should be created successfully
         $this->assertInstanceOf(ProtocolVersion::class, $protocolVersion);
-        $this->assertSame($version, $protocolVersion->getValue());
+        $this->assertSame($version, $protocolVersion->getProtocolVersion());
     }
 
     /**

@@ -401,7 +401,7 @@ class RepositoryIdentityTest extends TestCase
 
             // Then: It should match the provided policy
             $this->assertSame($deletedRecord, $retrieved);
-            $this->assertSame($policyValue, $retrieved->getValue());
+            $this->assertSame($policyValue, $retrieved->getDeletedRecord());
         }
     }
 
