@@ -61,10 +61,24 @@ Every PHP file must include this header block:
 - Include validation in the constructor
 - Throw `InvalidArgumentException` for validation failures
 - Implement these methods:
-  - `getValue()` or similar getter to retrieve the value
-  - `equals(self $other): bool` for value comparison
+  - Domain-specific getter (e.g., `getBaseUrl()`, `getDeletedRecord()`, `getProtocolVersion()`)
+  - `getValue()` as an alias for backward compatibility
+  - `equals(self $otherInstance): bool` for value comparison (use descriptive parameter names)
   - `__toString(): string` for string representation
 - Use descriptive error messages in exceptions
+- When validation is complex, extract into separate private methods (e.g., `validateNotEmpty()`, `validateFormat()`)
+
+#### Getter Method Pattern
+Value objects should provide:
+1. **Domain-specific getter**: Named after the domain concept (e.g., `getBaseUrl()`, `getRepositoryName()`)
+2. **Generic getter alias**: `getValue()` for consistency and backward compatibility
+3. Both should return the same value; the domain-specific name improves code readability
+
+#### Parameter Naming
+- **Constructor parameters**: Use descriptive names matching the domain concept (e.g., `$baseUrl`, not `$url`)
+- **equals() method**: Use descriptive parameter names (e.g., `$otherBaseUrl`, not `$other`)
+- **Validation methods**: Use descriptive parameter names matching what they validate
+- **CRITICAL**: When renaming parameters, update ALL references within the method body
 
 ### Example Value Object Pattern:
 ```php
@@ -72,31 +86,88 @@ final class ExampleValue
 {
     private string $value;
 
-    public function __construct(string $value)
+    /**
+     * Constructs a new ExampleValue instance.
+     *
+     * @param string $exampleValue The value to encapsulate.
+     * @throws InvalidArgumentException If validation fails.
+     */
+    public function __construct(string $exampleValue)
     {
-        $this->validateValue($value);
-        $this->value = $value;
+        $this->validate($exampleValue);
+        $this->value = $exampleValue;
     }
 
+    /**
+     * Returns the example value (domain-specific getter).
+     *
+     * @return string The encapsulated value.
+     */
+    public function getExampleValue(): string
+    {
+        return $this->value;
+    }
+
+    /**
+     * Returns the value (alias for getExampleValue).
+     *
+     * Provided for consistency with other value objects.
+     *
+     * @return string The encapsulated value.
+     */
     public function getValue(): string
     {
         return $this->value;
     }
 
-    public function equals(self $other): bool
+    /**
+     * Checks if this ExampleValue is equal to another.
+     *
+     * @param ExampleValue $otherExampleValue The other instance to compare with.
+     * @return bool True if both have the same value, false otherwise.
+     */
+    public function equals(self $otherExampleValue): bool
     {
-        return $this->value === $other->value;
+        return $this->value === $otherExampleValue->value;
     }
 
+    /**
+     * Returns a string representation of the ExampleValue object.
+     *
+     * @return string A string representation.
+     */
     public function __toString(): string
     {
         return sprintf('ExampleValue(value: %s)', $this->value);
     }
 
-    private function validateValue(string $value): void
+    /**
+     * Validates the example value.
+     *
+     * For complex validation, split into separate methods:
+     * - validateNotEmpty()
+     * - validateFormat()
+     * - validateBusinessRule()
+     *
+     * @param string $exampleValue The value to validate.
+     * @throws InvalidArgumentException If validation fails.
+     */
+    private function validate(string $exampleValue): void
     {
-        if (empty($value)) {
-            throw new InvalidArgumentException('Value cannot be empty');
+        $this->validateNotEmpty($exampleValue);
+        // Add more validation as needed
+    }
+
+    /**
+     * Validates that the value is not empty.
+     *
+     * @param string $exampleValue The value to validate.
+     * @throws InvalidArgumentException If the value is empty.
+     */
+    private function validateNotEmpty(string $exampleValue): void
+    {
+        if (empty($exampleValue)) {
+            throw new InvalidArgumentException('ExampleValue cannot be empty');
         }
     }
 }
@@ -107,6 +178,55 @@ final class ExampleValue
 - Implement `\Countable` and `\IteratorAggregate` interfaces when appropriate
 - Validate items when adding to the collection
 - Make collections immutable when possible
+
+### Refactoring Safety Guidelines
+
+When refactoring value objects (renaming parameters, methods, or extracting validation):
+
+#### Parameter Renaming Checklist
+1. ✅ Update the parameter declaration in method signature
+2. ✅ Update ALL references to that parameter within the method body
+3. ✅ Update @param docblock tags
+4. ✅ Update related test files that call the method
+5. ✅ Run tests to verify no references were missed
+6. ✅ Run PHPStan to catch any type mismatches
+
+**Common Mistake**: Renaming `$value` → `$exampleValue` in the constructor but forgetting to update `$this->validate($value)` → `$this->validate($exampleValue)`
+
+#### Method Signature Changes
+When adding domain-specific getters (e.g., `getBaseUrl()`) while keeping `getValue()`:
+1. ✅ Add the new domain-specific getter method
+2. ✅ Keep `getValue()` as an alias for backward compatibility
+3. ✅ Update test files to use the new getter (or keep getValue() if preferred)
+4. ✅ Document both methods clearly in docblocks
+5. ✅ Run full test suite to ensure nothing breaks
+
+#### Validation Refactoring Pattern
+When splitting complex validation into separate methods:
+1. ✅ Create a main `validate()` method that calls sub-validators
+2. ✅ Name sub-validators descriptively: `validateNotEmpty()`, `validateFormat()`, `validateHttpProtocol()`
+3. ✅ Each validator should have a single responsibility
+4. ✅ Pass the value being validated as a parameter (don't access $this->value)
+5. ✅ Document each validator's purpose
+6. ✅ Keep validators private
+7. ✅ Ensure tests still cover all validation paths
+
+Example:
+```php
+private function validateUrl(string $baseUrl): void
+{
+    $this->validateNotEmpty($baseUrl);
+    $this->validateUrlFormat($baseUrl);
+    $this->validateHttpProtocol($baseUrl);
+}
+
+private function validateNotEmpty(string $baseUrl): void
+{
+    if (empty($baseUrl)) {
+        throw new InvalidArgumentException('BaseURL cannot be empty.');
+    }
+}
+```
 
 ## Testing Requirements
 
@@ -125,6 +245,15 @@ final class ExampleValue
 ### Test Documentation
 - Add docblocks to test classes explaining what is being tested
 - Complex test methods should have comments explaining the scenario
+
+### Test Update Requirements
+When changing value object method signatures:
+- **Adding domain-specific getters**: Update test assertions to use new getter names
+  - Example: `$baseUrl->getValue()` → `$baseUrl->getBaseUrl()`
+- **Changing parameter names**: Review if tests pass parameters that need renaming
+- **Refactoring validation**: Ensure all validation paths are still tested
+- **Always run full test suite** after refactoring to catch breaking changes
+- If tests fail after refactoring, **fix the tests**, not the value object (unless there's a real bug)
 
 ## Quality Assurance
 
@@ -178,6 +307,39 @@ final class ExampleValue
 - Ensure all implementations comply with OAI-PMH 2.0 specification
 - Validate metadata formats according to standards
 - Handle protocol-specific data types correctly (e.g., UTC datetime, granularity)
+
+### OAI-PMH Documentation Requirements
+Every value object representing an OAI-PMH concept must include:
+1. **Class Docblock**: Reference the specific OAI-PMH 2.0 specification section
+   - Example: "According to OAI-PMH 2.0 specification section 4.2 (Identify)..."
+2. **Explain the OAI-PMH Context**: What part of the protocol does this implement?
+3. **List Allowed Values**: For enumeration types (e.g., DeletedRecord: no/transient/persistent)
+4. **Protocol Requirements**: Whether required or optional in OAI-PMH responses
+5. **Format Specifications**: For formatted values (e.g., UTC datetime, granularity patterns)
+6. **Usage Context**: Where this value appears in OAI-PMH responses
+
+Example:
+```php
+/**
+ * Represents the OAI-PMH deletedRecord support policy as a value object.
+ *
+ * According to OAI-PMH 2.0 specification section 3.5 (Deleted Records), repositories
+ * must declare how they handle deleted records using one of three values:
+ * - 'no': repository does not maintain information about deletions
+ * - 'transient': repository maintains deletion info but not persistently/completely
+ * - 'persistent': repository maintains complete deletion info with no time limit
+ *
+ * This value object:
+ * - encapsulates a validated deletedRecord value,
+ * - is immutable and compared by value (not identity),
+ * - ensures only allowed deletedRecord values are accepted,
+ * - is required in the OAI-PMH Identify response.
+ */
+final class DeletedRecord
+{
+    // ...
+}
+```
 
 ## Value Object Analysis Documentation
 
@@ -483,6 +645,52 @@ tests/Domain/ValueObject/{Name}Test.php
    - Link to related value objects
    - Reference OAI-PMH spec sections
    - Connect to GitHub issues
+
+### Updating Analysis Documents After Refactoring
+
+When modifying existing value objects, update their analysis documents to reflect changes:
+
+**When to Update:**
+- ✅ New methods added (e.g., domain-specific getters)
+- ✅ Validation logic refactored (e.g., split into multiple methods)
+- ✅ Parameter names changed (affects code examples)
+- ✅ New design decisions made
+- ⚠️ Simple docblock improvements (optional unless significant)
+- ⚠️ Backward-compatible changes (document in "Design Decisions" section)
+
+**What to Update:**
+1. **Implementation Details Section**: Update class structure table with new methods
+2. **Code Examples Section**: Update examples using new method names
+3. **Design Decisions Section**: Add new decision subsections with context/rationale
+4. **Test Coverage Analysis**: Update if new tests added
+5. **Known Issues & Future Enhancements**: Mark completed TODOs
+6. **Document metadata**: Update "Analysis Date" in header
+
+**Example Update Flow:**
+```markdown
+## Design Decisions
+
+### Decision 4: Domain-Specific Getter Method
+**Context:** Originally provided only getValue() for accessing the value
+**Why:** Adding getBaseUrl() improves code readability and self-documentation
+**Alternatives:** Keep only getValue() for consistency
+**Trade-offs:** 
+- ✅ Benefit: More expressive, domain-driven API
+- ✅ Benefit: Backward compatible (getValue() kept as alias)
+- ⚠️ Trade-off: Two method names for same functionality
+**Implementation:**
+```php
+public function getBaseUrl(): string
+{
+    return $this->value;
+}
+
+public function getValue(): string  // Alias for backward compatibility
+{
+    return $this->value;
+}
+```
+```
 
 ## Additional Best Practices
 

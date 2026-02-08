@@ -11,16 +11,23 @@
 namespace OaiPmh\Domain\ValueObject;
 
 /**
- * Base class for OAI-PMH XML container formats:
- * - metadata (record-level)
- * - about (record-level)
- * - description (repository-level)
- * - setDescription (set-level)
+ * Base class for OAI-PMH XML container formats.
  *
- * This value object:
- * - encapsulates an optional metadata prefix, namespaces, schema URL, and root tag,
+ * According to OAI-PMH 2.0, several elements serve as containers for extensible
+ * XML content with specific schemas:
+ * - metadata (record-level descriptive metadata)
+ * - about (record-level rights/provenance information)
+ * - description (repository-level descriptions)
+ * - setDescription (set-level descriptions)
+ *
+ * This abstract base class:
+ * - encapsulates common properties: optional prefix, namespaces, schema URL, and root tag,
  * - is immutable and compared by value (not identity),
- * - can be extended for specific protocol containers.
+ * - can be extended for specific protocol containers,
+ * - provides shared equality and string representation logic.
+ *
+ * TODO: Consider refactoring to separate concerns - format specification vs. data container.
+ * See GitHub issue for Container refactoring discussion.
  */
 abstract class ContainerFormat
 {
@@ -30,10 +37,13 @@ abstract class ContainerFormat
     protected MetadataRootTag $rootTag;
 
     /**
-     * @param MetadataPrefix|null $prefix The OAI-PMH metadata prefix (optional for about/description/setDescription).
-     * @param MetadataNamespaceCollection $namespaces
-     * @param AnyUri $schemaUrl
-     * @param MetadataRootTag $rootTag
+     * Constructs a new ContainerFormat instance.
+     *
+     * @param MetadataPrefix|null $prefix The metadata prefix (required for metadata formats,
+     *                                    optional for about/description/setDescription).
+     * @param MetadataNamespaceCollection $namespaces The XML namespaces for this format.
+     * @param AnyUri $schemaUrl The URL of the XSD schema defining the container structure.
+     * @param MetadataRootTag $rootTag The root element tag for the XML container.
      */
     public function __construct(
         ?MetadataPrefix $prefix,
@@ -49,7 +59,10 @@ abstract class ContainerFormat
 
     /**
      * Get the OAI-PMH metadata prefix (may be null).
-     * This is typically null for about, description, and setDescription containers.
+     *
+     * The prefix is typically null for about, description, and setDescription containers,
+     * as these are embedded rather than independently harvested.
+     *
      * @return MetadataPrefix|null The metadata prefix, or null if not applicable.
      */
     public function getPrefix(): ?MetadataPrefix
@@ -59,7 +72,9 @@ abstract class ContainerFormat
 
     /**
      * Get the XML namespaces used in the format.
-     * This collection contains all namespaces required for the XML representation.
+     *
+     * Contains all namespace declarations required for valid XML serialization.
+     *
      * @return MetadataNamespaceCollection The collection of namespaces.
      */
     public function getNamespaces(): MetadataNamespaceCollection
@@ -69,7 +84,10 @@ abstract class ContainerFormat
 
     /**
      * Get the schema URL for the format.
-     * This is the fully qualified URI of the XSD schema defining the format structure.
+     *
+     * Points to the XSD schema that defines the structure and validation rules
+     * for this container format.
+     *
      * @return AnyUri The schema URL.
      */
     public function getSchemaUrl(): AnyUri
@@ -79,7 +97,9 @@ abstract class ContainerFormat
 
     /**
      * Get the root tag for the format.
-     * This is the root element of the XML representation for this format.
+     *
+     * The root element name used when serializing this container to XML.
+     *
      * @return MetadataRootTag The root tag.
      */
     public function getRootTag(): MetadataRootTag
@@ -88,22 +108,25 @@ abstract class ContainerFormat
     }
 
     /**
-     * Checks if this container is equal to another.
-     * This method compares the prefix, namespaces, schema URL, and root tag.
-     * @param ContainerFormat $other The other container to compare with.
-     * @return bool True if both containers have the same properties, false otherwise.
+     * Checks if this container format is equal to another.
+     *
+     * Two formats are equal if they have matching prefix, namespaces, schema URL,
+     * and root tag.
+     *
+     * @param ContainerFormat $otherFormat The other container format to compare with.
+     * @return bool True if both formats have the same properties, false otherwise.
      */
-    public function equals(self $other): bool
+    public function equals(self $otherFormat): bool
     {
         $isPrefixEqual =
-            ($this->prefix === null && $other->prefix === null)
-            || ($this->prefix && $other->prefix && $this->prefix->equals($other->prefix));
+            ($this->prefix === null && $otherFormat->prefix === null)
+            || ($this->prefix && $otherFormat->prefix && $this->prefix->equals($otherFormat->prefix));
 
         return (
             $isPrefixEqual
-            && $this->namespaces->equals($other->namespaces)
-            && $this->schemaUrl->equals($other->schemaUrl)
-            && $this->rootTag->equals($other->rootTag)
+            && $this->namespaces->equals($otherFormat->namespaces)
+            && $this->schemaUrl->equals($otherFormat->schemaUrl)
+            && $this->rootTag->equals($otherFormat->rootTag)
         );
     }
 

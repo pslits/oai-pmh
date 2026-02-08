@@ -13,28 +13,31 @@ namespace OaiPmh\Domain\ValueObject;
 /**
  * Represents the complete identity information of an OAI-PMH repository.
  *
- * This value object encapsulates all required and optional elements for the
- * OAI-PMH Identify response as defined in the OAI-PMH 2.0 specification.
+ * According to OAI-PMH 2.0 specification section 4.2 (Identify), repositories
+ * must respond to the Identify request with a specific set of required and
+ * optional elements that describe the repository's characteristics and capabilities.
  *
  * This value object:
  * - aggregates all repository identification value objects,
  * - is immutable and compared by value (not identity),
  * - ensures all required OAI-PMH Identify elements are present,
- * - supports optional description containers for extended metadata.
+ * - supports optional description containers for extended metadata,
+ * - serves as the domain representation of an Identify response.
  *
- * Required OAI-PMH Identify elements:
+ * Required OAI-PMH Identify elements (per specification section 4.2):
  * - repositoryName: A human-readable name for the repository
- * - baseURL: The base URL of the repository
- * - protocolVersion: The version of the OAI-PMH protocol supported
- * - adminEmail: At least one email address of an administrator
- * - earliestDatestamp: The guaranteed lower limit on all datestamps
- * - deletedRecord: The deleted record support policy
- * - granularity: The finest temporal granularity supported
+ * - baseURL: The base URL of the repository (HTTP/HTTPS)
+ * - protocolVersion: The version of the OAI-PMH protocol supported (currently '2.0')
+ * - adminEmail: At least one email address of a repository administrator
+ * - earliestDatestamp: The guaranteed lower limit of all datestamps (UTC)
+ * - deletedRecord: The deleted record support policy (no/transient/persistent)
+ * - granularity: The finest harvesting granularity supported (date/datetime)
  *
- * Optional OAI-PMH Identify elements:
- * - description: Optional extensible containers for community-specific data
+ * Optional OAI-PMH Identify elements (per specification section 4.2):
+ * - description: Zero or more extensible containers for community-specific metadata
  *
  * @see http://www.openarchives.org/OAI/openarchivesprotocol.html#Identify
+ * @see OAI-PMH 2.0 Specification Section 4.2
  */
 final class RepositoryIdentity
 {

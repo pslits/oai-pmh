@@ -15,14 +15,15 @@ use InvalidArgumentException;
 /**
  * Represents the human-readable name of an OAI-PMH repository.
  *
+ * According to OAI-PMH 2.0 specification section 4.2 (Identify), the repositoryName
+ * element contains a human-readable name for the repository. This helps users and
+ * harvesters identify the repository.
+ *
  * This value object:
  * - encapsulates the repository name as a non-empty string,
  * - validates that the name is not empty or contains only whitespace,
  * - is immutable and compared by value (not identity),
- * - is used in the Identify response to provide a descriptive name for the repository.
- *
- * According to the OAI-PMH specification, the repositoryName is a human-readable name
- * for the repository that helps identify it to users and harvesters.
+ * - is required in the OAI-PMH Identify response.
  *
  * Domain concerns such as XML serialization or protocol transport are handled outside this class.
  */
@@ -32,19 +33,22 @@ final class RepositoryName
 
     /**
      * RepositoryName constructor.
-     * Initializes a new instance of the RepositoryName class.
      *
-     * @param string $name The human-readable name of the repository.
+     * Initializes a new instance with validation to ensure the name is not empty.
+     *
+     * @param string $repositoryName The human-readable name of the repository.
      * @throws InvalidArgumentException If the name is empty or contains only whitespace.
      */
-    public function __construct(string $name)
+    public function __construct(string $repositoryName)
     {
-        $this->validateName($name);
-        $this->name = $name;
+        $this->validateName($repositoryName);
+        $this->name = $repositoryName;
     }
 
     /**
      * Returns a string representation of the RepositoryName object.
+     *
+     * Provides a human-readable representation useful for debugging and logging.
      *
      * @return string A string representation in the format: RepositoryName(name: <name>)
      */
@@ -58,7 +62,7 @@ final class RepositoryName
      *
      * @return string The human-readable name of the repository.
      */
-    public function getValue(): string
+    public function getRepositoryName(): string
     {
         return $this->name;
     }
@@ -68,12 +72,12 @@ final class RepositoryName
      *
      * Two RepositoryName instances are considered equal if they have the same name value.
      *
-     * @param RepositoryName $other The other RepositoryName to compare against.
+     * @param RepositoryName $otherRepositoryName The other RepositoryName to compare against.
      * @return bool True if both RepositoryNames are equal, false otherwise.
      */
-    public function equals(RepositoryName $other): bool
+    public function equals(RepositoryName $otherRepositoryName): bool
     {
-        return $this->name === $other->name;
+        return $this->name === $otherRepositoryName->name;
     }
 
     /**
