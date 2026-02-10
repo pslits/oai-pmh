@@ -30,6 +30,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+        with:
+          # Ensure we fetch full history so the PR head commit exists locally
+          fetch-depth: 0
+          # If this is a pull_request event, checkout the PR head commit so uploads use the correct SHA;
+          # otherwise fall back to the default sha for push events.
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -76,3 +82,5 @@ jobs:
         with:
           files: coverage.xml
           token: ${{ secrets.CODECOV_TOKEN }}
+          # Ensure Codecov attributes the upload to the PR head commit (not the temporary merge commit)
+          override_commit: ${{ github.event.pull_request.head.sha || github.sha }}
