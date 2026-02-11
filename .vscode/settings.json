@@ -1,0 +1,8 @@
+{
+    "chat.tools.terminal.autoApprove": {
+        "vendor\\bin\\phpstan": true,
+        "vendor\\bin\\phpcbf": true,
+        "vendor\\bin\\phpcs": true,
+        "256M": true
+    }
+}
