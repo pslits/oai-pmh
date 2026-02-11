@@ -41,8 +41,7 @@ final class RecordIdentifierTest extends TestCase
 
         // Then
         $this->assertInstanceOf(RecordIdentifier::class, $recordId);
-        $this->assertSame($identifier, $recordId->getIdentifier());
-        $this->assertSame($identifier, $recordId->getValue());
+        $this->assertSame($identifier, $recordId->getRecordIdentifier());
     }
 
     /**
@@ -60,7 +59,7 @@ final class RecordIdentifierTest extends TestCase
         $recordId = new RecordIdentifier($identifier);
 
         // Then
-        $this->assertSame($identifier, $recordId->getIdentifier());
+        $this->assertSame($identifier, $recordId->getRecordIdentifier());
     }
 
     /**
@@ -78,7 +77,7 @@ final class RecordIdentifierTest extends TestCase
         $recordId = new RecordIdentifier($identifier);
 
         // Then
-        $this->assertSame($identifier, $recordId->getIdentifier());
+        $this->assertSame($identifier, $recordId->getRecordIdentifier());
     }
 
     /**
@@ -96,7 +95,7 @@ final class RecordIdentifierTest extends TestCase
         $recordId = new RecordIdentifier($identifier);
 
         // Then
-        $this->assertSame($identifier, $recordId->getIdentifier());
+        $this->assertSame($identifier, $recordId->getRecordIdentifier());
     }
 
     /**
@@ -198,12 +197,12 @@ final class RecordIdentifierTest extends TestCase
         $recordId = new RecordIdentifier($identifier);
 
         // When/Then - RecordIdentifier has no setters
-        $this->assertSame($identifier, $recordId->getIdentifier());
+        $this->assertSame($identifier, $recordId->getRecordIdentifier());
 
         // Creating a new instance doesn't affect the original
         $newRecordId = new RecordIdentifier('oai:example.org:67890');
-        $this->assertSame($identifier, $recordId->getIdentifier());
-        $this->assertNotSame($recordId->getIdentifier(), $newRecordId->getIdentifier());
+        $this->assertSame($identifier, $recordId->getRecordIdentifier());
+        $this->assertNotSame($recordId->getRecordIdentifier(), $newRecordId->getRecordIdentifier());
     }
 
     /**
@@ -221,7 +220,7 @@ final class RecordIdentifierTest extends TestCase
         $recordId = new RecordIdentifier($identifier);
 
         // Then
-        $this->assertSame($identifier, $recordId->getIdentifier());
+        $this->assertSame($identifier, $recordId->getRecordIdentifier());
     }
 
     /**
@@ -239,6 +238,6 @@ final class RecordIdentifierTest extends TestCase
         $recordId = new RecordIdentifier($identifier);
 
         // Then
-        $this->assertSame($identifier, $recordId->getIdentifier());
+        $this->assertSame($identifier, $recordId->getRecordIdentifier());
     }
 }

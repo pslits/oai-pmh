@@ -42,7 +42,6 @@ final class SetSpecTest extends TestCase
         // Then
         $this->assertInstanceOf(SetSpec::class, $setSpec);
         $this->assertSame($spec, $setSpec->getSetSpec());
-        $this->assertSame($spec, $setSpec->getValue());
     }
 
     /**

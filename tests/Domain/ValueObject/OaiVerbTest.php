@@ -41,7 +41,6 @@ final class OaiVerbTest extends TestCase
         // Then
         $this->assertInstanceOf(OaiVerb::class, $oaiVerb);
         $this->assertSame($verb, $oaiVerb->getVerb());
-        $this->assertSame($verb, $oaiVerb->getValue());
     }
 
     /**

@@ -71,23 +71,11 @@ final class OaiVerb
     }
 
     /**
-     * Returns the OAI-PMH verb (domain-specific getter).
+     * Returns the OAI-PMH verb.
      *
      * @return string The verb.
      */
     public function getVerb(): string
-    {
-        return $this->verb;
-    }
-
-    /**
-     * Returns the verb value (alias for getVerb).
-     *
-     * Provided for consistency with other value objects.
-     *
-     * @return string The verb.
-     */
-    public function getValue(): string
     {
         return $this->verb;
     }

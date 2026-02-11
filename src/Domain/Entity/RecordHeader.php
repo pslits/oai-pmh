@@ -144,7 +144,7 @@ final class RecordHeader
     {
         return sprintf(
             'RecordHeader(identifier: %s, datestamp: %s, deleted: %s, sets: %d)',
-            $this->identifier->getValue(),
+            $this->identifier->getRecordIdentifier(),
             $this->datestamp->getDateTime(),
             $this->isDeleted ? 'true' : 'false',
             count($this->setSpecs)

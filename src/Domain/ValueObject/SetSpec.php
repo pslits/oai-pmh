@@ -72,23 +72,11 @@ final class SetSpec
     }
 
     /**
-     * Returns the set specification (domain-specific getter).
+     * Returns the set specification.
      *
      * @return string The set specification.
      */
     public function getSetSpec(): string
-    {
-        return $this->setSpec;
-    }
-
-    /**
-     * Returns the setSpec value (alias for getSetSpec).
-     *
-     * Provided for consistency with other value objects.
-     *
-     * @return string The set specification.
-     */
-    public function getValue(): string
     {
         return $this->setSpec;
     }

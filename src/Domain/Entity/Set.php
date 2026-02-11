@@ -122,7 +122,7 @@ final class Set
     {
         return sprintf(
             'Set(setSpec: %s, setName: %s)',
-            $this->setSpec->getValue(),
+            $this->setSpec->getSetSpec(),
             $this->setName
         );
     }

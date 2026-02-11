@@ -78,8 +78,7 @@ final class Record
     ) {
         if ($header->isDeleted() && $metadata !== null) {
             throw new InvalidArgumentException(
-                'Deleted records cannot have metadata. Per OAI-PMH 2.0 specification ' .
-                'section 2.5, records with status="deleted" must omit the metadata element.'
+                'Deleted records cannot have metadata.'
             );
         }
 
@@ -141,7 +140,7 @@ final class Record
     {
         return sprintf(
             'Record(identifier: %s, deleted: %s, hasMetadata: %s)',
-            $this->header->getIdentifier()->getValue(),
+            $this->header->getIdentifier()->getRecordIdentifier(),
             $this->isDeleted() ? 'true' : 'false',
             $this->metadata !== null ? 'true' : 'false'
         );

@@ -52,23 +52,11 @@ final class RecordIdentifier
     }
 
     /**
-     * Returns the record identifier (domain-specific getter).
+     * Returns the record identifier.
      *
      * @return string The unique identifier.
      */
-    public function getIdentifier(): string
-    {
-        return $this->identifier;
-    }
-
-    /**
-     * Returns the identifier value (alias for getIdentifier).
-     *
-     * Provided for consistency with other value objects.
-     *
-     * @return string The unique identifier.
-     */
-    public function getValue(): string
+    public function getRecordIdentifier(): string
     {
         return $this->identifier;
     }
