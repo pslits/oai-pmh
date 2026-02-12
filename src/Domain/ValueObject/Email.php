@@ -58,14 +58,16 @@ final class Email
      * Checks if this Email is equal to another.
      *
      * Two Email instances are equal if they have the same email address.
-     * Comparison is case-sensitive.
+     * Comparison is case-insensitive as most email systems treat addresses
+     * case-insensitively in practice (though RFC 5321 local-part is technically
+     * case-sensitive).
      *
      * @param Email $otherEmail The other Email to compare with.
-     * @return bool True if both Email objects have the same address, false otherwise.
+     * @return bool True if both Email objects have the same address (case-insensitive), false otherwise.
      */
     public function equals(self $otherEmail): bool
     {
-        return $this->email === $otherEmail->email;
+        return strtolower($this->email) === strtolower($otherEmail->email);
     }
 
     /**

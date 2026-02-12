@@ -135,4 +135,42 @@ class EmailTest extends TestCase
             $this->assertTrue($property->isPrivate(), "Property {$property->getName()} should be private.");
         }
     }
+
+    /**
+     * User Story:
+     * As a developer,
+     * I want email comparison to be case-insensitive
+     * So that duplicate emails with different casing are detected.
+     */
+    public function testEqualsIsCaseInsensitive(): void
+    {
+        // Given: Two Email instances with different casing
+        $email1 = new Email('Admin@Example.COM');
+        $email2 = new Email('admin@example.com');
+
+        // When: Comparing them
+        $isEqual = $email1->equals($email2);
+
+        // Then: They should be considered equal
+        $this->assertTrue($isEqual, 'Email comparison should be case-insensitive');
+    }
+
+    /**
+     * User Story:
+     * As a developer,
+     * I want to ensure various case combinations are treated as equal
+     * So that email semantics are correctly implemented.
+     */
+    public function testEqualsWithVariousCaseCombinations(): void
+    {
+        // Given: Various case combinations of the same email
+        $baseEmail = new Email('user@domain.com');
+        $upperEmail = new Email('USER@DOMAIN.COM');
+        $mixedEmail = new Email('UsEr@DoMaIn.CoM');
+
+        // When/Then: All should be equal
+        $this->assertTrue($baseEmail->equals($upperEmail));
+        $this->assertTrue($baseEmail->equals($mixedEmail));
+        $this->assertTrue($upperEmail->equals($mixedEmail));
+    }
 }

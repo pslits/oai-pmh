@@ -69,6 +69,8 @@ class AnyUri
     /**
      * Validates the URI against the anyURI XSD schema.
      *
+     * Security: Uses textContent to prevent XML injection.
+     *
      * @param string $_uri The URI to validate.
      *
      * @throws InvalidArgumentException If the URI is not valid according to the anyURI schema.
@@ -80,7 +82,9 @@ class AnyUri
         $root = $dom->createElement('root');
         $dom->appendChild($root);
 
-        $_uriElement = $dom->createElement('uri', $_uri);
+        // Use textContent to safely insert user input (prevents XML injection)
+        $_uriElement = $dom->createElement('uri');
+        $_uriElement->textContent = $_uri;
         $root->appendChild($_uriElement);
 
         // Add schema location attribute on root
@@ -93,10 +97,20 @@ class AnyUri
         /**
          * TODO: Not possible to test invalid URI in this context (issue #7)
          */
-        if (!$dom->schemaValidate(self::ANYURI_XSD_PATH)) {
-            // @codeCoverageIgnoreStart
-            throw new InvalidArgumentException("Invalid URI: $_uri");
-            // @codeCoverageIgnoreEnd
+        try {
+            $isValid = @$dom->schemaValidate(self::ANYURI_XSD_PATH);
+            if (!$isValid) {
+                // @codeCoverageIgnoreStart
+                throw new InvalidArgumentException(
+                    sprintf("Invalid URI: %s", htmlspecialchars($_uri, ENT_QUOTES, 'UTF-8'))
+                );
+                // @codeCoverageIgnoreEnd
+            }
+        } catch (\Exception $e) {
+            // Schema validation failed with an exception (e.g., badly formatted content)
+            throw new InvalidArgumentException(
+                sprintf("Invalid URI: %s", htmlspecialchars($_uri, ENT_QUOTES, 'UTF-8'))
+            );
         }
     }
 
