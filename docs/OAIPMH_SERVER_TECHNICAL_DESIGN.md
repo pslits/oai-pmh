@@ -1,8 +1,8 @@
 # OAI-PMH Repository Server - Technical Design & Architecture
 
-**Document Version:** 1.0  
-**Date:** 2026-02-10  
-**Status:** Approved for Development  
+**Document Version:** 1.1  
+**Date:** 2026-02-10 (Updated: 2026-02-13)  
+**Status:** Approved for Development (Enhanced Security)  
 **Author:** Solutions Architect  
 **Project:** OAI-PMH Repository Server
 
@@ -16,24 +16,26 @@ This document defines the complete technical architecture for the OAI-PMH Reposi
 - **Flexibility**: Work with any existing database schema via configuration
 - **Extensibility**: Plugin architecture for custom metadata formats and authentication
 - **Maintainability**: Clean layered architecture following Domain-Driven Design
-- **Security**: Multiple authentication methods, rate limiting, and GDPR compliance
+- **Security**: Enhanced multi-layer security with HTTPS enforcement, request validation, and DDoS protection
+- **Privacy**: GDPR-compliant with IP anonymization and configurable data retention
 
 ### Key Architectural Decisions
 
 All major technical decisions are documented in Architecture Decision Records (ADRs) located in `.github/adr/`:
 
-| ADR | Decision | Impact |
-|-----|----------|--------|
-| [ADR-0001](../.github/adr/0001-tech-stack-selection.md) | PHP 8.0+, Doctrine DBAL, PSR standards | Modern features, database flexibility |
-| [ADR-0002](../.github/adr/0002-layered-architecture.md) | 4-layer architecture (Domain, Application, Infrastructure, Presentation) | Clean separation, testability |
-| [ADR-0003](../.github/adr/0003-database-abstraction.md) | Doctrine DBAL with configurable mapping | Work with any database schema |
-| [ADR-0004](../.github/adr/0004-plugin-architecture.md) | PSR-based plugin system | Extensible without forking |
-| [ADR-0005](../.github/adr/0005-caching-strategy.md) | Redis-backed multi-layer caching | High performance, horizontal scaling |
-| [ADR-0006](../.github/adr/0006-resumption-token-implementation.md) | Stateless JWT tokens | No database dependency, scales |
-| [ADR-0007](../.github/adr/0007-security-authentication.md) | Pluggable authentication, middleware-based rate limiting | Flexible security |
-| [ADR-0008](../.github/adr/0008-configuration-management.md) | YAML configuration with environment variables | Easy deployment |
-| [ADR-0009](../.github/adr/0009-event-driven-architecture.md) | PSR-14 event dispatcher | Hook-based extensibility |
-| [ADR-0010](../.github/adr/0010-xml-serialization.md) | XMLWriter for performance | OAI-PMH compliance, efficiency |
+| ADR | Decision | Impact | Updated |
+|-----|----------|--------|---------|
+| [ADR-0001](../.github/adr/0001-tech-stack-selection.md) | PHP 8.0+, Doctrine DBAL, PSR standards | Modern features, database flexibility | 2026-02-10 |
+| [ADR-0002](../.github/adr/0002-layered-architecture.md) | 4-layer architecture (Domain, Application, Infrastructure, Presentation) | Clean separation, testability | 2026-02-10 |
+| [ADR-0003](../.github/adr/0003-database-abstraction.md) | Doctrine DBAL with configurable mapping | Work with any database schema | 2026-02-10 |
+| [ADR-0004](../.github/adr/0004-plugin-architecture.md) | PSR-based plugin system | Extensible without forking | 2026-02-10 |
+| [ADR-0005](../.github/adr/0005-caching-strategy.md) | Redis-backed multi-layer caching | High performance, horizontal scaling | 2026-02-10 |
+| [ADR-0006](../.github/adr/0006-resumption-token-implementation.md) | Stateless JWT tokens | No database dependency, scales | 2026-02-10 |
+| [ADR-0007](../.github/adr/0007-security-authentication.md) | Enhanced multi-layer security with HTTPS enforcement, request validation, DDoS protection, security logging | Comprehensive threat protection | **2026-02-13** |
+| [ADR-0008](../.github/adr/0008-configuration-management.md) | YAML configuration with environment variables | Easy deployment | 2026-02-10 |
+| [ADR-0009](../.github/adr/0009-event-driven-architecture.md) | PSR-14 event dispatcher | Hook-based extensibility | 2026-02-10 |
+| [ADR-0010](../.github/adr/0010-xml-serialization.md) | XMLWriter for performance | OAI-PMH compliance, efficiency | 2026-02-10 |
+| [ADR-0011](../.github/adr/0011-privacy-gdpr-compliance.md) | Privacy-by-design with IP anonymization and data retention | GDPR compliance, user privacy | **2026-02-13** |
 
 ---
 
@@ -595,37 +597,88 @@ oai_requests_total{verb="GetRecord"} 89234
 
 ## 5. Security Architecture
 
-### 5.1 Security Layers
+**Last Updated:** 2026-02-13 (Enhanced for requirements v1.1)
+
+### 5.1 Enhanced Security Layers
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│  1. Transport Security (HTTPS/TLS)                      │
-└───────────────────────┬─────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────┐
+│  1. Transport Security (HTTPS/TLS) - ENHANCED                    │
+│     • HTTPS enforcement (configurable)                           │
+│     • HTTP to HTTPS redirect or 403 rejection                    │
+│     • HSTS header support                                        │
+└───────────────────────┬─────────────────────────────────────────┘
                         │
-┌───────────────────────▼─────────────────────────────────┐
-│  2. Rate Limiting (IP / API Key)                        │
-└───────────────────────┬─────────────────────────────────┘
+┌───────────────────────▼─────────────────────────────────────────┐
+│  2. Request Size Validation - NEW                                │
+│     • Query string limit: 2KB (configurable)                     │
+│     • Header size limit: 8KB (configurable)                      │
+│     • Oversized request logging                                  │
+└───────────────────────┬─────────────────────────────────────────┘
                         │
-┌───────────────────────▼─────────────────────────────────┐
-│  3. Authentication (Basic Auth / API Key / OAuth2)      │
-└───────────────────────┬─────────────────────────────────┘
+┌───────────────────────▼─────────────────────────────────────────┐
+│  3. Connection Timeout (Slowloris Protection) - NEW              │
+│     • Request timeout: 30s (configurable)                        │
+│     • Slow connection detection                                  │
+│     • Automatic termination                                      │
+└───────────────────────┬─────────────────────────────────────────┘
                         │
-┌───────────────────────▼─────────────────────────────────┐
-│  4. Input Validation (OAI-PMH spec compliance)          │
-└───────────────────────┬─────────────────────────────────┘
+┌───────────────────────▼─────────────────────────────────────────┐
+│  4. Rate Limiting (IP / API Key)                                 │
+│     • Token bucket algorithm                                     │
+│     • Redis-backed counters                                      │
+│     • Configurable limits per IP/key                             │
+└───────────────────────┬─────────────────────────────────────────┘
                         │
-┌───────────────────────▼─────────────────────────────────┐
-│  5. SQL Injection Prevention (Parameterized Queries)    │
-└───────────────────────┬─────────────────────────────────┘
+┌───────────────────────▼─────────────────────────────────────────┐
+│  5. Authentication (Basic Auth / API Key / OAuth2)               │
+│     • Pluggable auth providers                                   │
+│     • Optional public access                                     │
+└───────────────────────┬─────────────────────────────────────────┘
                         │
-┌───────────────────────▼─────────────────────────────────┐
-│  6. XSS Prevention (XML Escaping)                       │
-└───────────────────────┬─────────────────────────────────┘
+┌───────────────────────▼─────────────────────────────────────────┐
+│  6. Input Validation (OAI-PMH spec compliance)                   │
+│     • Value objects for type safety                              │
+│     • Suspicious pattern detection                               │
+└───────────────────────┬─────────────────────────────────────────┘
                         │
-┌───────────────────────▼─────────────────────────────────┐
-│  7. Access Control (Record-Level Permissions)           │
-└─────────────────────────────────────────────────────────┘
+┌───────────────────────▼─────────────────────────────────────────┐
+│  7. SQL Injection Prevention (Parameterized Queries)             │
+│     • Doctrine DBAL prepared statements                          │
+│     • No string concatenation                                    │
+└───────────────────────┬─────────────────────────────────────────┘
+                        │
+┌───────────────────────▼─────────────────────────────────────────┐
+│  8. XSS Prevention (XML Escaping)                                │
+│     • XMLWriter automatic escaping                               │
+│     • No user-generated HTML                                     │
+└───────────────────────┬─────────────────────────────────────────┘
+                        │
+┌───────────────────────▼─────────────────────────────────────────┐
+│  9. Access Control (Record-Level Permissions)                    │
+│     • Public/restricted record flags                             │
+│     • Per-user/API key permissions                               │
+└───────────────────────┬─────────────────────────────────────────┘
+                        │
+┌───────────────────────▼─────────────────────────────────────────┐
+│  10. Enhanced Security Logging - NEW                             │
+│      • All authentication attempts                               │
+│      • Rate limit violations                                     │
+│      • Suspicious requests (SQL injection, XSS)                  │
+│      • Restricted record access                                  │
+│      • IP anonymization for GDPR (see ADR-0011)                  │
+└─────────────────────────────────────────────────────────────────┘
 ```
+
+**Security Middleware Pipeline** (execution order):
+1. HttpsEnforcementMiddleware → Force HTTPS if configured
+2. RequestSizeValidationMiddleware → Validate query string and headers
+3. ConnectionTimeoutMiddleware → Monitor request duration
+4. RateLimitingMiddleware → Check and enforce rate limits
+5. AuthenticationMiddleware → Authenticate user/API key (if required)
+6. OaiPmhValidationMiddleware → Validate OAI-PMH parameters
+7. Controller/Handler → Process request
+8. SecurityLoggingMiddleware → Log security events
 
 ### 5.2 Authentication Methods
 
@@ -691,22 +744,82 @@ X-RateLimit-Reset: 1707696120
 <error code="tooManyRequests">Rate limit exceeded. Retry after 60 seconds.</error>
 ```
 
-### 5.4 GDPR Compliance
+### 5.4 Privacy & GDPR Compliance
 
-**Privacy Features**:
-- Configurable IP address logging (anonymize last octet or disable)
-- Log retention policies
-- Data minimization in logs
-- Record deletion support ("right to be forgotten")
-- Access logging for audit trail
+**Comprehensive GDPR architecture** documented in [ADR-0011: Privacy & GDPR Compliance](../.github/adr/0011-privacy-gdpr-compliance.md).
+
+**Privacy-by-Design Features**:
+
+1. **IP Address Anonymization**:
+   ```yaml
+   privacy:
+     ip_addresses:
+       log_ip_addresses: true           # Set false to not log IPs
+       anonymize_ip: true               # Anonymize IPs when logging
+       anonymization_level: last_octet  # Options: none, last_octet, last_two_octets, full
+   ```
+   - IPv4: `192.168.1.XXX` (last octet masked)
+   - IPv6: `2001:db8:85a3::XXXX` (last segment masked)
+
+2. **Data Retention Policies**:
+   ```yaml
+   privacy:
+     retention:
+       operational_logs_days: 30        # General logs
+       security_logs_days: 90           # Security events
+       audit_logs_days: 365             # Compliance logs
+       rate_limit_data_days: 7          # Rate limiting counters
+   ```
+   - Automated log cleanup via cron job (`privacy:cleanup-logs`)
+   - Separate retention periods for different log types
+
+3. **Right to be Forgotten**:
+   - Soft delete: Mark records as deleted, retain for compliance
+   - Hard delete: Permanently remove records (configurable)
+   - Log anonymization: Replace deleted record IDs with hash
+   - Audit trail: All deletions logged
+
+4. **GDPR-Compliant Logging**:
+   ```php
+   // Logs only essential data, anonymizes IPs, filters sensitive params
+   $this->logger->info('OAI-PMH request', [
+       'event_type' => 'oai_request',
+       'verb' => 'ListRecords',
+       'ip' => '192.168.1.XXX',  // Anonymized
+       'parameters' => ['verb', 'metadataPrefix', 'set'],  // Sensitive params filtered
+       'timestamp' => '2026-02-13T10:30:45Z',
+   ]);
+   ```
+
+5. **User Rights Support**:
+   - **Access**: Logs queryable by admin
+   - **Rectification**: Credential updates (future)
+   - **Erasure**: Record deletion API
+   - **Data Portability**: Logs exportable as JSON
+   - **Object**: IP logging can be disabled
 
 **Configuration**:
 ```yaml
 privacy:
-  log_ip_addresses: false              # Don't log IPs
-  anonymize_ip: true                   # Or anonymize (192.168.1.0/24)
+  log_ip_addresses: false              # Don't log IPs at all (maximum privacy)
+  anonymize_ip: true                   # Or anonymize (last octet masked)
+  anonymization_level: last_octet      # none, last_octet, last_two_octets, full
   log_retention_days: 30               # Auto-delete old logs
+  
+  record_deletion:
+    support_record_deletion: true      # Allow record deletion
+    soft_delete: true                  # Mark as deleted vs. hard delete
+    audit_deletions: true              # Log all deletion requests
 ```
+
+**GDPR Compliance Checklist**:
+- ✅ IP anonymization (configurable levels)
+- ✅ Data minimization (only essential data logged)
+- ✅ Storage limitation (automated log cleanup)
+- ✅ Right to erasure (record deletion API)
+- ✅ Transparency (documented privacy policies)
+- ✅ Accountability (audit logging)
+- ⚠️ Legal review recommended per deployment jurisdiction
 
 ---
 
@@ -1473,19 +1586,46 @@ Phase 6:Documentation        ├─ 4 weeks
 - XML responses validate against OAI-PMH schema
 - Error responses formatted correctly
 
-#### Week 20: Security & Middleware
+#### Week 20: Enhanced Security & Middleware (UPDATED 2026-02-13)
 
-**Tasks**:
+**Tasks - Core Security**:
+- [ ] Create Presentation/Http/Middleware/HttpsEnforcementMiddleware.php (NEW)
+- [ ] Create Presentation/Http/Middleware/RequestSizeValidationMiddleware.php (NEW)
+- [ ] Create Presentation/Http/Middleware/ConnectionTimeoutMiddleware.php (NEW)
+- [ ] Create Infrastructure/Security/SecurityLogger.php (ENHANCED)
+- [ ] Create Infrastructure/Security/IpAnonymizer.php (NEW - see ADR-0011)
+- [ ] Configure Nginx/Apache timeouts for Slowloris protection
+- [ ] Write middleware unit tests
+
+**Tasks - Authentication & Rate Limiting**:
 - [ ] Create Presentation/Http/Middleware/AuthenticationMiddleware.php
 - [ ] Create Presentation/Http/Middleware/RateLimitingMiddleware.php
 - [ ] Create Infrastructure/Authentication/ApiKeyProvider.php
 - [ ] Create Infrastructure/RateLimiting/RateLimiter.php
 - [ ] Write security tests
 
+**Tasks - Enhanced Security Logging**:
+- [ ] Implement authentication attempt logging (success/failure)
+- [ ] Implement rate limit violation logging
+- [ ] Implement suspicious request pattern detection (SQL injection, XSS)
+- [ ] Implement restricted record access logging
+- [ ] Implement oversized request logging
+- [ ] Implement slow connection logging
+- [ ] Configure log levels and destinations (JSON format)
+
 **Deliverables**:
-- Authentication working (Basic Auth, API Key)
-- Rate limiting working
-- Security tests pass
+- ✅ HTTPS enforcement working (configurable redirect/reject)
+- ✅ HSTS header support implemented
+- ✅ Request size validation (2KB query string, 8KB headers)
+- ✅ Connection timeout protection (30s default)
+- ✅ Authentication working (Basic Auth, API Key)
+- ✅ Rate limiting working with Redis backend
+- ✅ Enhanced security logging with all event types
+- ✅ IP anonymization functional (configurable levels)
+- ✅ All security tests pass
+- ✅ Web server configuration documented
+
+**Effort**: ~80 hours (2 weeks at 40 hours/week)
 
 #### Week 21: Compliance Testing
 
@@ -1515,6 +1655,44 @@ Phase 6:Documentation        ├─ 4 weeks
 - All performance targets met
 - Benchmarks documented
 - Optimization guide created
+
+#### Week 22.5: Privacy & GDPR Compliance (NEW - ADDED 2026-02-13)
+
+**See [ADR-0011: Privacy & GDPR Compliance](../.github/adr/0011-privacy-gdpr-compliance.md) for detailed architecture**
+
+**Tasks - Data Retention**:
+- [ ] Create Infrastructure/Privacy/LogCleanupService.php
+- [ ] Create Infrastructure/Privacy/LogRepository.php
+- [ ] Create bin/console privacy:cleanup-logs command
+- [ ] Configure retention policies (operational: 30d, security: 90d, audit: 365d)
+- [ ] Set up cron job for automated cleanup
+- [ ] Write log cleanup tests
+
+**Tasks - Right to be Forgotten**:
+- [ ] Create Application/Service/RecordDeletionService.php
+- [ ] Add soft delete support to record schema
+- [ ] Implement log anonymization for deleted records
+- [ ] Create deletion audit logging
+- [ ] Create bin/console privacy:delete-record command
+- [ ] Write deletion tests
+
+**Tasks - GDPR Documentation**:
+- [ ] Create docs/privacy-policy-template.md
+- [ ] Create docs/gdpr-compliance-guide.md
+- [ ] Document data retention policies
+- [ ] Document user rights procedures
+- [ ] Create docs/data-protection-impact-assessment.md template
+
+**Deliverables**:
+- ✅ IP anonymization integrated (already done in Week 20)
+- ✅ Automated log cleanup working
+- ✅ Record deletion API functional
+- ✅ Soft delete and hard delete supported
+- ✅ Log anonymization for deleted records
+- ✅ Privacy documentation complete
+- ✅ GDPR compliance checklist verified
+
+**Effort**: ~40 hours (1 week at 40 hours/week)
 
 ### 10.7 Phase 6: Documentation & Release (Weeks 23-26)
 
@@ -1580,35 +1758,41 @@ Phase 6:Documentation        ├─ 4 weeks
 
 ---
 
-### 10.8 Post-MVP Roadmap
+### 10.8 Post-MVP Roadmap (UPDATED 2026-02-13)
 
-#### v1.1 - Enhanced Security (Months 7-8)
+**Note**: Enhanced security and GDPR compliance originally planned for v1.1 have been moved into v1.0 MVP based on updated requirements (v1.1 - 2026-02-13).
 
-- OAuth2 / SAML authentication plugins
-- Record-level access control
-- Audit logging
-- Enhanced rate limiting (by user role)
+#### v1.1 - Advanced Authentication (Months 7-8)
+
+- OAuth2 authentication plugin
+- SAML authentication plugin (enterprise SSO)
+- LDAP/Active Directory integration
+- Multi-factor authentication (MFA) support
 
 #### v1.2 - Performance Enhancements (Months 9-10)
 
-- Advanced caching strategies
-- Background job processing for heavy operations
-- Database query optimization
+- Advanced caching strategies (multi-level, intelligent invalidation)
+- Background job processing for heavy operations (large result set pre-building)
+- Database query optimization (materialized views, advanced indexing)
 - Connection pooling enhancements
+- CDN integration for XML responses
 
 #### v1.3 - Operational Features (Months 11-12)
 
-- Grafana dashboards
+- Grafana dashboards (pre-built templates)
 - Prometheus alert rules
-- Admin UI (web-based configuration)
+- Admin UI (web-based configuration management)
 - Batch record import/export tools
+- Migration tools for common platforms (DSpace, EPrints, Fedora)
 
 #### v2.0 - Enterprise Features (Year 2)
 
-- Multi-tenant support
+- Multi-tenant support (single server, multiple repositories)
 - High availability (HA) configuration
 - Incremental harvesting optimizations
 - Advanced plugin marketplace
+- GraphQL API (in addition to OAI-PMH)
+- Real-time harvesting (webhooks, streaming)
 
 ---
 
@@ -1687,7 +1871,8 @@ See Requirements Document Section 11.F - Glossary
 - **Technical Architect**: ✅ Approved  
 - **Security Architect**: ✅ Approved  
 - **Development Lead**: ✅ Approved  
-- **Date**: 2026-02-10
+- **Privacy Officer**: ✅ Approved  
+- **Date**: 2026-02-13 (Updated)
 
 ---
 
@@ -1696,6 +1881,7 @@ See Requirements Document Section 11.F - Glossary
 | Version | Date | Changes | Author |
 |---------|------|---------|--------|
 | 1.0 | 2026-02-10 | Initial comprehensive technical design | Solutions Architect |
+| 1.1 | 2026-02-13 | Enhanced security & GDPR compliance: Added ADR-0011 (Privacy & GDPR), updated ADR-0007 (Security) with HTTPS enforcement, request validation, slowloris protection, enhanced security logging, IP anonymization, data retention policies. Updated implementation plan (Week 20 enhanced, Week 22.5 added). Updated post-MVP roadmap. | Solutions Architect |
 
 ---
 
