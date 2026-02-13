@@ -16,18 +16,32 @@ Each ADR follows this structure:
 
 ## Index of ADRs
 
-| ADR | Title | Status |
-|-----|-------|--------|
-| [ADR-0001](0001-tech-stack-selection.md) | Technology Stack Selection | Accepted |
-| [ADR-0002](0002-layered-architecture.md) | Layered Architecture Pattern | Accepted |
-| [ADR-0003](0003-database-abstraction.md) | Database Abstraction Strategy | Accepted |
-| [ADR-0004](0004-plugin-architecture.md) | Plugin Architecture Design | Accepted |
-| [ADR-0005](0005-caching-strategy.md) | Caching Strategy | Accepted |
-| [ADR-0006](0006-resumption-token-implementation.md) | Resumption Token Implementation | Accepted |
-| [ADR-0007](0007-security-authentication.md) | Security and Authentication Approach | Accepted |
-| [ADR-0008](0008-configuration-management.md) | Configuration Management | Accepted |
-| [ADR-0009](0009-event-driven-architecture.md) | Event-Driven Extension Points | Accepted |
-| [ADR-0010](0010-xml-serialization.md) | XML Response Serialization | Accepted |
+| ADR | Title | Status | Last Updated |
+|-----|-------|--------|--------------|
+| [ADR-0001](0001-tech-stack-selection.md) | Technology Stack Selection | Accepted | 2026-02-10 |
+| [ADR-0002](0002-layered-architecture.md) | Layered Architecture Pattern | Accepted | 2026-02-10 |
+| [ADR-0003](0003-database-abstraction.md) | Database Abstraction Strategy | Accepted | 2026-02-10 |
+| [ADR-0004](0004-plugin-architecture.md) | Plugin Architecture Design | Accepted | 2026-02-10 |
+| [ADR-0005](0005-caching-strategy.md) | Caching Strategy | Accepted | 2026-02-10 |
+| [ADR-0006](0006-resumption-token-implementation.md) | Resumption Token Implementation | Accepted | 2026-02-10 |
+| [ADR-0007](0007-security-authentication.md) | Security and Authentication Approach | Accepted (Updated) | **2026-02-13** |
+| [ADR-0008](0008-configuration-management.md) | Configuration Management | Accepted | 2026-02-10 |
+| [ADR-0009](0009-event-driven-architecture.md) | Event-Driven Extension Points | Accepted | 2026-02-10 |
+| [ADR-0010](0010-xml-serialization.md) | XML Response Serialization | Accepted | 2026-02-10 |
+| [ADR-0011](0011-privacy-gdpr-compliance.md) | Privacy & GDPR Compliance | **Accepted** | **2026-02-13** |
+
+## Recent Updates (2026-02-13)
+
+**Requirements Enhanced (v1.0 → v1.1)**:
+- Added HTTPS enforcement requirements
+- Added request size validation for security
+- Added Slowloris protection
+- Enhanced security logging requirements
+- Added IP anonymization for GDPR compliance
+
+**Architectural Changes**:
+- **ADR-0007 Updated**: Added HTTPS enforcement, request size validation, slowloris protection, and enhanced security logging
+- **ADR-0011 New**: Comprehensive privacy and GDPR compliance architecture
 
 ## Creating New ADRs
 

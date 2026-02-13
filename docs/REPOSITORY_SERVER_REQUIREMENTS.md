@@ -1,9 +1,10 @@
 # OAI-PMH Repository Server - Requirements Document
 
-**Document Version:** 1.0  
-**Date:** February 10, 2026  
+**Document Version:** 1.1  
+**Date:** February 13, 2026 (Updated)  
+**Original Date:** February 10, 2026  
 **Project:** OAI-PMH Repository Server  
-**Status:** Requirements Approved  
+**Status:** Requirements Approved - Enhanced  
 **License:** MIT License
 
 ---
@@ -16,6 +17,65 @@ The server will be built on top of the existing OAI-PMH value objects library (D
 
 ---
 
+## Table of Contents
+
+1. [Project Vision & Objectives](#1-project-vision--objectives)
+   - 1.1 [Vision Statement](#11-vision-statement)
+   - 1.2 [Primary Objectives](#12-primary-objectives)
+   - 1.3 [Target Audience](#13-target-audience)
+
+2. [High-Level System Architecture](#2-high-level-system-architecture)
+   - 2.1 [System Context Diagram](#21-system-context-diagram)
+   - 2.2 [Component Architecture](#22-component-architecture)
+   - 2.3 [Data Flow Diagram](#23-data-flow-diagram)
+
+3. [Functional Requirements](#3-functional-requirements)
+   - 3.1 [OAI-PMH Protocol Implementation](#31-oai-pmh-protocol-implementation)
+   - 3.2 [Metadata Format Support](#32-metadata-format-support)
+   - 3.3 [Data Source & Storage Architecture](#33-data-source--storage-architecture)
+   - 3.4 [Security & Access Control](#34-security--access-control)
+   - 3.5 [Configuration Management](#35-configuration-management)
+
+4. [Non-Functional Requirements](#4-non-functional-requirements)
+   - 4.1 [Performance Requirements](#41-performance-requirements)
+   - 4.2 [Reliability & Resilience](#42-reliability--resilience)
+   - 4.3 [Operational Requirements](#43-operational-requirements)
+   - 4.4 [Extensibility & Plugin Architecture](#44-extensibility--plugin-architecture)
+   - 4.5 [Database Migration Support](#45-database-migration-support)
+
+5. [Technical Requirements](#5-technical-requirements)
+   - 5.1 [Technology Stack](#51-technology-stack)
+   - 5.2 [Architecture & Design Patterns](#52-architecture--design-patterns)
+   - 5.3 [Code Quality & Standards](#53-code-quality--standards)
+   - 5.4 [Security Requirements](#54-security-requirements)
+
+6. [Deployment & Installation Requirements](#6-deployment--installation-requirements)
+   - 6.1 [Distribution & Packaging](#61-distribution--packaging)
+   - 6.2 [Documentation Requirements](#62-documentation-requirements)
+   - 6.3 [Migration & Upgrade Support](#63-migration--upgrade-support)
+
+7. [Minimum Viable Product (MVP) Scope](#7-minimum-viable-product-mvp-scope)
+
+8. [Standards & Compliance](#8-standards--compliance)
+
+9. [Project Constraints & Assumptions](#9-project-constraints--assumptions)
+
+10. [Stakeholder Requirements](#10-stakeholder-requirements)
+
+11. [Acceptance Criteria Summary](#11-acceptance-criteria-summary)
+
+12. [Risks & Mitigation Strategies](#12-risks--mitigation-strategies)
+
+13. [Success Metrics](#13-success-metrics)
+
+14. [Project Roadmap](#14-project-roadmap)
+
+15. [Appendices](#15-appendices)
+
+16. [Document Approval](#16-document-approval)
+
+---
+
 ## 1. Project Vision & Objectives
 
 ### 1.1 Vision Statement
@@ -23,7 +83,7 @@ Create a high-performance, enterprise-ready OAI-PMH repository server that can b
 
 ### 1.2 Primary Objectives
 1. **Reusability:** Provide a turnkey solution that any organization can deploy without custom development
-2. **Scalability:** Support very large repositories (5M+ records) with high performance (<1s response time)
+2. **Scalability:** Support very large repositories (> 10M records, target: hundreds of millions) with high performance (< 500ms response time)
 3. **Flexibility:** Enable customization through a comprehensive plugin architecture
 4. **Standards Compliance:** Strict adherence to OAI-PMH 2.0 specification and PHP best practices
 5. **Operational Excellence:** Production-ready with monitoring, logging, caching, and resilience
@@ -40,7 +100,184 @@ Create a high-performance, enterprise-ready OAI-PMH repository server that can b
 
 ---
 
-## 2. Functional Requirements
+## 2. High-Level System Architecture
+
+> **Note:** The following diagrams provide a high-level overview of system context, components, and data flow. Detailed architectural design will be provided in the Technical Design Document and Architecture Decision Records (ADRs).
+
+### 2.1 System Context Diagram
+
+```mermaid
+graph TB
+    subgraph External["<b>EXTERNAL ACTORS</b>"]
+        H["<b>OAI-PMH Harvesters</b><br/>• Automated metadata collection<br/>• Research portals<br/>• Aggregation services"]
+        A["<b>Repository Administrators</b><br/>• Configure server<br/>• Manage sets<br/>• Monitor usage"]
+        D["<b>Platform Engineers (DevOps)</b><br/>• Deploy<br/>• Monitor<br/>• Scale<br/>• Maintain"]
+    end
+    
+    H -->|"HTTP/HTTPS<br/>OAI-PMH 2.0 XML"| S
+    A -->|"Configuration<br/>YAML files"| S
+    D -->|"Infrastructure<br/>Management"| S
+    
+    S["<b>OAI-PMH REPOSITORY SERVER</b><br/><br/>• All 6 OAI-PMH verbs<br/>• Metadata format plugins<br/>• Database schema mapping<br/>• Caching & performance<br/>• Security & rate limiting<br/>• Monitoring & logging"]
+    
+    S -->|"Database Queries<br/>(Doctrine DBAL)"| DB
+    S -->|"Cache Operations<br/>(Redis/Memcached)"| C
+    
+    DB[("<b>DATABASE</b><br/><br/>• MySQL 5.7+<br/>• PostgreSQL 10+<br/><br/>Stores:<br/>- Records<br/>- Metadata<br/>- Sets<br/>- Identifiers")]
+    C[("<b>CACHE LAYER</b><br/><br/>• Redis 5.0+<br/>• Memcached<br/>• File cache<br/><br/>Caches:<br/>- Responses<br/>- Tokens<br/>- Rate limits")]
+    
+    classDef serverStyle fill:#4A90E2,stroke:#2E5C8A,stroke-width:3px,color:#fff
+    classDef actorStyle fill:#7ED321,stroke:#5A9C18,stroke-width:2px,color:#000
+    classDef dataStyle fill:#F5A623,stroke:#C47D15,stroke-width:2px,color:#000
+    
+    class S serverStyle
+    class H,A,D actorStyle
+    class DB,C dataStyle
+```
+
+**Key External Dependencies:**
+- **Harvesters**: Automated clients consuming OAI-PMH protocol
+- **Database**: Existing or new relational database with metadata records
+- **Cache**: Optional but recommended for production performance
+- **Web Server**: Apache/Nginx serving PHP-FPM
+
+### 2.2 Component Architecture
+
+```mermaid
+graph TB
+    subgraph P["<b>PRESENTATION LAYER</b>"]
+        P1["<b>HTTP Controllers</b><br/>• IdentifyController<br/>• ListRecordsController<br/>• GetRecordController"]
+        P2["<b>XML Response Builders</b><br/>• OAI-PMH XML<br/>• Error Responses"]
+        P3["<b>Middleware</b><br/>• Authentication<br/>• Rate Limiting<br/>• Request Validation<br/>• Error Handling<br/>• Logging"]
+    end
+    
+    subgraph A["<b>APPLICATION LAYER</b>"]
+        A1["<b>Request Handlers</b><br/>• IdentifyHandler<br/>• ListSetsHandler<br/>• ListFormatsHandler<br/>• Filtering<br/>• Pagination"]
+        A2["<b>Use Case Services</b><br/>• ListRecords<br/>• GetRecord<br/>• FilterByDate<br/>• Pagination<br/>• Format Selection"]
+    end
+    
+    subgraph D["<b>DOMAIN LAYER</b>"]
+        D1["<b>Value Objects</b><br/>(Existing Library)<br/>• BaseURL<br/>• Email<br/>• ProtocolVersion<br/>• UTCdatetime<br/>• MetadataPrefix<br/>• ... (18 more)"]
+        D2["<b>Entities</b><br/>(New for Server)<br/>• Record<br/>• RecordHeader<br/>• Set<br/>• RepositoryInfo<br/>• MetadataFormat"]
+        D3["<b>Domain Services</b><br/>• Val idators<br/>• Factories"]
+    end
+    
+    subgraph I["<b>INFRASTRUCTURE LAYER</b>"]
+        I1["<b>Repository Adapters</b><br/>• MySQLAdapter<br/>• PostgreSQLAdapter<br/>• Schema Mapping"]
+        I2["<b>External Services</b><br/>• Cache<br/>• Logger<br/>• EventDispatcher<br/>• Metrics"]
+        I3["<b>Metadata Format Plugins</b><br/>• DublinCore<br/>• DataCite<br/>• Custom Formats"]
+        I4["<b>Configuration</b><br/>• YAML Loader<br/>• Validator<br/>• Environment  Vars"]
+    end
+    
+    P1 --> A1
+    P2 --> A1
+    P3 --> A1
+    A1 --> A2
+    A2 --> D1
+    A2 --> D2
+    A2 --> D3
+    D1 -.Interfaces.-> I1
+    D2 -.Interfaces.-> I1
+    D3 -.Interfaces.-> I2
+    A2 --> I3
+    I1 --> I4
+    
+    classDef presentation fill:#E8F5E9,stroke:#4CAF50,stroke-width:2px
+    classDef application fill:#E3F2FD,stroke:#2196F3,stroke-width:2px
+    classDef domain fill:#FFF3E0,stroke:#FF9800,stroke-width:2px
+    classDef infrastructure fill:#FCE4EC,stroke:#E91E63,stroke-width:2px
+    
+    class P,P1,P2,P3 presentation
+    class A,A1,A2 application
+    class D,D1,D2,D3 domain
+    class I,I1,I2,I3,I4 infrastructure
+```
+
+**Architectural Principles:**
+- **Domain-Driven Design (DDD)**: Clear separation between domain, application, and infrastructure
+- **Dependency Inversion**: Infrastructure depends on domain, not vice versa
+- **Plugin Architecture**: Extensibility through well-defined interfaces
+- **Single Responsibility**: Each component has one clear purpose
+
+### 2.3 Data Flow Diagram
+
+**Typical OAI-PMH Request Flow (ListRecords Example):**
+
+```mermaid
+sequenceDiagram
+    participant H as Harvester
+    participant W as Web Server<br/>(Nginx/Apache)
+    participant M as Middleware<br/>(Auth, Rate Limit, Validation)
+    participant C as Controller<br/>(ListRecordsController)
+    participant S as Service<br/>(ListRecordsService)
+    participant Cache as Cache<br/>(Redis)
+    participant R as Repository<br/>(DB Adapter)
+    participant DB as Database<br/>(MySQL/PostgreSQL)
+    participant P as Format Plugin<br/>(DublinCore)
+    participant X as XML Builder
+    participant L as Logger
+    
+    H->>W: 1. GET /oai?verb=ListRecords&metadataPrefix=oai_dc&from=2020-01-01
+    W->>M: 2. Route request
+    
+    M->>M: 3. Check authentication
+    M->>M: 4. Check rate limits
+    M->>M: 5. Validate OAI-PMH parameters
+    
+    M->>C: 6. Pass to controller
+    C->>S: 7. Delegate to service
+    
+    S->>Cache: 8. Check cache
+    alt Cache Hit
+        Cache-->>S: Return cached response
+        S-->>C: Cached XML response
+    else Cache Miss
+        S->>S: 9. Convert dates to UTCdatetime
+        S->>S: 10. Create filter criteria
+        S->>S: 11. Determine page size
+        
+        S->>R: 12. Call repository.listRecords(criteria)
+        R->>R: 13. Build SQL from mapping config
+        R->>DB: 14. Execute SQL query
+        DB-->>R: Result rows
+        R->>R: 15. Map rows to Record entities
+        R-->>S: Record collection
+        
+        S->>P: 16. For each record: serialize(record)
+        loop Each Record
+            P-->>S: metadata XML
+        end
+        
+        S->>S: 17. Build OAI-PMH response
+        S->>S: 18. Add responseDate, request params
+        S->>S: 19. Add resumption token (if needed)
+        
+        S->>Cache: 20. Store response with TTL
+        S-->>C: OAI-PMH response object
+    end
+    
+    C->>X: 21. Build HTTP response
+    X->>X: 22. Set headers (Content-Type, Cache-Control)
+    X-->>C: HTTP response
+    
+    C->>L: 23. Log request (metrics, response time)
+    
+    C->>W: 24. HTTP 200 + XML body
+    W->>H: 25. Return OAI-PMH XML response
+    
+    Note over H,L: Total time: < 500ms for first page (performance target)
+```
+
+**Key Data Flow Points:**
+- **Layers**: Clear separation - Presentation → Application → Domain → Infrastructure
+- **Caching**: Multi-level caching (response cache, query cache)
+- **Validation**: Early parameter validation in middleware
+- **Serialization**: Plugin-based metadata format handling
+- **Observability**: Logging and metrics at each layer
+
+---
+
+## 3. Functional Requirements
 
 ### 2.1 OAI-PMH Protocol Implementation
 
@@ -330,7 +567,58 @@ mapping:
 - [ ] HTTP 429 response when exceeded
 - [ ] Storage backend for rate limit counters (Redis recommended)
 
-#### 2.4.3 Record-Level Access Control
+#### 2.4.3 HTTPS Enforcement (NEW - MVP)
+**Requirement:** The server MUST support HTTPS-only mode to ensure secure communication.
+
+**Functional Details:**
+- Configuration option: `force_https: true/false`
+- When enabled, reject all HTTP requests
+- Return HTTP 403 Forbidden or HTTP 301 redirect to HTTPS endpoint
+- HSTS headers recommended for security (`Strict-Transport-Security`)
+
+**Rationale:** Customer requirement for secure metadata transmission, especially for sensitive repository data.
+
+**Acceptance Criteria:**
+- [ ] Configuration option `force_https` in security section
+- [ ] HTTP requests rejected or redirected when enabled
+- [ ] HSTS header support (configurable)
+- [ ] Documentation for HTTPS setup
+
+#### 2.4.4 Request Size Validation (NEW - MVP)
+**Requirement:** The server MUST validate request size to prevent URL-based attacks.
+
+**Functional Details:**
+- Reject requests with query strings > 2KB
+- Reject HTTP headers > 8KB (optional, configurable)
+- Return OAI-PMH error `badArgument` with explanation
+- Log suspicious oversized requests for security monitoring
+
+**Rationale:** Prevent URL-based DDoS attacks and malformed harvester requests.
+
+**Acceptance Criteria:**
+- [ ] Query string validation middleware
+- [ ] Configurable size limits
+- [ ] Appropriate OAI-PMH error response
+- [ ] Security logging for oversized requests
+
+#### 2.4.5 Slowloris Protection (NEW - MVP)
+**Requirement:** The server SHOULD timeout connections that send data too slowly.
+
+**Functional Details:**
+- Connection timeout for slow requests (configurable, default: 30s)
+- Detection of slow header transmission
+- Automatic connection termination
+- Logging of slow connection attempts
+
+**Rationale:** Protect against Slowloris-style DDoS attacks that exhaust server resources.
+
+**Acceptance Criteria:**
+- [ ] Connection timeout configuration
+- [ ] Slow connection detection
+- [ ] Graceful connection termination
+- [ ] Security event logging
+
+#### 2.4.6 Record-Level Access Control
 **Requirement:** The server SHOULD support record-level access control for sensitive metadata.
 
 **Functional Details:**
@@ -506,13 +794,13 @@ monitoring:
 | **ListMetadataFormats** | < 100ms | Simple query, cacheable |
 | **ListSets** | < 500ms | Depends on set count, cacheable |
 | **GetRecord** | < 500ms | Single record retrieval |
-| **ListIdentifiers** (first page) | < 1s | Initial query, 100 records |
-| **ListRecords** (first page) | < 1s | Initial query, 100 records, includes metadata |
-| **Resumption Token** | < 500ms | Subsequent pages |
+| **ListIdentifiers** (first page) | < 500ms | Initial query, 100 records |
+| **ListRecords** (first page) | < 500ms | Initial query, 100 records, includes metadata |
+| **Resumption Token** | < 300ms | Subsequent pages |
 
 **Load Targets:**
 - **Concurrent Requests:** Handle 100+ requests per minute
-- **Dataset Size:** Support repositories with 5M+ records
+- **Dataset Size:** Support repositories with > 10M records (target: hundreds of millions)
 - **Scalability:** Linear or better scaling with database size (proper indexing)
 
 **Acceptance Criteria:**
@@ -583,11 +871,21 @@ monitoring:
 - **Log Content:**
   - Request logging: verb, parameters, response time, status code
   - Error logging: error type, message, stack trace, context
-  - Security logging: authentication attempts, rate limit violations
+  - **Security logging (ENHANCED):**
+    - All authentication attempts (success and failure)
+    - Rate limit violations with request details
+    - Suspicious request patterns (SQL injection attempts, path traversal, XSS)
+    - IP addresses accessing restricted records
+    - Oversized requests (query strings > 2KB)
+    - Slowloris connection attempts
   - Performance logging: slow queries, cache hit/miss rates
 - **Log Destinations:** File, syslog, or external services (ELK stack compatible)
 - **Log Rotation:** Automatic rotation and retention policies
-- **Privacy:** Sensitive data (passwords, tokens) excluded from logs
+- **Privacy & GDPR Compliance:**
+  - Sensitive data (passwords, tokens) excluded from logs
+  - **IP Address Anonymization:** Last octet masked (e.g., `192.168.1.XXX`)
+  - Configurable anonymization level
+  - Data retention policies configurable
 
 **Acceptance Criteria:**
 - [ ] Structured JSON logging
@@ -906,7 +1204,7 @@ monitoring:
 
 | Test Type | Coverage Target | Tools |
 |-----------|----------------|-------|
-| **Unit Tests** | 80%+ code coverage | PHPUnit |
+| **Unit Tests** | 90-100% code coverage | PHPUnit |
 | **Integration Tests** | All database adapters | PHPUnit + Test database |
 | **OAI-PMH Compliance** | All verbs validated | OAI-PMH Validator |
 | **Performance Tests** | Load testing scenarios | PHPBench, ab/wrk |
@@ -920,7 +1218,7 @@ monitoring:
 - Real dependencies in integration tests
 
 **Acceptance Criteria:**
-- [ ] 80%+ unit test coverage
+- [ ] 90-100% unit test coverage
 - [ ] Integration tests for all adapters
 - [ ] OAI-PMH compliance tests pass
 - [ ] Performance benchmarks documented
@@ -1169,12 +1467,12 @@ monitoring:
 ### 6.2 MVP Success Criteria
 
 **The MVP is considered successful when:**
-1. ✅ A harvester can successfully harvest all records from a 100,000-record repository
-2. ✅ Response times meet performance targets (<1s for ListRecords first page)
+1. ✅ A harvester can successfully harvest all records from a 1,000,000-record repository
+2. ✅ Response times meet performance targets (< 500ms for ListRecords first page)
 3. ✅ OAI-PMH Validator passes all compliance tests
-4. ✅ Documentation allows a developer to install and configure in <1 hour
+4. ✅ Documentation allows a developer to install and configure in < 1 hour
 5. ✅ At least one external organization successfully deploys the server
-6. ✅ All automated tests pass (unit, integration, compliance)
+6. ✅ All automated tests pass (unit, integration, compliance) with 90%+ code coverage
 7. ✅ PHPStan Level 8 and PSR-12 compliance verified
 8. ✅ Demo/reference implementation runs in Docker with sample data
 
@@ -1390,11 +1688,11 @@ monitoring:
 ### 10.2 Technical Acceptance
 
 **The codebase is technically acceptable when:**
-- [ ] PHPUnit tests achieve 80%+ coverage
+- [ ] PHPUnit tests achieve 90-100% coverage
 - [ ] PHPStan Level 8 passes with zero errors
 - [ ] PHP_CodeSniffer PSR-12 compliance verified
 - [ ] OAI-PMH Validator passes all compliance tests
-- [ ] Performance tests verify <1s response times
+- [ ] Performance tests verify < 500ms response times
 - [ ] Load tests verify 100+ req/min capacity
 - [ ] All PSR interfaces used correctly
 - [ ] Documentation is complete and accurate
@@ -1461,12 +1759,12 @@ monitoring:
 
 **Performance:**
 - [ ] Average response time: <500ms for GetRecord
-- [ ] Average response time: <1s for ListRecords (first page)
+- [ ] Average response time: < 500ms for ListRecords (first page)
 - [ ] Throughput: > 100 requests/minute sustained
 - [ ] Database query optimization: < 10 queries per request average
 
 **Quality:**
-- [ ] Code coverage: > 80%
+- [ ] Code coverage: 90-100%
 - [ ] PHPStan Level: 8
 - [ ] OAI-PMH compliance: 100% (validator passes)
 - [ ] PSR-12 compliance: 100%
