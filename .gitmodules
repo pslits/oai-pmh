@@ -1,3 +1,0 @@
-[submodule ".github/copilot-skills"]
-	path = .github/copilot-skills
-	url = https://github.com/anthropics/skills
