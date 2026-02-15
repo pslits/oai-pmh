@@ -108,7 +108,7 @@ new MetadataPrefix('oai/dc');  // Exception: slash
 ## 7. References
 
 - [OAI-PMH 2.0 Spec](http://www.openarchives.org/OAI/openarchivesprotocol.html)
-- [docs/METADATAFORMAT_ANALYSIS.md](METADATAFORMAT_ANALYSIS.md)
+- [METADATAFORMAT_ANALYSIS.md](METADATAFORMAT_ANALYSIS.md)
 - Issue #8: PHP 8.2 readonly migration
 
 ---

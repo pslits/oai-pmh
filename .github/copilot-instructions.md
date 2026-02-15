@@ -354,20 +354,20 @@ final class DeletedRecord
 
 ### Analysis Document Structure
 
-Create **separate** analysis documents in the `docs/` directory with naming pattern: `docs/{VALUEOBJECT}_ANALYSIS.md`
+Create **separate** analysis documents in the `docs/analysis/ValueObject/` directory with naming pattern: `docs/analysis/ValueObject/{VALUEOBJECT}_ANALYSIS.md`
 
 **Examples:**
-- `docs/BASEURL_ANALYSIS.md` - Individual BaseURL value object analysis
-- `docs/REPOSITORYNAME_ANALYSIS.md` - Individual RepositoryName value object analysis  
-- `docs/DESCRIPTIONCOLLECTION_ANALYSIS.md` - Individual DescriptionCollection analysis
-- `docs/EMAIL_ANALYSIS.md` - Individual Email value object analysis
+- `docs/analysis/ValueObject/BASEURL_ANALYSIS.md` - Individual BaseURL value object analysis
+- `docs/analysis/ValueObject/REPOSITORYNAME_ANALYSIS.md` - Individual RepositoryName value object analysis  
+- `docs/analysis/ValueObject/DESCRIPTIONCOLLECTION_ANALYSIS.md` - Individual DescriptionCollection analysis
+- `docs/analysis/ValueObject/EMAIL_ANALYSIS.md` - Individual Email value object analysis
 - etc.
 
 **Note:** Each value object gets its own dedicated analysis file following the detailed template below.
 
 ### Required Sections
 
-Follow the structure from `docs/DESCRIPTIONCOLLECTION_ANALYSIS.md`, `docs/BASEURL_ANALYSIS.md`, or `docs/REPOSITORYNAME_ANALYSIS.md`:
+Follow the structure from `docs/analysis/ValueObject/DESCRIPTIONCOLLECTION_ANALYSIS.md`, `docs/analysis/ValueObject/BASEURL_ANALYSIS.md`, or `docs/analysis/ValueObject/REPOSITORYNAME_ANALYSIS.md`:
 
 1. **Document Header**
    - Analysis date
@@ -604,7 +604,7 @@ tests/Domain/ValueObject/{Name}Test.php
 
 ## References
 
-- [OAI-PMH Specification](URL)
+- [OAI-PMH Specification](https://www.openarchives.org/OAI/openarchivesprotocol.html)
 - Related analysis documents
 - GitHub issues
 - External resources
@@ -722,7 +722,7 @@ vendor/bin/phpcs
 vendor/bin/phpcbf
 ```
 
-## Commit message guidelines
+## Commit Message Guidelines
 
 Keep commit messages clear, consistent and machine-friendly so changelogs and code review history are useful.
 
@@ -769,10 +769,24 @@ Prefixing with ticket IDs (e.g., `ABC-123: ...`) is optional—use it when your 
 
 When in doubt, write a short, descriptive header and a body that explains the why, not only the what.
 
+---
+
+## Team Collaboration
+
+This project uses specialized GitHub Copilot agents for different development roles. For information about agent workflows, roles, and collaboration patterns, see:
+
+**📁 [.github/agents/README.md](agents/README.md)**
+
+---
 
 ## Remember
+
 - Quality over speed
 - Write code that is easy to read and maintain
 - Document the "why" not just the "what"
 - Think about the domain, not just the code
 - Every class should tell a story about the domain
+
+---
+
+*For coding standards and implementation patterns, see above. For team workflows and agent collaboration, see [.github/agents/](agents/).*

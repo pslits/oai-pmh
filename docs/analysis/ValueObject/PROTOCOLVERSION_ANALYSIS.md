@@ -147,8 +147,8 @@ if (!in_array($version, self::ALLOWED_VERSIONS, true)) {
 ## 6. References
 
 - [OAI-PMH 2.0 Specification](http://www.openarchives.org/OAI/openarchivesprotocol.html)
-- [docs/DELETEDRECORD_ANALYSIS.md](DELETEDRECORD_ANALYSIS.md) - Similar validation pattern
-- [docs/GRANULARITY_ANALYSIS.md](GRANULARITY_ANALYSIS.md) - Enumeration pattern
+- [DELETEDRECORD_ANALYSIS.md](DELETEDRECORD_ANALYSIS.md) - Similar validation pattern
+- [GRANULARITY_ANALYSIS.md](GRANULARITY_ANALYSIS.md) - Enumeration pattern
 
 ---
 

@@ -153,8 +153,8 @@ $descriptions = new DescriptionCollection(
 ## 7. References
 
 - [OAI-PMH 2.0 - Identify](http://www.openarchives.org/OAI/openarchivesprotocol.html#Identify)
-- [docs/DESCRIPTIONFORMAT_ANALYSIS.md](DESCRIPTIONFORMAT_ANALYSIS.md)
-- [docs/DESCRIPTIONCOLLECTION_ANALYSIS.md](DESCRIPTIONCOLLECTION_ANALYSIS.md)
+- [DESCRIPTIONFORMAT_ANALYSIS.md](DESCRIPTIONFORMAT_ANALYSIS.md)
+- [DESCRIPTIONCOLLECTION_ANALYSIS.md](DESCRIPTIONCOLLECTION_ANALYSIS.md)
 - Issue #8: PHP 8.2 readonly migration
 
 ---

@@ -153,8 +153,8 @@ $timestamp = new UTCdatetime('2026-02-07T14:30:00Z');
 
 - [OAI-PMH 2.0 Specification - Granularity](http://www.openarchives.org/OAI/openarchivesprotocol.html#Granularity)
 - [ISO 8601 Date/Time Format](https://www.iso.org/iso-8601-date-and-time-format.html)
-- [docs/UTCDATETIME_ANALYSIS.md](UTCDATETIME_ANALYSIS.md) - Related datetime handling
-- [docs/DELETEDRECORD_ANALYSIS.md](DELETEDRECORD_ANALYSIS.md) - Similar enumeration pattern
+- [UTCDATETIME_ANALYSIS.md](UTCDATETIME_ANALYSIS.md) - Related datetime handling
+- [DELETEDRECORD_ANALYSIS.md](DELETEDRECORD_ANALYSIS.md) - Similar enumeration pattern
 
 ---
 

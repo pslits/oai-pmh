@@ -23,26 +23,26 @@ use OaiPmh\Domain\ValueObject\MetadataRootTag;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Test helper class for ExtensibleContainer.
+ * Test helper class for ContainerFormat.
  *
- * This class is used to test the abstract ExtensibleContainer class.
+ * This class is used to test the abstract ContainerFormat class.
  */
 class TestExtensibleContainer extends ContainerFormat
 {
 }
 
 /**
- * Tests for the ExtensibleContainer class.
+ * Tests for the ContainerFormat class.
  *
- * This class contains unit tests for the ExtensibleContainer value object,
- * ensuring it behaves correctly as a value object in the OAI-PMH domain.
+ * This class contains unit tests for the ContainerFormat abstract base class,
+ * ensuring it behaves correctly as a value object foundation in the OAI-PMH domain.
  */
-class ExtensibleContainerTest extends TestCase
+class ContainerFormatTest extends TestCase
 {
     /**
      * User story:
      * As a developer,
-     * I want to create an ExtensibleContainer with a metadata prefix, namespaces, schema URL, and root tag
+     * I want to create a ContainerFormat with a metadata prefix, namespaces, schema URL, and root tag
      * So that I can represent an extensible OAI-PMH container
      * with the necessary metadata for OAI-PMH responses.
      */

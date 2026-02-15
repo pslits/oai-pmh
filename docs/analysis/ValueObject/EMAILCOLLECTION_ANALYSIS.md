@@ -551,9 +551,9 @@ new EmailCollection(
 - [OAI-PMH 2.0 - Identify Response](http://www.openarchives.org/OAI/openarchivesprotocol.html#Identify)
 
 ### Related Analysis Documents
-- [docs/EMAIL_ANALYSIS.md](EMAIL_ANALYSIS.md) - Email value object
-- [docs/DESCRIPTIONCOLLECTION_ANALYSIS.md](DESCRIPTIONCOLLECTION_ANALYSIS.md) - Similar collection pattern
-- [docs/BASEURL_ANALYSIS.md](BASEURL_ANALYSIS.md) - Part of Identify response
+- [EMAIL_ANALYSIS.md](EMAIL_ANALYSIS.md) - Email value object
+- [DESCRIPTIONCOLLECTION_ANALYSIS.md](DESCRIPTIONCOLLECTION_ANALYSIS.md) - Similar collection pattern
+- [BASEURL_ANALYSIS.md](BASEURL_ANALYSIS.md) - Part of Identify response
 
 ### Related GitHub Issues
 - Issue #8: PHP 8.2 readonly property migration
