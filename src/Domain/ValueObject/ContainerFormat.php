@@ -131,10 +131,14 @@ abstract class ContainerFormat
     }
 
     /**
-     * Returns a string representation of the container.
+     * Returns a string representation of the container format.
+     *
+     * Uses reflection to detect the actual subclass name, ensuring the output
+     * accurately represents the concrete implementation (MetadataFormat, AboutFormat, etc.).
      * This is useful for debugging and logging.
-     * @return string A string representation of the container format.
-     * The format is: ClassName(prefix: <prefix>, namespaces: <namespaces>,
+     *
+     * @return string A string representation in the format:
+     *                ClassName(prefix: ..., namespaces: ..., schemaUrl: ..., rootTag: ...)
      */
     public function __toString(): string
     {

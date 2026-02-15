@@ -198,9 +198,9 @@ ContainerFormat (abstract)
 
 - [OAI-PMH 2.0 - Identify](http://www.openarchives.org/OAI/openarchivesprotocol.html#Identify)
 - [OAI-Identifier Spec](http://www.openarchives.org/OAI/2.0/guidelines-oai-identifier.htm)
-- [docs/DESCRIPTION_ANALYSIS.md](DESCRIPTION_ANALYSIS.md)
-- [docs/CONTAINERFORMAT_ANALYSIS.md](CONTAINERFORMAT_ANALYSIS.md)
-- [docs/METADATAFORMAT_ANALYSIS.md](METADATAFORMAT_ANALYSIS.md)
+- [DESCRIPTION_ANALYSIS.md](DESCRIPTION_ANALYSIS.md)
+- [CONTAINERFORMAT_ANALYSIS.md](CONTAINERFORMAT_ANALYSIS.md)
+- [METADATAFORMAT_ANALYSIS.md](METADATAFORMAT_ANALYSIS.md)
 - Issue #8: PHP 8.2 readonly migration
 
 ---

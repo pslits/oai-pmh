@@ -565,9 +565,9 @@ $policy = new DeletedRecord(DeletedRecord::NO);
 - [OAI-PMH 2.0 Specification - Deleted Records](http://www.openarchives.org/OAI/openarchivesprotocol.html#DeletedRecords)
 
 ### Related Analysis Documents
-- [docs/GRANULARITY_ANALYSIS.md](GRANULARITY_ANALYSIS.md) - Similar enumeration pattern
-- [docs/PROTOCOLVERSION_ANALYSIS.md](PROTOCOLVERSION_ANALYSIS.md) - Single-value enumeration
-- [docs/BASEURL_ANALYSIS.md](BASEURL_ANALYSIS.md) - Part of Identify response
+- [GRANULARITY_ANALYSIS.md](GRANULARITY_ANALYSIS.md) - Similar enumeration pattern
+- [PROTOCOLVERSION_ANALYSIS.md](PROTOCOLVERSION_ANALYSIS.md) - Single-value enumeration
+- [BASEURL_ANALYSIS.md](BASEURL_ANALYSIS.md) - Part of Identify response
 
 ### Related GitHub Issues
 - Issue #8: PHP 8.2 readonly property migration

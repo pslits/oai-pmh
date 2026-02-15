@@ -1862,7 +1862,7 @@ See Requirements Document Section 11.F - Glossary
 - **Requirements**: `docs/REPOSITORY_SERVER_REQUIREMENTS.md`
 - **ADRs**: `.github/adr/*.md`
 - **File Structure**: `docs/OAIPMH_SERVER_FILE_STRUCTURE.md`
-- **Value Objects Analysis**: `docs/*_ANALYSIS.md`
+- **Value Objects Analysis**: `docs/analysis/ValueObject/*_ANALYSIS.md`
 
 ---
 

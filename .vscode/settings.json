@@ -3,6 +3,18 @@
         "vendor\\bin\\phpstan": true,
         "vendor\\bin\\phpcbf": true,
         "vendor\\bin\\phpcs": true,
-        "256M": true
-    }
+        "256M": true,
+        "/^php \\.github\\\\skills\\\\value-object-validator\\\\scripts\\\\validate_vo\\.php src\\\\Domain\\\\ValueObject\\\\RepositoryName\\.php 2>&1 \\| Select-Object -First 80$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
+    },
+    "github.copilot.chat.codeGeneration.instructions": [
+        {
+            "file": ".github/copilot-instructions.md"
+        },
+        {
+            "file": ".github/skills/value-object-validator/SKILL.md"
+        }
+    ]
 }

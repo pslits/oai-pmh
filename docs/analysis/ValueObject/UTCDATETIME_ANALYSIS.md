@@ -449,9 +449,9 @@ new UTCdatetime('2026-02-07T14:30:00Z', $granularity);
 - [PHP DateTimeImmutable](https://www.php.net/manual/en/class.datetimeimmutable.php)
 
 ### Related Analysis Documents
-- [docs/GRANULARITY_ANALYSIS.md](GRANULARITY_ANALYSIS.md) - Granularity value object
-- [docs/EMAIL_ANALYSIS.md](EMAIL_ANALYSIS.md) - Similar validation pattern
-- [docs/BASEURL_ANALYSIS.md](BASEURL_ANALYSIS.md) - Similar coverage issue
+- [GRANULARITY_ANALYSIS.md](GRANULARITY_ANALYSIS.md) - Granularity value object
+- [EMAIL_ANALYSIS.md](EMAIL_ANALYSIS.md) - Similar validation pattern
+- [BASEURL_ANALYSIS.md](BASEURL_ANALYSIS.md) - Similar coverage issue
 
 ### Related GitHub Issues
 - Issue #8: PHP 8.2 readonly property migration

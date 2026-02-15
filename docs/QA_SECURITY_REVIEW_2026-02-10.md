@@ -646,7 +646,7 @@ public function equals(BaseURL $otherBaseUrl): bool
 The project includes **19 comprehensive analysis documents** covering all value objects and entities:
 
 - Complete coverage: [VALUE_OBJECTS_INDEX.md](docs/VALUE_OBJECTS_INDEX.md)
-- Individual analyses: [BASEURL_ANALYSIS.md](docs/BASEURL_ANALYSIS.md), [REPOSITORYIDENTITY_ANALYSIS.md](docs/REPOSITORYIDENTITY_ANALYSIS.md), etc.
+- Individual analyses: [BASEURL_ANALYSIS.md](docs/analysis/ValueObject/BASEURL_ANALYSIS.md), [REPOSITORYIDENTITY_ANALYSIS.md](docs/analysis/ValueObject/REPOSITORYIDENTITY_ANALYSIS.md), etc.
 - 12-section template including:
   - OAI-PMH specification context
   - User stories with acceptance criteria
