@@ -10,7 +10,6 @@
 
 namespace OaiPmh\Domain\ValueObject;
 
-use InvalidArgumentException;
 use Countable;
 use IteratorAggregate;
 use ArrayIterator;
@@ -25,9 +24,10 @@ use ArrayIterator;
  * This value object:
  * - encapsulates zero or more Description objects,
  * - is immutable and compared by value (not identity),
- * - implements Countable and IteratorAggregate for convenient usage,
+ * - @implements IteratorAggregate<int, Description> for easy iteration,
  * - supports OAI-PMH's optional and repeatable description containers.
  *
+ * @see http://www.openarchives.org/OAI/openarchivesprotocol.html#Identify
  * @implements IteratorAggregate<int, Description>
  */
 final class DescriptionCollection implements Countable, IteratorAggregate
@@ -36,7 +36,7 @@ final class DescriptionCollection implements Countable, IteratorAggregate
     private array $descriptions;
 
     /**
-     * Constructs a new DescriptionCollection instance.
+     * DescriptionCollection constructor.
      *
      * Accepts zero or more Description objects, supporting OAI-PMH's optional and
      * repeatable description element requirement.

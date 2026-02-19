@@ -1,0 +1,5 @@
+# ignore the docblock-writer and its content
+docblock-writer/*
+# ignore skill-creator and its content, because it is a tool for development and not part of the project itself
+skill-creator/*
+

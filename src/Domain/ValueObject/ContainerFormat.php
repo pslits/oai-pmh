@@ -13,12 +13,16 @@ namespace OaiPmh\Domain\ValueObject;
 /**
  * Base class for OAI-PMH XML container formats.
  *
- * According to OAI-PMH 2.0, several elements serve as containers for extensible
- * XML content with specific schemas:
- * - metadata (record-level descriptive metadata)
- * - about (record-level rights/provenance information)
- * - description (repository-level descriptions)
- * - setDescription (set-level descriptions)
+ * According to OAI-PMH 2.0 specification, several elements serve as containers
+ * for extensible XML content with specific schemas:
+ * - metadata (section 2.1 and 3.1.1): record-level descriptive metadata
+ * - about (section 2.8): record-level rights/provenance information
+ * - description (section 4.2): repository-level descriptions in Identify
+ * - setDescription (section 2.6): set-level descriptions
+ *
+ * Each container format requires namespace declarations (section 3.1.1), a schema
+ * location, and a root element tag. Metadata containers also require a metadataPrefix
+ * for harvesting, while embedded containers (about, description, setDescription) do not.
  *
  * This abstract base class:
  * - encapsulates common properties: optional prefix, namespaces, schema URL, and root tag,
@@ -28,6 +32,9 @@ namespace OaiPmh\Domain\ValueObject;
  *
  * TODO: Consider refactoring to separate concerns - format specification vs. data container.
  * See GitHub issue for Container refactoring discussion.
+ *
+ * @see http://www.openarchives.org/OAI/openarchivesprotocol.html#XMLResponse
+ * @see http://www.openarchives.org/OAI/openarchivesprotocol.html#ListMetadataFormats
  */
 abstract class ContainerFormat
 {
@@ -37,7 +44,10 @@ abstract class ContainerFormat
     protected MetadataRootTag $rootTag;
 
     /**
-     * Constructs a new ContainerFormat instance.
+     * ContainerFormat constructor.
+     *
+     * Initializes an immutable container format with namespace declarations, schema location,
+     * root element tag, and optional metadata prefix.
      *
      * @param MetadataPrefix|null $prefix The metadata prefix (required for metadata formats,
      *                                    optional for about/description/setDescription).
@@ -58,51 +68,51 @@ abstract class ContainerFormat
     }
 
     /**
-     * Get the OAI-PMH metadata prefix (may be null).
+     * Returns the OAI-PMH metadata prefix (domain-specific getter).
      *
      * The prefix is typically null for about, description, and setDescription containers,
      * as these are embedded rather than independently harvested.
      *
      * @return MetadataPrefix|null The metadata prefix, or null if not applicable.
      */
-    public function getPrefix(): ?MetadataPrefix
+    public function getMetadataPrefix(): ?MetadataPrefix
     {
         return $this->prefix;
     }
 
     /**
-     * Get the XML namespaces used in the format.
+     * Returns the XML namespaces used in the format (domain-specific getter).
      *
      * Contains all namespace declarations required for valid XML serialization.
      *
      * @return MetadataNamespaceCollection The collection of namespaces.
      */
-    public function getNamespaces(): MetadataNamespaceCollection
+    public function getXmlNamespaces(): MetadataNamespaceCollection
     {
         return $this->namespaces;
     }
 
     /**
-     * Get the schema URL for the format.
+     * Returns the schema location URL for the format (domain-specific getter).
      *
      * Points to the XSD schema that defines the structure and validation rules
-     * for this container format.
+     * for this container format, following OAI-PMH schemaLocation terminology.
      *
-     * @return AnyUri The schema URL.
+     * @return AnyUri The schema location URL.
      */
-    public function getSchemaUrl(): AnyUri
+    public function getSchemaLocation(): AnyUri
     {
         return $this->schemaUrl;
     }
 
     /**
-     * Get the root tag for the format.
+     * Returns the XML root tag for the format (domain-specific getter).
      *
      * The root element name used when serializing this container to XML.
      *
-     * @return MetadataRootTag The root tag.
+     * @return MetadataRootTag The XML root tag.
      */
-    public function getRootTag(): MetadataRootTag
+    public function getXmlRootTag(): MetadataRootTag
     {
         return $this->rootTag;
     }
@@ -119,14 +129,18 @@ abstract class ContainerFormat
     public function equals(self $otherFormat): bool
     {
         $isPrefixEqual =
-            ($this->prefix === null && $otherFormat->prefix === null)
-            || ($this->prefix && $otherFormat->prefix && $this->prefix->equals($otherFormat->prefix));
+            ($this->prefix === null && $otherFormat->getMetadataPrefix() === null)
+            || (
+                $this->prefix
+                && $otherFormat->getMetadataPrefix()
+                && $this->prefix->equals($otherFormat->getMetadataPrefix())
+            );
 
         return (
             $isPrefixEqual
-            && $this->namespaces->equals($otherFormat->namespaces)
-            && $this->schemaUrl->equals($otherFormat->schemaUrl)
-            && $this->rootTag->equals($otherFormat->rootTag)
+            && $this->namespaces->equals($otherFormat->getXmlNamespaces())
+            && $this->schemaUrl->equals($otherFormat->getSchemaLocation())
+            && $this->rootTag->equals($otherFormat->getXmlRootTag())
         );
     }
 

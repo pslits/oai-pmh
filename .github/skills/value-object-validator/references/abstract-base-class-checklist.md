@@ -105,18 +105,125 @@ Use this checklist when validating classes that are:
 
 ---
 
-## 9. Documentation (10 checks)
+## 9. Documentation (22 checks)
 
-- [ ] Class docblock explains base class purpose
-- [ ] Class docblock lists known subclasses
-- [ ] Class docblock explains template method pattern if used
-- [ ] OAI-PMH specification section referenced
+### File-Level Docblock (3 checks)
+- [ ] File docblock at very top (before namespace)
+- [ ] Includes `@author`, `@copyright`, `@license`, `@link`, `@since` tags
+- [ ] `@package` tag present (e.g., `OaiPmh\Domain\ValueObject`)
+
+### Class-Level Docblock (6 checks)
+- [ ] Class docblock directly above class declaration
+- [ ] Summary: one-line description immediately after `/**`
+- [ ] Summary: written as a complete sentence
+- [ ] Summary: clearly states what the element does
+- [ ] Description: more detailed explanation after blank line (recommended)
+- [ ] Description: explains "why" and "how", not just "what"
+- [ ] Lists known subclasses or references them
+- [ ] Explains template method pattern if used
+- [ ] References OAI-PMH specification section
+- [ ] Includes `@package`, `@since` tags where appropriate
+
+### Method/Function Docblock (5 checks)
+- [ ] Each public method has complete docblock directly above method
 - [ ] Each abstract method documents subclass requirements
 - [ ] Each protected method documents extension point purpose
-- [ ] `@param` tags use descriptive names
-- [ ] `@return` tags document all possible return types including null
-- [ ] `@throws` tags document all exceptions
-- [ ] Migration notes in docblock if breaking changes exist
+- [ ] Summary: one-line description immediately after `/**`
+- [ ] Summary: written as a complete sentence
+- [ ] Summary: clearly states what the element does
+- [ ] Description: more detailed explanation after blank line (recommended)
+- [ ] Description: explains "why" and "how", not just "what"
+- [ ] `@param` tags: one per parameter with type and description
+- [ ] `@return` tags: type and description, including `Type|null` for nullable returns
+
+### Exception Documentation (1 check)
+- [ ] `@throws` tags: one per exception type that may be thrown
+
+### Docblock Quality Standards (3 checks)
+- [ ] All descriptions use clear, complete sentences
+- [ ] Parameter descriptions explain purpose, not just repeat name
+- [ ] Return descriptions explain what is returned and when
+
+### Canonical PHPDoc Examples
+
+**Docblock Structure (Summary + Description):**
+```php
+/**
+ * Returns the container format identifier. ← SUMMARY (one line, complete sentence)
+ *                                           ← BLANK LINE
+ * Template method that subclasses should override to provide  ← DESCRIPTION START
+ * their specific format identifier (e.g., 'oai_dc', 'oai_pmh').
+ * Explains WHY and HOW, not just WHAT.                        ← DESCRIPTION END
+ *
+ * @param ...
+ */
+```
+
+**File-Level Docblock:**
+```php
+<?php
+/**
+ * Contains the ContainerFormat abstract base class.
+ *
+ * @author    Paul Slits <paul.slits@gmail.com>
+ * @copyright (c) 2025 Paul Slits
+ * @license   MIT License - https://opensource.org/licenses/MIT
+ * @link      https://github.com/pslits/oai-pmh
+ * @since     0.1.0
+ * @package   OaiPmh\Domain\ValueObject
+ */
+```
+
+**Class-Level Docblock:**
+```php
+/**
+ * Abstract base class for OAI-PMH container format implementations.
+ *
+ * Provides shared infrastructure for format-specific containers like
+ * Dublin Core and OAIPMH metadata formats.
+ *
+ * Known subclasses:
+ * - DublinCore (oai_dc format)
+ * - OAIPMH (oai_pmh format)
+ *
+ * @package OaiPmh\Domain\ValueObject
+ * @since   0.1.0
+ */
+abstract class ContainerFormat
+{
+```
+
+**Method Docblock:**
+```php
+/**
+ * Returns the container format identifier.
+ *
+ * Template method that subclasses should override to provide
+ * their specific format identifier (e.g., 'oai_dc', 'oai_pmh').
+ *
+ * @return string The container format identifier.
+ *
+ * @throws \LogicException If subclass doesn't override this method.
+ */
+protected function getContainerFormat(): string
+{
+```
+
+**Abstract Method Docblock:**
+```php
+/**
+ * Creates a container instance from the provided namespace.
+ *
+ * Subclasses must implement this to create format-specific containers.
+ *
+ * @param string $namespace The XML namespace for the container.
+ *
+ * @return static A new instance of the concrete container format.
+ *
+ * @throws InvalidArgumentException If the namespace is invalid.
+ */
+abstract protected static function fromNamespace(string $namespace): static;
+```
 
 ---
 

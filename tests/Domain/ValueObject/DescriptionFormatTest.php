@@ -61,10 +61,10 @@ class DescriptionFormatTest extends TestCase
         $this->assertInstanceOf(DescriptionFormat::class, $format);
 
         // And: The properties should be set correctly
-        $this->assertNull($format->getPrefix());
-        $this->assertInstanceOf(MetadataNamespaceCollection::class, $format->getNamespaces());
-        $this->assertInstanceOf(AnyUri::class, $format->getSchemaUrl());
-        $this->assertInstanceOf(MetadataRootTag::class, $format->getRootTag());
+        $this->assertNull($format->getMetadataPrefix());
+        $this->assertInstanceOf(MetadataNamespaceCollection::class, $format->getXmlNamespaces());
+        $this->assertInstanceOf(AnyUri::class, $format->getSchemaLocation());
+        $this->assertInstanceOf(MetadataRootTag::class, $format->getXmlRootTag());
     }
 
     /**
@@ -191,9 +191,9 @@ class DescriptionFormatTest extends TestCase
 
         $expected = sprintf(
             'DescriptionFormat(prefix: null, namespaces: %s, schemaUrl: %s, rootTag: %s)',
-            (string)$format->getNamespaces(),
-            (string)$format->getSchemaUrl(),
-            (string)$format->getRootTag()
+            (string)$format->getXmlNamespaces(),
+            (string)$format->getSchemaLocation(),
+            (string)$format->getXmlRootTag()
         );
 
         // When: I convert it to a string

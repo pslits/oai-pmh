@@ -84,27 +84,153 @@ Complete checklist for validating OAI-PMH value objects against project standard
 - [ ] Uses `sprintf()` with context: `sprintf('Error: %s', $context)`
 - [ ] Each validator can throw independently
 
-## 11. Class Documentation (8 checks)
+## 11. Documentation (23 checks)
 
-- [ ] Class docblock exists
+### File-Level Docblock (3 checks)
+- [ ] File docblock at very top (before namespace)
+- [ ] Includes `@author`, `@copyright`, `@license`, `@link`, `@since` tags
+- [ ] `@package` tag present (e.g., `OaiPmh\Domain\ValueObject`)
+
+### Class-Level Docblock (8 checks)
+- [ ] Class docblock directly above class declaration
 - [ ] References OAI-PMH 2.0 specification section
 - [ ] Explains what the value represents
-- [ ] Mentions encapsulation
-- [ ] Mentions immutability
-- [ ] Mentions value equality
+- [ ] Mentions encapsulation principle
+- [ ] Mentions immutability principle
+- [ ] Mentions value equality (compared by value not identity)
 - [ ] Lists allowed values (for enums) or format requirements
 - [ ] States if required/optional in OAI-PMH protocol
 
-## 12. Method Documentation (6 checks)
+### Method/Function Docblock (4 checks)
+- [ ] All public methods have complete docblock directly above method
+- [ ] `@param` tags: one per parameter with type and description
+- [ ] `@return` tags: type and description, including `Type|null` for nullable returns
+- [ ] `@throws` tags: one per exception type that may be thrown
 
-- [ ] All public methods have docblocks
-- [ ] All `@param` tags include type and description
-- [ ] All `@return` tags include type and description
-- [ ] All `@throws` tags documented
-- [ ] Complex private methods documented
+### Docblock Structure (5 checks)
+- [ ] Summary: one-line description immediately after `/**`
+- [ ] Summary: written as a complete sentence
+- [ ] Summary: clearly states what the element does
+- [ ] Description: more detailed explanation after blank line (recommended)
+- [ ] Description: explains "why" and "how", not just "what"
+
+### Docblock Quality Standards (5 checks)
+- [ ] All descriptions use clear, complete sentences
+- [ ] Parameter descriptions explain purpose, not just repeat name
+- [ ] Return descriptions explain what is returned and when
+- [ ] Complex private methods documented when logic is non-trivial
 - [ ] Docblocks explain WHY not just WHAT
 
-## 13. Naming Conventions (5 checks)
+### Canonical PHPDoc Examples
+
+**Docblock Structure (Summary + Description):**
+```php
+/**
+ * Validates that the URL uses HTTP or HTTPS protocol. ← SUMMARY (one line, complete sentence)
+ *                                                      ← BLANK LINE
+ * Checks if the provided URL starts with http:// or https://.  ← DESCRIPTION START
+ * This is required by the OAI-PMH specification for base URLs.
+ * Explains WHY and HOW, not just WHAT.                         ← DESCRIPTION END
+ *
+ * @param string $baseUrl The URL to validate.
+ *
+ * @throws InvalidArgumentException If the URL doesn't use HTTP/HTTPS.
+ */
+```
+
+**File-Level Docblock:****
+```php
+<?php
+/**
+ * Contains the BaseURL value object.
+ *
+ * @author    Paul Slits <paul.slits@gmail.com>
+ * @copyright (c) 2025 Paul Slits
+ * @license   MIT License - https://opensource.org/licenses/MIT
+ * @link      https://github.com/pslits/oai-pmh
+ * @since     0.1.0
+ * @package   OaiPmh\Domain\ValueObject
+ */
+```
+
+**Class-Level Docblock:**
+```php
+/**
+ * Represents an OAI-PMH repository base URL as a value object.
+ *
+ * According to OAI-PMH 2.0 specification section 4.2 (Identify),
+ * the baseURL identifies the repository and must be a valid HTTP/HTTPS URL.
+ *
+ * This value object:
+ * - encapsulates a validated base URL,
+ * - is immutable and compared by value (not identity),
+ * - ensures only valid HTTP/HTTPS URLs are accepted,
+ * - is required in the OAI-PMH Identify response.
+ *
+ * @package OaiPmh\Domain\ValueObject
+ * @since   0.1.0
+ */
+final class BaseURL
+{
+```
+
+**Constructor Docblock:**
+```php
+/**
+ * Constructs a new BaseURL instance.
+ *
+ * Validates that the provided URL is not empty, is a valid URL format,
+ * and uses HTTP or HTTPS protocol.
+ *
+ * @param string $baseUrl The repository base URL to encapsulate.
+ *
+ * @throws InvalidArgumentException If the URL is empty, invalid, or not HTTP/HTTPS.
+ */
+public function __construct(string $baseUrl)
+{
+```
+
+**Getter Method Docblock:**
+```php
+/**
+ * Returns the base URL.
+ *
+ * @return string The validated repository base URL.
+ */
+public function getBaseUrl(): string
+{
+```
+
+**equals() Method Docblock:**
+```php
+/**
+ * Checks if this BaseURL is equal to another.
+ *
+ * Two BaseURL instances are considered equal if they contain
+ * the same URL value (case-sensitive comparison).
+ *
+ * @param BaseURL $otherBaseUrl The other instance to compare with.
+ *
+ * @return bool True if both have the same URL value, false otherwise.
+ */
+public function equals(self $otherBaseUrl): bool
+{
+```
+
+**Validation Method Docblock:**
+```php
+/**
+ * Validates that the URL uses HTTP or HTTPS protocol.
+ *
+ * @param string $baseUrl The URL to validate.
+ *
+ * @throws InvalidArgumentException If the URL doesn't start with http:// or https://.
+ */
+private function validateHttpProtocol(string $baseUrl): void
+{
+```
+
+## 12. Naming Conventions (5 checks)
 
 - [ ] Class name is PascalCase
 - [ ] Methods are camelCase
@@ -112,7 +238,7 @@ Complete checklist for validating OAI-PMH value objects against project standard
 - [ ] equals() parameter is descriptive (e.g., `$otherX`)
 - [ ] Validation method parameters are descriptive
 
-## 14. OAI-PMH Compliance (6 checks)
+## 13. OAI-PMH Compliance (6 checks)
 
 - [ ] Implements correct OAI-PMH concept
 - [ ] Docblock cites specific spec section (e.g., "section 4.2")
@@ -121,7 +247,7 @@ Complete checklist for validating OAI-PMH value objects against project standard
 - [ ] Required vs optional correctly understood
 - [ ] XML element name considerations (if applicable)
 
-## 15. Code Quality - PHPStan (3 checks)
+## 14. Code Quality - PHPStan (3 checks)
 
 - [ ] Passes PHPStan Level 8 analysis
 - [ ] 0 errors reported
@@ -132,7 +258,7 @@ Command:
 vendor\bin\phpstan analyse src/Domain/ValueObject/[File].php
 ```
 
-## 16. Code Quality - PSR-12 (5 checks)
+## 15. Code Quality - PSR-12 (5 checks)
 
 - [ ] Passes PHPCS checks
 - [ ] 4 spaces indentation (no tabs)
@@ -146,13 +272,13 @@ vendor\bin\phpcs src/Domain/ValueObject/[File].php
 vendor\bin\phpcbf src/Domain/ValueObject/[File].php
 ```
 
-## 17. Test File Existence (3 checks)
+## 16. Test File Existence (3 checks)
 
 - [ ] Test file exists: `tests/Domain/ValueObject/[Name]Test.php`
 - [ ] Test class name: `[Name]Test`
 - [ ] Test namespace: `OaiPmh\Tests\Domain\ValueObject`
 
-## 18. Test Quality (11 checks)
+## 17. Test Quality (11 checks)
 
 - [ ] Extends PHPUnit `TestCase`
 - [ ] Test methods use pattern: `testMethodName_Condition_ExpectedBehavior()`
@@ -166,7 +292,7 @@ vendor\bin\phpcbf src/Domain/ValueObject/[File].php
 - [ ] Tests __toString()
 - [ ] Uses data providers where appropriate
 
-## 19. Test Coverage (5 checks)
+## 18. Test Coverage (5 checks)
 
 - [ ] Tests run successfully
 - [ ] Line coverage ≥ 95% (aim for 100%)
@@ -180,7 +306,7 @@ vendor\bin\phpunit tests/Domain/ValueObject/[File]Test.php
 vendor\bin\phpunit --coverage-html coverage/html
 ```
 
-## Total Checks: 90+
+## Total Checks: 111
 
 ### Scoring
 
@@ -222,8 +348,9 @@ vendor\bin\phpunit --coverage-html coverage/html
 - File header checks: `/^## 1\. File Header/`
 - Constructor checks: `/^## 5\. Constructor/`
 - Getter checks: `/^## 6\. Domain-Specific Getter/`
-- Validation checks: `/^## 10\. Validation Logic/`
-- Test checks: `/^## 19\. Test Coverage/`
+- Documentation checks: `/^## 11\. Documentation/`
+- Validation checks: `/^## 9\. Validation Structure/`
+- Test checks: `/^## 18\. Test Coverage/`
 
 **Find specific patterns:**
 - All checkboxes: `/^- \[ \] /`

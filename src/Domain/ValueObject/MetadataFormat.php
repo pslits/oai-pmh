@@ -41,14 +41,16 @@ final class MetadataFormat extends ContainerFormat
     }
 
     /**
-     * Get the OAI-PMH metadata prefix.
+     * Get the OAI-PMH metadata prefix (domain-specific getter).
+     *
      * This prefix is used to identify the metadata format in OAI-PMH requests and responses.
+     *
      * @return MetadataPrefix The metadata prefix used in the OAI-PMH protocol.
      */
-    public function getPrefix(): MetadataPrefix
+    public function getMetadataPrefix(): MetadataPrefix
     {
         // Always returns non-null for MetadataFormat
         /** @var MetadataPrefix */
-        return parent::getPrefix();
+        return parent::getMetadataPrefix();
     }
 }

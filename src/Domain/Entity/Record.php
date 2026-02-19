@@ -1,10 +1,13 @@
 <?php
 
 /**
+ * Represents a complete OAI-PMH record entity.
+ *
  * @author    Paul Slits <paul.slits@gmail.com>
  * @copyright (c) 2025 Paul Slits
  * @license   MIT License - https://opensource.org/licenses/MIT
  * @link      https://github.com/pslits/oai-pmh
+ * @version   0.1.0
  * @since     0.1.0
  */
 
@@ -13,42 +16,29 @@ namespace OaiPmh\Domain\Entity;
 use InvalidArgumentException;
 
 /**
- * Represents a complete OAI-PMH record entity.
+ * Represents a Record entity — combines header and optional metadata.
  *
- * According to OAI-PMH 2.0 specification section 2.5 (Record), a record is the
- * fundamental unit of metadata harvesting in the OAI-PMH protocol. It combines
- * a header (identifying and cataloging information) with metadata (the actual
- * content being harvested).
- *
- * Record structure (per OAI-PMH specification):
- * - **header** (required): RecordHeader with identifier, datestamp, setSpecs, status
- * - **metadata** (conditional): The actual metadata content in a specified format
- * - **about** (optional): Additional information about the record (not yet implemented)
- *
- * Record states:
- * 1. **Active Record**: Has header and metadata
- *    - Normal harvestable record with complete information
- *    - Header status is not "deleted"
- *
- * 2. **Deleted Record**: Has header only, no metadata
- *    - Header status is "deleted"
- *    - Metadata element is absent
- *    - Used to communicate record deletions to harvesters
- *
- * Deleted records behavior:
- * - Repositories supporting deletedRecord="persistent" or "transient" must
- *   indicate deleted records by marking the header with status="deleted"
- * - Deleted records contain only the header (identifier, datestamp, optional setSpecs)
- * - The metadata element is omitted for deleted records
+ * According to OAI-PMH 2.0 specification section 2.5 (Record), a Record
+ * consists of a header (identifier, datestamp, optional setSpecs and status)
+ * and, when not deleted, a metadata container with the record's metadata.
+ * Deleted records MUST contain only a header and MUST omit the metadata
+ * element.
  *
  * This entity:
- * - combines header information with metadata content,
- * - supports both active and deleted record states,
- * - is compared by record identifier (two records are equal if same identifier),
- * - is used in GetRecord and ListRecords responses.
+ * - encapsulates a `RecordHeader` and optional metadata payload,
+ * - enforces the invariant that deleted records cannot have metadata,
+ * - is compared by identifier (value equality via the record identifier),
+ * - is used in `GetRecord` and `ListRecords` responses.
+ *
+ * Usage:
+ * - Construct with a `RecordHeader` and `null` metadata for deleted records.
+ * - For active records provide the metadata array; callers should serialize
+ *   or validate metadata according to the selected `metadataPrefix`.
+ *
+ * Note: Kept as a final entity rather than a value object to reflect its
+ * lifecycle and relationships within the domain model.
  *
  * @see http://www.openarchives.org/OAI/openarchivesprotocol.html#Record
- * @see OAI-PMH 2.0 Specification Section 2.5
  */
 final class Record
 {
@@ -62,15 +52,13 @@ final class Record
     /**
      * Constructs a new Record instance.
      *
-     * Per OAI-PMH 2.0 specification section 2.5, deleted records must NOT
-     * contain metadata. This invariant is enforced here.
+     * Initializes a Record with a `RecordHeader` and optional metadata. If the
+     * provided header indicates the record is deleted, the metadata MUST be
+     * null; otherwise the metadata may contain the record's payload.
      *
-     * For deleted records, metadata should be null or omitted.
-     * For active records, metadata should contain the record's metadata content.
-     *
-     * @param RecordHeader $header The record header.
-     * @param array<string, mixed>|null $metadata The metadata content (null for deleted records).
-     * @throws InvalidArgumentException If deleted record has metadata.
+     * @param RecordHeader $header The record header (identifier, datestamp and status).
+     * @param array<string, mixed>|null $metadata The metadata content, or null for deleted records.
+     * @throws InvalidArgumentException If the header is marked deleted but metadata is not null.
      */
     public function __construct(
         RecordHeader $header,
@@ -87,9 +75,12 @@ final class Record
     }
 
     /**
-     * Returns the record header.
+     * This function returns the RecordHeader for this Record.
      *
-     * @return RecordHeader The header containing identifier, datestamp, and status.
+     * Returns the `RecordHeader` containing the record's identifier,
+     * datestamp, optional setSpecs and status flag (deleted or not).
+     *
+     * @return RecordHeader The record header (identifier, datestamp and status).
      */
     public function getHeader(): RecordHeader
     {
@@ -97,7 +88,11 @@ final class Record
     }
 
     /**
-     * Returns the record metadata.
+     * This function returns the record metadata.
+     *
+     * Returns the metadata payload for active records, or null when the
+     * record is marked deleted. Consumers should serialize or validate the
+     * metadata according to the repository's `metadataPrefix`.
      *
      * @return array<string, mixed>|null The metadata content, or null for deleted records.
      */
@@ -107,7 +102,11 @@ final class Record
     }
 
     /**
-     * Checks if the record is marked as deleted.
+     * This function returns whether the record is marked as deleted.
+     *
+     * Returns true when the underlying `RecordHeader` has status="deleted".
+     * Callers can use this to decide whether metadata is expected to be present
+     * or intentionally omitted for deleted records.
      *
      * @return bool True if the record is deleted, false otherwise.
      */
@@ -117,9 +116,10 @@ final class Record
     }
 
     /**
-     * Checks if this Record is equal to another.
+     * This function checks whether this Record is equal to another by identifier.
      *
-     * Two records are considered equal if they have the same identifier.
+     * Determines equality by delegating to the underlying `RecordIdentifier`.
+     * Two records are equal when their identifiers are equal.
      *
      * @param Record $otherRecord The other Record instance to compare with.
      * @return bool True if both records have the same identifier, false otherwise.
@@ -132,9 +132,13 @@ final class Record
     }
 
     /**
-     * Returns a string representation of the Record.
+     * This function returns a concise string representation of the Record.
      *
-     * @return string A string representation.
+     * Returns a short, human-readable summary including the record identifier,
+     * deletion status and whether metadata is present. Intended for logging
+     * and debugging; avoid relying on the exact format for machine parsing.
+     *
+     * @return string A string in the format: 'Record(identifier: ..., deleted: true|false, hasMetadata: true|false)'.
      */
     public function __toString(): string
     {

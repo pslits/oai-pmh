@@ -66,10 +66,10 @@ class ContainerFormatTest extends TestCase
         $this->assertInstanceOf(ContainerFormat::class, $container);
 
         // And: The container should have the correct properties
-        $this->assertEquals($prefix, $container->getPrefix());
-        $this->assertEquals($namespaces, $container->getNamespaces());
-        $this->assertEquals($schemaUrl, $container->getSchemaUrl());
-        $this->assertEquals($rootTag, $container->getRootTag());
+        $this->assertEquals($prefix, $container->getMetadataPrefix());
+        $this->assertEquals($namespaces, $container->getXmlNamespaces());
+        $this->assertEquals($schemaUrl, $container->getSchemaLocation());
+        $this->assertEquals($rootTag, $container->getXmlRootTag());
     }
 
     /**
@@ -95,10 +95,10 @@ class ContainerFormatTest extends TestCase
 
         // Then: The object should be created without error
         // And: The container should have the correct properties
-        $this->assertNull($container->getPrefix());
-        $this->assertEquals($namespaces, $container->getNamespaces());
-        $this->assertEquals($schemaUrl, $container->getSchemaUrl());
-        $this->assertEquals($rootTag, $container->getRootTag());
+        $this->assertNull($container->getMetadataPrefix());
+        $this->assertEquals($namespaces, $container->getXmlNamespaces());
+        $this->assertEquals($schemaUrl, $container->getSchemaLocation());
+        $this->assertEquals($rootTag, $container->getXmlRootTag());
     }
 
     /**

@@ -12,14 +12,14 @@ Validates PHP value objects and abstract base classes against OAI-PMH project st
 
 **Validate and generate analysis:**
 ```
-Validate src/Domain/ValueObject/BaseURL.php
+Validate src/Domain/ValueObject/{CLASS}.php
 ```
 
 This will:
 1. Classify class type (final vs abstract)
 2. Run appropriate validation checklist
 3. Generate validation report with priority fixes
-4. **Create analysis document** at `docs/analysis/ValueObject/BASEURL_ANALYSIS.md`
+4. **Create analysis document** at `docs/analysis/ValueObject/{CLASS}_ANALYSIS.md`
 
 ## Workflow
 
@@ -34,7 +34,7 @@ This will:
 
 **Step 3: Output**
 - **Console Report:** Validation results with ✅ PASS / ⚠️ WARN / ❌ FAIL
-- **Analysis Document:** Complete analysis at `docs/analysis/ValueObject/{VALUEOBJECT}_ANALYSIS.md` (see Output Format below)
+- **Analysis Document:** Complete analysis at `docs/analysis/ValueObject/{CLASS}_ANALYSIS.md` (see Output Format below)
 
 ## Validation Focus
 
@@ -69,7 +69,7 @@ This will:
 📋 Value Object Validation Report
 ==================================
 
-File: src/Domain/ValueObject/BaseURL.php
+File: src/Domain/ValueObject/{CLASS}.php
 Class Type: [Standard Value Object | Abstract Base Class]
 Checklist: [references/vo-checklist.md | references/abstract-base-class-checklist.md]
 
@@ -93,9 +93,7 @@ Next Steps:
 
 ### 2. Analysis Document (REQUIRED OUTPUT)
 
-**When validation passes, automatically generate:**
-
-**File:** `docs/analysis/ValueObject/{VALUEOBJECT}_ANALYSIS.md`
+**File:** `docs/analysis/ValueObject/{CLASS}_ANALYSIS.md`
 
 **Required sections (13 total):**
 1. Document Header (date, component, file path, OAI-PMH version)
@@ -114,35 +112,9 @@ Next Steps:
 
 **Complete template:** [references/analysis-template.md](references/analysis-template.md)
 
-**Note:** Analysis documents are generated in the main project at `docs/analysis/ValueObject/{VALUEOBJECT}_ANALYSIS.md` following this template when validation passes.
+**Note:** Analysis documents are generated in the main project at `docs/analysis/ValueObject/{CLASS}_ANALYSIS.md` following this template when validation passes.
 
 ## Validation Examples
-
-**Standard Value Object:**
-```php
-final class BaseURL
-{
-    private string $value;
-    
-    public function __construct(string $baseUrl) { /* ... */ }
-    public function getBaseUrl(): string { /* ... */ }  // Domain-specific - REQUIRED
-    public function equals(self $otherBaseUrl): bool { /* ... */ }  // Descriptive param
-    public function __toString(): string { /* ... */ }
-    private function validate(string $baseUrl): void { /* ... */ }  // Split validation
-}
-```
-
-**Abstract Base Class:**
-```php
-abstract class ContainerFormat
-{
-    protected string|null $value;  // Protected for subclass access
-    
-    protected function getContainerFormat(): string|null { /* ... */ }  // Template method
-    public function equals(self $otherFormat): bool { /* ... */ }  // Handles inheritance
-    protected function validate(?string $containerFormat): void { /* ... */ }  // Override point
-}
-```
 
 **Complete examples:** [references/validation-examples.md](references/validation-examples.md)
 
@@ -166,12 +138,6 @@ vendor\bin\phpunit --coverage-html coverage/html tests/Domain/ValueObject/[FileN
 
 ### scripts/
 - `validate_vo.php` - **CI/CD-ready automated validation script**
-  - Detects class type (abstract/final)
-  - Runs appropriate validation checklist
-  - Generates console report with priority fixes
-  - Creates analysis document template
-  - Usage: `php validate_vo.php src/Domain/ValueObject/BaseURL.php`
-  - Options: `--no-analysis` to skip analysis document generation
 
 ### references/
 - `vo-checklist.md` - 90+ point checklist for standard value objects

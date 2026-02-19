@@ -24,13 +24,15 @@ use InvalidArgumentException;
  * - is immutable and compared by value (not identity),
  * - ensures only valid email addresses are accepted,
  * - is used in the required adminEmail element of Identify responses.
+ *
+ * @see http://www.openarchives.org/OAI/openarchivesprotocol.html#Identify
  */
 final class Email
 {
     private string $email;
 
     /**
-     * Constructs a new Email instance.
+     * Email constructor.
      *
      * Validates the email address format using PHP's filter_var with FILTER_VALIDATE_EMAIL,
      * which provides RFC 5322 compliant validation.
@@ -72,6 +74,10 @@ final class Email
 
     /**
      * Returns a string representation of the Email object.
+     *
+     * Provides a human-readable representation useful for debugging and logging.
+     *
+     * @return string A string representation in the format: Email(email: <address>)
      */
     public function __toString(): string
     {
@@ -81,6 +87,9 @@ final class Email
     /**
      * Validates the email address.
      *
+     * Uses PHP's filter_var with FILTER_VALIDATE_EMAIL for RFC 5322 compliant validation.
+     *
+     * @param string $email The email address to validate.
      * @throws InvalidArgumentException If the email address is not valid.
      */
     private function validateEmail(string $email): void

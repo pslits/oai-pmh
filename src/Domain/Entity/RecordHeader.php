@@ -25,10 +25,10 @@ use OaiPmh\Domain\ValueObject\UTCdatetime;
  * - ListIdentifiers (header-only responses)
  *
  * Header components (per OAI-PMH specification):
- * - **identifier** (required): Unique identifier for the item
- * - **datestamp** (required): Date of creation, modification, or deletion
- * - **setSpec** (optional, repeatable): Set membership of the item
- * - **status** (optional): Indicates if the record is deleted
+ * - identifier (required): "Unique identifier for the item"
+ * - datestamp (required): "Date of creation, modification, or deletion"
+ * - setSpec (optional, repeatable): "Set membership of the item"
+ * - status (optional): "Indicates if the record is deleted"
  *
  * Deleted records:
  * When a record is deleted, the header is marked with status="deleted" and
@@ -42,7 +42,6 @@ use OaiPmh\Domain\ValueObject\UTCdatetime;
  * - is used in multiple OAI-PMH verb responses.
  *
  * @see http://www.openarchives.org/OAI/openarchivesprotocol.html#Record
- * @see OAI-PMH 2.0 Specification Section 2.5
  */
 final class RecordHeader
 {

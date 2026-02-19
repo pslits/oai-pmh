@@ -72,10 +72,10 @@ class MetadataFormatTest extends TestCase
         $format = new MetadataFormat($prefix, $namespaces, $schemaUrl, $rootTag);
 
         // Then: The getters should return the expected values
-        $this->assertSame($prefix, $format->getPrefix());
-        $this->assertSame($namespaces, $format->getNamespaces());
-        $this->assertSame($schemaUrl, $format->getSchemaUrl());
-        $this->assertSame($rootTag, $format->getRootTag());
+        $this->assertSame($prefix, $format->getMetadataPrefix());
+        $this->assertSame($namespaces, $format->getXmlNamespaces());
+        $this->assertSame($schemaUrl, $format->getSchemaLocation());
+        $this->assertSame($rootTag, $format->getXmlRootTag());
     }
 
     /**

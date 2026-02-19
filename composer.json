@@ -12,11 +12,24 @@
     ],
     "autoload": {
         "psr-4": {
-            "OaiPmh\\": "src/"
+            "OaiPmh\\": "src/",
+            "OaiPmh\\Protocol\\": "src/Protocol/",
+            "OaiPmh\\Repository\\": "src/Repository/",
+            "OaiPmh\\MetadataSerialization\\": "src/MetadataSerialization/",
+            "OaiPmh\\AccessControl\\": "src/AccessControl/",
+            "OaiPmh\\FlowControl\\": "src/FlowControl/",
+            "OaiPmh\\Observability\\": "src/Observability/",
+            "OaiPmh\\Configuration\\": "src/Configuration/",
+            "OaiPmh\\Infrastructure\\": "src/Infrastructure/"
         }
     },
+    "bin": [
+        "bin/oaipmh-server"
+    ],
     "autoload-dev": {
-        "OaiPmh\\Tests\\": "tests/"
+        "psr-4": {
+            "OaiPmh\\Tests\\": "tests/"
+        }
     },
     "require-dev": {
         "phpunit/phpunit": "^9.6",

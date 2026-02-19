@@ -1,0 +1,27 @@
+#!/usr/bin/env php
+<?php
+
+/**
+ * @author    Paul Slits <paul.slits@gmail.com>
+ * @copyright (c) 2025 Paul Slits
+ * @license   MIT License - https://opensource.org/licenses/MIT
+ * @link      https://github.com/pslits/oai-pmh
+ * @since     0.1.0
+ */
+
+// TODO Phase 0.1 placeholder — HTTP entry point to be implemented in Phase 3.
+// This script will bootstrap the OAI-PMH server and dispatch incoming requests.
+
+declare(strict_types=1);
+
+$autoload = dirname(__DIR__) . '/vendor/autoload.php';
+
+if (!file_exists($autoload)) {
+    fwrite(STDERR, "Autoload file not found. Run: composer install\n");
+    exit(1);
+}
+
+require $autoload;
+
+echo "OAI-PMH Server entry point — not yet implemented.\n";
+exit(0);

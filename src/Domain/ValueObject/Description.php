@@ -10,8 +10,6 @@
 
 namespace OaiPmh\Domain\ValueObject;
 
-use InvalidArgumentException;
-
 /**
  * Represents an OAI-PMH <description> container as a value object.
  *
@@ -25,6 +23,8 @@ use InvalidArgumentException;
  * - is immutable and compared by value (not identity),
  * - supports flexible repository metadata using standard schemas,
  * - can be serialized to XML for OAI-PMH Identify responses.
+ *
+ * @see http://www.openarchives.org/OAI/openarchivesprotocol.html#Identify
  */
 final class Description
 {
@@ -33,7 +33,7 @@ final class Description
     private array $data;
 
     /**
-     * Constructs a new Description instance.
+     * Description constructor.
      *
      * Combines a description format (defining the XML structure) with the actual
      * data content for that format.

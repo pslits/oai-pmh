@@ -20,16 +20,19 @@ namespace OaiPmh\Domain\ValueObject;
  * - rights: Usage rights and licensing
  * - provenance: Content provenance information
  *
- * This value object extends ContainerFormat and represents description format metadata
- * without the actual description data (which is handled by the Description class).
+ * This value object:
+ * - extends <ContainerFormat> to inherit common container properties,
+ * - encapsulates description format metadata (schema, namespaces, root tag),
+ * - is immutable and compared by value (not identity),
+ * - has no prefix since descriptions are embedded in Identify responses rather than independently harvested.
  *
- * Unlike MetadataFormat, DescriptionFormat has no prefix since descriptions are
- * embedded in Identify responses rather than independently harvested.
- *
- * This class is final and immutable, compared by value (not identity).
+ * Note: The actual description data content is handled by the Description class,
+ * which combines a DescriptionFormat with its associated data.
  *
  * TODO: After Container refactoring discussion, this class may be merged or refactored.
  * See related GitHub issue for architectural review.
+ *
+ * @see http://www.openarchives.org/OAI/openarchivesprotocol.html#Identify
  */
 final class DescriptionFormat extends ContainerFormat
 {

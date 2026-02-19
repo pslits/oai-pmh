@@ -30,6 +30,8 @@ use InvalidArgumentException;
  * type distinction and allows independent evolution of validation rules.
  *
  * Domain concerns such as XML serialization or protocol transport are handled outside this class.
+ *
+ * @see http://www.openarchives.org/OAI/openarchivesprotocol.html#Identify
  */
 final class BaseURL
 {

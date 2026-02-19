@@ -26,6 +26,8 @@ use InvalidArgumentException;
  * - is immutable and compared by value (not identity),
  * - ensures only allowed deletedRecord values are accepted,
  * - is required in the OAI-PMH Identify response.
+ *
+ * @see http://www.openarchives.org/OAI/openarchivesprotocol.html#DeletedRecords
  */
 final class DeletedRecord
 {
@@ -42,7 +44,7 @@ final class DeletedRecord
     private string $value;
 
     /**
-     * Constructs a new DeletedRecord instance.
+     * DeletedRecord constructor.
      *
      * Validates that the value is one of the three allowed values defined
      * by the OAI-PMH specification.

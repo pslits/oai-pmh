@@ -16,6 +16,11 @@
     <arg name="colors"/>
     <arg name="extensions" value="php"/>
 
+    <!-- Allow test method names like testMethod_Condition_Behavior in tests -->
+    <rule ref="PSR1.Methods.CamelCapsMethodName">
+        <exclude-pattern>tests/*</exclude-pattern>
+    </rule>
+
     <!-- Custom rule tweaks -->
     <rule ref="Generic.WhiteSpace.DisallowTabIndent">
         <severity>5</severity>

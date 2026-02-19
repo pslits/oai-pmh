@@ -28,6 +28,7 @@ use ArrayIterator;
  * - uses order-insensitive equality (set semantics),
  * - prevents duplicate email addresses.
  *
+ * @see http://www.openarchives.org/OAI/openarchivesprotocol.html#Identify
  * @implements IteratorAggregate<int, Email>
  */
 final class EmailCollection implements IteratorAggregate, Countable
@@ -38,7 +39,7 @@ final class EmailCollection implements IteratorAggregate, Countable
     private array $emails = [];
 
     /**
-     * Constructs a new EmailCollection instance.
+     * EmailCollection constructor.
      *
      * Per OAI-PMH specification, at least one admin email is required.
      * Duplicate emails are not allowed.
