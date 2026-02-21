@@ -102,13 +102,20 @@ Every PHP file must include this header block:
 <?php
 
 /**
- * @author    Paul Slits <paul.slits@gmail.com>
- * @copyright (c) 2025 Paul Slits
+ * [Short description of the file's purpose]
+ *
+ * @author    [author] <[email]>
+ * @copyright (c) [Year when created] Paul Slits
  * @license   MIT License - https://opensource.org/licenses/MIT
  * @link      https://github.com/pslits/oai-pmh
- * @since     0.1.0
+ * @since     [Project version when created]
  */
 ```
+
+**Note:** The `@since` version should match the `"version"` field in `composer.json` at the time the file was created. Check `composer.json` for the current version (currently `0.1.0`).
+
+### Code Documentation
+- Add docblocks to all new PHP classes, methods, and properties following PHPDoc standards
 
 ### Domain-Driven Design Patterns
 
@@ -196,6 +203,6 @@ vendor/bin/phpcbf
 ## Remember
 - Quality over speed
 - Write code that is easy to read and maintain
-- Document the "why" not just the "what"
+- Use concise, modern PHP 8.0 documentation (let type hints speak)
 - Think about the domain, not just the code
 - Every class should tell a story about the domain

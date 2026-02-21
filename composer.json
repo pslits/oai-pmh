@@ -3,7 +3,7 @@
     "description": "OAI-PMH protocol implementation in PHP",
     "type": "library",
     "license": "MIT",
-    "version ": "0.1.0",
+    "version": "0.1.0",
     "authors": [
         {
             "name": "Paul Slits",
@@ -27,6 +27,9 @@
         "psr-4": {
             "OaiPmh\\Tests\\": "tests/"
         }
+    },
+    "require": {
+        "php": ">=8.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.6",
