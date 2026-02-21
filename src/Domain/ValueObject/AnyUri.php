@@ -16,14 +16,9 @@ use InvalidArgumentException;
 /**
  * Represents a URI that conforms to the XML Schema anyURI type.
  *
- * This value object:
- * - encapsulates a validated URI,
- * - is immutable and compared by value (not identity),
- * - ensures URIs are suitable for XML serialization in OAI-PMH responses.
- *
- * Validation is performed using PHP's filter_var function with the FILTER_VALIDATE_URL flag,
- * which is stricter than XML Schema's anyURI and may reject some valid anyURI values.
- * This is a pragmatic choice for most OAI-PMH use cases, but not a full XML Schema anyURI check.
+ * This immutable value object validates URIs against the anyURI XSD schema, ensuring
+ * they are suitable for XML serialization in OAI-PMH responses. Value equality is
+ * compared by the URI string content.
  */
 class AnyUri
 {
@@ -36,7 +31,7 @@ class AnyUri
      *
      * Validates the provided URI against the anyURI XSD schema.
      *
-     * @param string $uri The URI to validate and store.
+     * @throws InvalidArgumentException If the URI is not valid according to the anyURI schema.
      */
     public function __construct(string $uri)
     {
@@ -46,10 +41,8 @@ class AnyUri
 
     /**
      * Returns a string representation of the AnyUri object.
-     * The string format is presented as:
-     * `AnyUri(uri: <uri>)`
      *
-     * @return string A string representation of the AnyUri.
+     * Format: `AnyUri(uri: <uri>)`
      */
     public function __toString(): string
     {
@@ -58,8 +51,6 @@ class AnyUri
 
     /**
      * Returns the stored URI.
-     *
-     * @return string The validated URI.
      */
     public function getValue(): string
     {
@@ -71,10 +62,7 @@ class AnyUri
      *
      * Security: Uses textContent to prevent XML injection.
      *
-     * @param string $_uri The URI to validate.
-     *
      * @throws InvalidArgumentException If the URI is not valid according to the anyURI schema.
-     * @return void
      */
     private function validateAnyUri(string $_uri): void
     {
@@ -116,9 +104,6 @@ class AnyUri
 
     /**
      * Checks if this AnyUri is equal to another.
-     *
-     * @param AnyUri $other The other AnyUri to compare against.
-     * @return bool True if both URIs are equal, false otherwise.
      */
     public function equals(AnyUri $other): bool
     {
