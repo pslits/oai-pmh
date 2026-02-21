@@ -155,3 +155,25 @@ All value objects in the library should follow this pattern:
 - etc.
 
 **Do NOT** mix patterns (some with `getValue()`, some without).
+
+## Domain Method Naming Checklist
+
+When naming methods in OAI-PMH domain:
+
+1. **Check OAI-PMH specification** for exact terminology
+   - Verbs: GetRecord, ListRecords, Identify, ListMetadataFormats
+   - Nouns: metadata, datestamp, set, identifier, granularity
+
+2. **Avoid generic patterns**:
+   - ❌ `findByIdentifier()` - repository pattern language
+   - ✅ `getRecord()` - OAI-PMH domain language
+   - ❌ `getMetadataContent()` - redundant qualifier
+   - ✅ `getMetadata()` - matches specification
+
+3. **Maintain consistency**:
+   - If `listRecords()` uses domain language, so should `getRecord()`
+   - All methods in an interface should follow same naming conventions
+
+4. **Self-documenting names**:
+   - Method name should be self-explanatory to domain experts
+   - Should read naturally when implementing OAI-PMH verbs
